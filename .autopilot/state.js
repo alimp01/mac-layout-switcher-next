@@ -2,7 +2,7 @@ window.STATE =
 {
   "slug": "mac-layout-switcher",
   "dir": "2026-08-29-mac-layout-switcher",
-  "title": "Свой аналог Punto/Caramba Switcher для Mac",
+  "title": "Mac Layout Switcher Next — Keyboop fork",
   "mode": "semi",
   "depth": "normal",
   "polish": null,
@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "CLAUDE.md",
   "skillDir": "/home/claudebot/.claude/skills/autopilot",
   "startedAt": "2026-08-29T03:22:57+00:00",
-  "updatedAt": "2026-10-27T03:23:04.365606+00:00",
+  "updatedAt": "2026-11-06",
   "stages": [
     {
       "id": "preflight",
@@ -64,9 +64,9 @@ window.STATE =
     }
   ],
   "requirements": {
-    "total": 36,
+    "total": 39,
     "done": 32,
-    "inTicket": 3,
+    "inTicket": 6,
     "droppedNote": "G07 отменён пользователем в пользу G08",
     "inSpec": 0,
     "placeholder": 0,
@@ -906,6 +906,36 @@ window.STATE =
       "publication": "verified",
       "finishedAt": "2026-10-27T03:23:04.365606+00:00",
       "acceptedAt": "2026-10-27T03:23:04.365606+00:00"
+    },
+    {
+      "id": "35",
+      "title": "Separate Next identity",
+      "requirements": [
+        "G30"
+      ],
+      "status": "ready",
+      "blockedBy": []
+    },
+    {
+      "id": "36",
+      "title": "Keyboop language detection",
+      "requirements": [
+        "G31"
+      ],
+      "status": "ready",
+      "blockedBy": []
+    },
+    {
+      "id": "37",
+      "title": "Keyboop replacement transport",
+      "requirements": [
+        "G32"
+      ],
+      "status": "blocked",
+      "blockedBy": [
+        "35",
+        "36"
+      ]
     }
   ],
   "singlePass": null,
@@ -1300,5 +1330,13 @@ window.STATE =
     "scope": "Bitrix24 native app зщкефд+Option → portal",
     "note": "User answered «Да, получилось portal» after actual Bitrix24 зщкефд+Option without selection. This confirms manual conversion in that field; Yandex, auto separators and dictation were not part of this test.",
     "confirmedAt": "2026-10-26T09:36:58.857391+00:00"
+  },
+  "fork": {
+    "repository": "alimp01/mac-layout-switcher-next",
+    "base": "7043925e2f4f7028c6cb1539669290dbf5e0d446",
+    "upstream": "iffuno/keyboop@fb9bdde4eb8f13a486974cf102a8bec9d607e5d2",
+    "status": "implementing",
+    "version": "1.5.0",
+    "manualAcceptance": "pending"
   }
 };

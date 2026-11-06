@@ -40,3 +40,7 @@
 | G27 | Обработать AX noValue при физическом Option после 1.4.9 | done | 1.4.10: scoped Chromium preparation, RED13→GREEN77, two reviews, installed/published; user confirmed physical Option + Space in Codex on 25.10 | no-value-focus-spec.md / no-value-focus-qa.md → T32 |
 | G28 | «почему опять ошибка?» в приложении Битрикс24 | done | 1.4.11 installed/published: Bitrix24/Yandex identities, RED24→GREEN147, two reviews; user confirmed physical Bitrix Option зщкефд→portal on26.10 | browser-family-spec.md / browser-family-qa.md → T33 |
 | G29 | «вот еще тут не распознает» — подтверждён Spotlight | done | 1.4.12 installed/published: rawRED32→GREEN199, rootEngine/fullspeech/DMG and two reviews PASS; user confirmed physical Spotlight Option ghbdtn→привет on27.10 | spotlight-focus-spec.md / spotlight-focus-qa.md → T34 |
+
+| G30 | «сделаем форк нашего ПО»; «Отдельный репозиторий на GitHub» | in-ticket | Отдельная идентичность, настройки, обновления и DMG Next; исходный проект сохраняется | keyboop-fork-spec.md → T35 |
+| G31 | «дополним наш распознование ошибок из keyboop» | in-ticket | Словари, триграммы, правила и решения на лету из закреплённого upstream с MIT notices | keyboop-fork-spec.md → T36 |
+| G32 | «алгоритм замены возьмем тоже из него» | in-ticket | Backspace/Unicode по собственному буферу, отсутствие обязательного AX для набранного слова, упорядочивание ввода | keyboop-fork-spec.md → T37 |

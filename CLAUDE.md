@@ -1,3 +1,11 @@
+# Next fork override — 2026-11-06
+
+This checkout is alimp01/mac-layout-switcher-next, based on stable 1.4.12 commit7043925. The user explicitly requested a separate GitHub repository with Keyboop detection AND replacement. Active requirements G30–G32, tickets35–37, keyboop-fork-spec.md, ADR0014. Historical memory below describes the parent and must not redirect release to its main/archive/app.
+
+Next identity: space.alimp.maclayoutswitcher.next, MacLayoutSwitcherNext.app, version1.5.0. Isolated settings/update source. Root does not write product code; fresh executor per ticket plus independent Spec/Standards reviews. Backspace/Unicode for fresh tracked words is authorized in this fork, superseding ADR0013 only for that path. Preserve GigaAM and original stable installation. No live private UI/TCC bypass; tests are not hardware acceptance.
+
+Release only to alimp01/mac-layout-switcher-next and /var/www/cat.alimp.space/mac-layout-switcher-next.tar.gz. Never publish experimental code to mac-layout-switcher or replace installed stable app.
+
 <!-- autopilot:start -->
 # Mac Layout Switcher
 
