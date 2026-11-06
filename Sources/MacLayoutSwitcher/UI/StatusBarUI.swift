@@ -83,7 +83,7 @@ public final class StatusBarUI: NSObject {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         // Вместо картинки на кнопке — текст текущей раскладки («RU»/«EN»);
         // до первого setLayoutIndicator показываем «--».
-        item.button?.toolTip = "Mac Layout Switcher"
+        item.button?.toolTip = "Mac Layout Switcher Next"
         item.menu = buildMenu()
         statusItem = item
         refresh()
@@ -135,6 +135,8 @@ public final class StatusBarUI: NSObject {
 
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "Mac Layout Switcher Next", action: nil, keyEquivalent: ""))
+        menu.addItem(.separator())
 
         let pause = NSMenuItem(
             title: "", action: #selector(togglePause), keyEquivalent: "")
@@ -219,7 +221,7 @@ public final class StatusBarUI: NSObject {
         guard let button = statusItem?.button else { return }
         let paused = layoutPaused || state.paused
         let lang = layoutLang.map { $0.rawValue.uppercased() } ?? "--"
-        let text = (paused ? "⏸ " + lang : lang) + (dictationStatus.isEmpty ? "" : " " + dictationStatus)
+        let text = "Next " + (paused ? "⏸ " + lang : lang) + (dictationStatus.isEmpty ? "" : " " + dictationStatus)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: NSFont.monospacedSystemFont(ofSize: 12, weight: .bold),
             .foregroundColor: paused ? NSColor.secondaryLabelColor : NSColor.labelColor,
@@ -262,7 +264,7 @@ public final class StatusBarUI: NSObject {
 
     @objc private func showAbout() {
         let alert = NSAlert()
-        alert.messageText = "Mac Layout Switcher \(version)"
+        alert.messageText = "Mac Layout Switcher Next \(version)"
         alert.informativeText = """
         Свой аналог Punto Switcher и Caramba Switcher — бесплатный и открытый.
 

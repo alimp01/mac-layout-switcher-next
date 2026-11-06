@@ -19,7 +19,7 @@ final class Updater {
 
     /// Raw VERSION из main — источник истины о последней версии.
     private static let versionURL = URL(
-        string: "https://raw.githubusercontent.com/alimp01/mac-layout-switcher/main/VERSION")!
+        string: "https://raw.githubusercontent.com/alimp01/mac-layout-switcher-next/main/VERSION")!
 
     /// Своя версия — из Info.plist (заполняет build.sh из файла VERSION).
     /// nil = запущено НЕ из собранного бандла (swift run, голый бинарник):
@@ -37,7 +37,8 @@ final class Updater {
 
     init(currentVersion: String? =
             Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) {
-        self.bundleVersion = currentVersion
+        self.bundleVersion = Bundle.main.bundleIdentifier == "space.alimp.maclayoutswitcher.next"
+            && Bundle.main.bundlePath.hasSuffix(".app") ? currentVersion : nil
     }
 
     /// Запускает расписание проверок. Вызывать один раз после старта UI.
@@ -65,7 +66,7 @@ final class Updater {
         // Вне бандла обновление недоступно (см. bundleVersion): фоново —
         // молча в лог, вручную — честный алерт вместо ложного «доступна версия».
         guard let ownVersion = bundleVersion else {
-            NSLog("MacLayoutSwitcher: запущено не из .app — проверка обновлений отключена")
+            NSLog("MacLayoutSwitcherNext: запущено не из .app — проверка обновлений отключена")
             if interactive { presentNotFromBundleAlert() }
             return
         }
@@ -102,15 +103,15 @@ final class Updater {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             var latest: String?
             if let error = error {
-                NSLog("MacLayoutSwitcher: проверка обновлений не удалась: \(error.localizedDescription)")
+                NSLog("MacLayoutSwitcherNext: проверка обновлений не удалась: \(error.localizedDescription)")
             } else if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-                NSLog("MacLayoutSwitcher: проверка обновлений: HTTP \(http.statusCode)")
+                NSLog("MacLayoutSwitcherNext: проверка обновлений: HTTP \(http.statusCode)")
             } else if let data = data,
                       let body = String(data: data, encoding: .utf8),
                       !body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 latest = body
             } else {
-                NSLog("MacLayoutSwitcher: проверка обновлений: пустой или нечитаемый VERSION")
+                NSLog("MacLayoutSwitcherNext: проверка обновлений: пустой или нечитаемый VERSION")
             }
             DispatchQueue.main.async { completion(latest) }
         }
@@ -121,12 +122,12 @@ final class Updater {
 
     private func presentUpdateAlert(latest: String) {
         let alert = NSAlert()
-        alert.messageText = "Доступна версия \(latest)"
+        alert.messageText = "Next: доступна версия \(latest)"
         alert.informativeText = """
         У тебя \(currentVersion). Обновить?
 
         Приложение скачает исходники, пересоберётся и перезапустится — это \
-        займёт ~1–2 минуты (лог: ~/Library/Logs/MacLayoutSwitcher-update.log).
+        займёт ~1–2 минуты (лог: ~/Library/Logs/MacLayoutSwitcherNext-update.log).
 
         Внимание: после обновления macOS попросит заново выдать разрешения \
         (Универсальный доступ и Мониторинг ввода) — замена приложения \
@@ -143,7 +144,7 @@ final class Updater {
 
     private func presentUpToDateAlert() {
         let alert = NSAlert()
-        alert.messageText = "Версия актуальна"
+        alert.messageText = "Next: версия актуальна"
         alert.informativeText = "У тебя последняя версия — \(currentVersion)."
         alert.addButton(withTitle: "OK")
         alert.runModal()
@@ -164,7 +165,7 @@ final class Updater {
         let alert = NSAlert()
         alert.messageText = "Обновление недоступно"
         alert.informativeText = """
-        Приложение запущено не из собранного .app-бандла (например, напрямую \
+        Приложение запущено не из собранного Next .app-бандла (например, напрямую \
         из терминала), поэтому самообновление отключено. Соберите и запустите \
         .app через ./build.sh.
         """
@@ -181,24 +182,25 @@ final class Updater {
     private func runSelfUpdate() {
         // Скрипт заменяет только установленный .app (он валидирует путь тоже).
         let appPath = Bundle.main.bundlePath
-        guard appPath.hasSuffix(".app") else {
-            NSLog("MacLayoutSwitcher: bundlePath '\(appPath)' — не .app, самообновление отменено")
+        guard appPath.hasSuffix(".app"),
+              Bundle.main.bundleIdentifier == "space.alimp.maclayoutswitcher.next" else {
+            NSLog("MacLayoutSwitcherNext: bundlePath '\(appPath)' — не .app, самообновление отменено")
             return
         }
         guard let scriptURL = Bundle.main.url(forResource: "self-update", withExtension: "sh") else {
-            NSLog("MacLayoutSwitcher: self-update.sh не найден в Resources бандла — обновление невозможно")
+            NSLog("MacLayoutSwitcherNext: self-update.sh не найден в Resources бандла — обновление невозможно")
             presentUpdateStartFailedAlert()
             return
         }
         let fm = FileManager.default
         let tmpDir = fm.temporaryDirectory
-            .appendingPathComponent("MacLayoutSwitcher-update-\(ProcessInfo.processInfo.globallyUniqueString)")
+            .appendingPathComponent("MacLayoutSwitcherNext-update-\(ProcessInfo.processInfo.globallyUniqueString)")
         let tmpScript = tmpDir.appendingPathComponent("self-update.sh")
         do {
             try fm.createDirectory(at: tmpDir, withIntermediateDirectories: true)
             try fm.copyItem(at: scriptURL, to: tmpScript)
         } catch {
-            NSLog("MacLayoutSwitcher: не удалось подготовить копию self-update.sh: \(error)")
+            NSLog("MacLayoutSwitcherNext: не удалось подготовить копию self-update.sh: \(error)")
             try? fm.removeItem(at: tmpDir)
             presentUpdateStartFailedAlert()
             return
@@ -219,12 +221,12 @@ final class Updater {
         do {
             try process.run()
         } catch {
-            NSLog("MacLayoutSwitcher: не удалось запустить self-update.sh: \(error)")
+            NSLog("MacLayoutSwitcherNext: не удалось запустить self-update.sh: \(error)")
             try? fm.removeItem(at: tmpDir)
             presentUpdateStartFailedAlert()
             return
         }
-        NSLog("MacLayoutSwitcher: самообновление запущено, выходим")
+        NSLog("MacLayoutSwitcherNext: самообновление запущено, выходим")
         NSApp.terminate(nil)
     }
 

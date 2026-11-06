@@ -18,7 +18,7 @@ final class DictationPanel: NSObject {
         panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 420, height: 270),
                         styleMask: [.titled, .nonactivatingPanel], backing: .buffered, defer: false)
         super.init()
-        panel.title = "Диктовка · GigaAM v3"
+        panel.title = "Next · Диктовка · GigaAM v3"
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = false
         panel.level = .floating

@@ -13,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Config создаётся здесь и передаётся в Engine — общий экземпляр, чтобы
     // тумблеры меню и Engine писали/читали один и тот же файл настроек.
     private let config = Config()
+    private lazy var captureSession = CaptureSessionGuard(directory: config.directory)
 
     private var engine: Engine?
     private var sounds: Sounds?
@@ -35,6 +36,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var manualPaused = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        do { try captureSession.acquire() }
+        catch { refuseCapture(error); return }
+        captureSession.onConflict = { [weak self] reason in self?.refuseCapture(reason) }
+        captureSession.watchForConflicts()
         config.load()
         if Permissions.trusted {
             startSwitcher()
@@ -57,6 +62,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Рабочий режим
 
     private func startSwitcher() {
+        do { try captureSession.checkBeforeCapture() }
+        catch { refuseCapture(error); return }
         let sounds = Sounds(enabled: config.config.sounds)
         let engine = Engine(config: config)
         engine.sounds = sounds
@@ -90,6 +97,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 engine.stop()
                 self.manualPaused = true
             } else {
+                do { try self.captureSession.checkBeforeCapture() }
+                catch { self.refuseCapture(error); return }
                 self.manualPaused = !engine.start()
             }
             self.ui?.setPausedState(self.manualPaused)
@@ -112,7 +121,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             do {
                 if desired { try self.loginItem.enable() } else { try self.loginItem.disable() }
             } catch {
-                NSLog("MacLayoutSwitcher: смена автозапуска не удалась: \(error)")
+                NSLog("MacLayoutSwitcherNext: смена автозапуска не удалась: \(error)")
             }
             // На современных macOS register() часто не бросает ошибку, а ставит
             // статус .requiresApproval: объект входа создан, но ждёт подтверждения
@@ -173,6 +182,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updateLayoutIndicator()
     }
 
+    /// Stop our own capture before showing a conflict; never terminate another app.
+    private func refuseCapture(_ error: Error) {
+        engine?.stop()
+        manualPaused = true
+        ui?.setPausedState(true)
+        let alert = NSAlert()
+        alert.messageText = "Mac Layout Switcher Next: запуск остановлен"
+        alert.informativeText = error.localizedDescription
+        alert.addButton(withTitle: "Закрыть Next")
+        alert.runModal()
+        NSApp.terminate(nil)
+    }
+
     /// Перечитывает текущую раскладку и отдаёт её индикатору в меню-баре.
     /// Всегда спрашиваем систему (`LayoutSwitcher.current()`), а не кэш —
     /// уведомление лишь сигнал «что-то поменялось».
@@ -200,7 +222,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.messageText = "Разрешите автозапуск"
         alert.informativeText = """
         macOS просит подтвердить автозапуск вручную. Откройте «Системные \
-        настройки → Основные → Объекты входа» и включите «Mac Layout Switcher» \
+        настройки → Основные → Объекты входа» и включите «Mac Layout Switcher Next» \
         в списке — после этого приложение будет стартовать при входе.
         """
         alert.addButton(withTitle: "Открыть «Объекты входа»")
@@ -232,7 +254,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = item.button {
             button.image = NSImage(
                 systemSymbolName: "keyboard.badge.ellipsis",
-                accessibilityDescription: "Mac Layout Switcher — нужны разрешения")
+                accessibilityDescription: "Mac Layout Switcher Next — нужны разрешения")
             button.image?.isTemplate = true
         }
         let menu = NSMenu()
@@ -268,14 +290,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             ? "После этого повторите «Работа (снять паузу)»."
             : "Затем перезапустите приложение (пункт меню-бара «Я выдал разрешения»)."
         alert.informativeText = resumeExplanation + """
-        Mac Layout Switcher слушает клавиатуру во всех приложениях, поэтому \
+        Mac Layout Switcher Next слушает клавиатуру во всех приложениях, поэтому \
         macOS требует два разрешения:
 
         1. Универсальный доступ (Accessibility) — чтобы перехватывать и \
         перепечатывать текст.
         2. Мониторинг ввода (Input Monitoring) — чтобы видеть нажатия клавиш.
 
-        Откройте обе панели кнопками ниже и включите «Mac Layout Switcher». \
+        Откройте обе панели кнопками ниже и включите «Mac Layout Switcher Next». \
         \(retryInstruction)
         """
         alert.addButton(withTitle: "Открыть «Универсальный доступ»")
@@ -301,10 +323,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func relaunch() {
         let path = Bundle.main.bundlePath
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/open")
-        process.arguments = ["-n", path]
-        try? process.run()
-        NSApp.terminate(nil)
+        // Wait for this process (and its lifetime lock) to exit, including
+        // dictation cleanup. Starting `open -n` first would correctly be refused.
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/nohup")
+        process.arguments = ["/bin/sh", "-c", """
+            attempt=0
+            while kill -0 "$2" 2>/dev/null; do
+                [ "$attempt" -lt 30 ] || exit 1
+                attempt=$((attempt + 1))
+                sleep 1
+            done
+            exec /usr/bin/open "$1"
+            """, "next-relaunch", path, String(ProcessInfo.processInfo.processIdentifier)]
+        process.standardInput = FileHandle.nullDevice
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        do { try process.run(); NSApp.terminate(nil) }
+        catch {
+            let alert = NSAlert()
+            alert.messageText = "Не удалось перезапустить Next"
+            alert.informativeText = "Завершите Next через меню и откройте приложение снова."
+            alert.runModal()
+        }
     }
 }
 

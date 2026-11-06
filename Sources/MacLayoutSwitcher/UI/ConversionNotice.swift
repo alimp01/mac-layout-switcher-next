@@ -18,7 +18,7 @@ final class ConversionNotice: NSObject {
         self.presentsWindow = presentsWindow
         super.init()
         label.isSelectable = true
-        panel.title = "Конвертация раскладки"
+        panel.title = "Next · Конвертация раскладки"
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = false
         panel.level = .floating

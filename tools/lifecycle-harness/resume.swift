@@ -12,7 +12,7 @@ if !CommandLine.arguments.contains("--engine") {
 let delegate = AppDelegate()
 delegate.applicationDidFinishLaunching(Notification(name: NSApplication.didFinishLaunchingNotification))
 precondition(harnessMenus.count == 1 && harnessActiveTaps.count == 1)
-let pause = harnessMenus[0].items[0]
+let pause = harnessMenus[0].items.first { $0.title == "Пауза" }!
 func togglePause() { _ = NSApp.sendAction(pause.action!, to: pause.target, from: pause) }
 togglePause()
 check(pause.title == "Работа (снять паузу)" && harnessActiveTaps.isEmpty, "pause removes tap and offers resume")

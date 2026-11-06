@@ -15,7 +15,7 @@ final class DictationRecorder: NSObject, AVAudioRecorderDelegate {
         queue.async { [self] in
             cleanup()
             do {
-                let folder = FileManager.default.temporaryDirectory.appendingPathComponent("MacLayoutSwitcher-recording-\(UUID().uuidString)", isDirectory: true)
+                let folder = FileManager.default.temporaryDirectory.appendingPathComponent("MacLayoutSwitcherNext-recording-\(UUID().uuidString)", isDirectory: true)
                 try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true,
                                                        attributes: [.posixPermissions: 0o700])
                 directory = folder

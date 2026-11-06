@@ -24,6 +24,8 @@ for path in paths:
         target = dest/('AppDelegate.swift' if path.name == 'main.swift' else path.name)
     if path.name == 'main.swift':
         text = exact(text, 'private let config = Config()', 'private let config = Config(directory: harnessConfigDirectory)')
+        text = exact(text, 'CaptureSessionGuard(directory: config.directory)',
+                     'CaptureSessionGuard(directory: config.directory, applications: { [] }, notifications: NotificationCenter())')
         offset = text.index('\nlet app = NSApplication.shared\n')
         text = text[:offset] + '\n#endif\n'
         text = text.replace('alert.runModal()', 'harnessAlert(alert)')

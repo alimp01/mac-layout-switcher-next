@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
-# build-dmg.sh — упаковка MacLayoutSwitcher.app в .dmg-дистрибутив одной командой.
+# build-dmg.sh — упаковка MacLayoutSwitcherNext.app в .dmg-дистрибутив одной командой.
 #
 # Запускать ТОЛЬКО на macOS 13+ (нужны `hdiutil` и `ln`, которых на Linux-машине
 # сборки агента нет). На Linux скрипт не запускается — проверяется только
 # шеллчеком: `bash -n build-dmg.sh`. Логику сборки .app держит build.sh, здесь —
 # только упаковка в образ.
 #
-# Результат: dist/MacLayoutSwitcher.dmg. Пользователь монтирует его и
-# перетаскивает MacLayoutSwitcher.app на ярлык «Программы» (симлинк /Applications
+# Результат: dist/MacLayoutSwitcherNext.dmg. Пользователь монтирует его и
+# перетаскивает MacLayoutSwitcherNext.app на ярлык «Программы» (симлинк /Applications
 # внутри образа) — обычная установка macOS-приложения.
 #
 # Использование:
@@ -26,8 +26,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # --- Константы образа ---------------------------------------------------------
-APP_NAME="MacLayoutSwitcher"                 # = имя бандла, что делает build.sh
-VOL_NAME="MacLayoutSwitcher"                 # имя тома при монтировании
+APP_NAME="MacLayoutSwitcherNext"                 # = имя бандла, что делает build.sh
+VOL_NAME="MacLayoutSwitcherNext"                 # имя тома при монтировании
 DIST_DIR="${MLS_DIST_DIR:-$SCRIPT_DIR/dist}"
 APP_BUNDLE="$DIST_DIR/$APP_NAME.app"
 DMG_PATH="$DIST_DIR/$APP_NAME.dmg"
@@ -63,8 +63,14 @@ if [[ ! -d "$APP_BUNDLE" ]]; then
     exit 1
 fi
 
+if [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_BUNDLE/Contents/Info.plist")" != space.alimp.maclayoutswitcher.next ||
+      "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP_BUNDLE/Contents/Info.plist")" != MacLayoutSwitcher ]]; then
+    echo "!! Отказ: в каталоге сборки находится приложение другого канала; выполните --rebuild" >&2
+    exit 1
+fi
+
 # --- 2. Staging: .app + симлинк на /Applications ------------------------------
-STAGING="$(mktemp -d "${TMPDIR:-/tmp}/maclayoutswitcher-dmg.XXXXXX")"
+STAGING="$(mktemp -d "${TMPDIR:-/tmp}/maclayoutswitcher-next-dmg.XXXXXX")"
 echo "==> Готовлю staging $STAGING"
 cp -R "$APP_BUNDLE" "$STAGING/$APP_NAME.app"
 # FileProvider may attach FinderInfo to a bundle in Documents after signing.
@@ -96,8 +102,8 @@ cat <<DONE
 
 Установка:
   1. open "$DMG_PATH"
-  2. Перетащить MacLayoutSwitcher.app на ярлык «Программы» (Applications).
-  3. Первый запуск: в «Программах» правый клик по MacLayoutSwitcher →
+  2. Перетащить MacLayoutSwitcherNext.app на ярлык «Программы» (Applications).
+  3. Первый запуск: в «Программах» правый клик по MacLayoutSwitcherNext →
      «Открыть» → подтвердить (ad-hoc подпись без нотаризации — Gatekeeper
      спросит один раз).
   4. Выдать разрешения: Системные настройки → Конфиденциальность и

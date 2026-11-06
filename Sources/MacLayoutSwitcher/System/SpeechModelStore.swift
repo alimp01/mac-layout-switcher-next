@@ -57,7 +57,7 @@ final class SpeechModelStore {
 
     init(rootURL: URL? = nil) {
         self.rootURL = rootURL ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("MacLayoutSwitcher/SpeechModels", isDirectory: true)
+            .appendingPathComponent("MacLayoutSwitcherNext/SpeechModels", isDirectory: true)
         modelDirectory = self.rootURL.appendingPathComponent("gigaam-v3-e2e-2026-06-22", isDirectory: true)
     }
     func cancel() { lock.lock(); let task = active; lock.unlock(); task?.cancel() }

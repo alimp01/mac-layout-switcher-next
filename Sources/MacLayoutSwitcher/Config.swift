@@ -73,7 +73,7 @@ extension AppConfig {
     }
 }
 
-/// Хранилище настроек в `~/Library/Application Support/MacLayoutSwitcher/`.
+/// Хранилище настроек в `~/Library/Application Support/MacLayoutSwitcherNext/`.
 /// Дефолты при отсутствии файла; битый config.json → бэкап `.broken` рядом
 /// и дефолты. Пути/дефолты/миграции спрятаны за этим типом.
 public final class Config {
@@ -103,7 +103,7 @@ public final class Config {
             .urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.homeDirectoryForCurrentUser
                 .appendingPathComponent("Library/Application Support")
-        return base.appendingPathComponent("MacLayoutSwitcher", isDirectory: true)
+        return base.appendingPathComponent("MacLayoutSwitcherNext", isDirectory: true)
     }
 
     /// Читает config.json. Нет файла → дефолты и запись. Битый → бэкап
@@ -130,7 +130,7 @@ public final class Config {
     /// активного event tap'а, где дисковый I/O держал бы клавиатуру всей
     /// системы и грозил `tapDisabledByTimeout`. Очередь последовательная —
     /// записи одного файла не обгоняют друг друга.
-    private let persistQueue = DispatchQueue(label: "MacLayoutSwitcher.Persist", qos: .utility)
+    private let persistQueue = DispatchQueue(label: "MacLayoutSwitcherNext.Persist", qos: .utility)
 
     /// Пишет config.json (атомарно, стабильный порядок ключей для диффов).
     /// Запись асинхронная, на `persistQueue`.

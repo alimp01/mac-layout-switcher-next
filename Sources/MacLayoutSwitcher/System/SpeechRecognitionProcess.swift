@@ -62,7 +62,7 @@ final class SpeechRecognitionProcess {
         let source = try wavURL.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
         guard source.isRegularFile == true, let size = source.fileSize, size > 0,
               size <= 128 * 1024 * 1024 else { throw SpeechError.invalidAudio }
-        let directory = fm.temporaryDirectory.appendingPathComponent("MacLayoutSwitcher-speech-\(UUID().uuidString)", isDirectory: true)
+        let directory = fm.temporaryDirectory.appendingPathComponent("MacLayoutSwitcherNext-speech-\(UUID().uuidString)", isDirectory: true)
         try fm.createDirectory(at: directory, withIntermediateDirectories: false, attributes: [.posixPermissions: 0o700])
         defer { try? fm.removeItem(at: directory) }
         let audio = directory.appendingPathComponent("recording.wav")

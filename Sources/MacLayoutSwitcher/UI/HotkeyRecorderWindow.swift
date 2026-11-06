@@ -53,7 +53,7 @@ public final class HotkeyRecorderWindow: NSObject, NSWindowDelegate {
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false)
-        win.title = "Настройка горячих клавиш"
+        win.title = "Next · Горячие клавиши"
         win.isReleasedWhenClosed = false
         win.delegate = self
         win.center()
