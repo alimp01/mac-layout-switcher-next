@@ -4,8 +4,8 @@ cd "$(dirname "$0")/.."
 focus_work=$(mktemp -d /tmp/mls-system-focus.XXXXXX)
 mkdir -p "$focus_work/Sources" "$focus_work/Compiled" "$focus_work/modules"
 cp -R Sources/SwitcherCore "$focus_work/Sources/"
-for name in InputFocusGuard Typist SelectionConverter SecureInput; do
-    if [[ -n "${MLS_FOCUS_BASE_REF:-}" ]]; then
+for name in InputFocusGuard Typist TrackedInputBatch SelectionConverter SecureInput; do
+    if [[ -n "${MLS_FOCUS_BASE_REF:-}" && "$name" != "TrackedInputBatch" ]]; then
         git show "$MLS_FOCUS_BASE_REF:Sources/MacLayoutSwitcher/System/$name.swift" > "$focus_work/Sources/$name.swift"
     else
         cp "Sources/MacLayoutSwitcher/System/$name.swift" "$focus_work/Sources/"

@@ -21,15 +21,15 @@ final class InputFocusGuard {
     }
 
     enum CaptureFailure {
-        case accessibilityDenied, protectedField, unavailableField, unavailableSelection
-        case unavailableText, selectionTooLarge, changed, unavailableApplication
+        case accessibilityDenied, protectedField, secureInput, unavailableField, unavailableSelection
+        case unavailableText, unreadableSelection, selectionTooLarge, changed, unavailableApplication
         case systemFocus(DictationFocusFailure)
         case preparingAccessibility(DictationFocusFailure?)
         var message: String {
             switch self {
             case .accessibilityDenied:
                 return "У Mac Layout Switcher нет разрешения «Универсальный доступ». Проверьте его в настройках macOS; после обновления может потребоваться повторное включение."
-            case .protectedField: return "Включён защищённый ввод или выбрано защищённое поле."
+            case .protectedField, .secureInput: return "Включён защищённый ввод или выбрано защищённое поле."
             case .unavailableField: return "Редактор не предоставил доступное поле ввода."
             case .unavailableApplication: return "macOS не сообщила активное приложение. Выберите нужное поле и повторите действие."
             case .systemFocus(let failure): return failure.message
@@ -38,6 +38,7 @@ final class InputFocusGuard {
                     + (focus.map { " Диагностика: \($0.metadata)." } ?? "")
             case .unavailableSelection: return "Редактор не сообщил положение курсора или выделение."
             case .unavailableText: return "Редактор не предоставил текст для проверки замены."
+            case .unreadableSelection: return "Редактор не предоставил текст выделения для проверки замены."
             case .selectionTooLarge: return "Выделение слишком большое. Выберите меньший фрагмент текста."
             case .changed: return "Во время захвата изменилось поле, текст или положение курсора. Повторите Option в нужном поле."
             }
@@ -59,7 +60,7 @@ final class InputFocusGuard {
                             failure: (CaptureFailure) -> Void = { _ in }) -> Target? {
             func failed(_ reason: CaptureFailure) -> Target? { failure(reason); return nil }
             guard accessibility.isTrusted else { return failed(.accessibilityDenied) }
-            guard !accessibility.isSecure else { return failed(.protectedField) }
+            guard !accessibility.isSecure else { return failed(.secureInput) }
             guard let pid = expectedPID else { return failed(.unavailableApplication) }
             guard allowed() else { return failed(.changed) }
             var bootstrap: DictationAXBootstrap?
@@ -80,7 +81,7 @@ final class InputFocusGuard {
                 }
                 guard allowed() else { return failed(.changed) }
                 guard accessibility.isTrusted else { return failed(.accessibilityDenied) }
-                guard !accessibility.isSecure else { return failed(.protectedField) }
+                guard !accessibility.isSecure else { return failed(.secureInput) }
                 var stop = false
                 let reportFailure: (DictationFocusFailure) -> Void = {
                     reason = .systemFocus($0.including(bootstrap)); stop = $0.preventsBootstrap
@@ -301,6 +302,8 @@ final class InputFocusGuard {
     private var target: Target?
     private var replayRoute: ReplayRoute?
     private var sampling = false
+    private(set) var isProtectedField = false
+    private var protectedFieldPID: pid_t?
     var onChange: (() -> Void)?
     var shouldSample: (() -> Bool)?
     var ticket: Ticket? {
@@ -377,11 +380,28 @@ final class InputFocusGuard {
         let requestedPermit = permit
         let expectedPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
         queue.async { [weak self] in
-            let captured = Target.capture(expectedPID: expectedPID, allowed: { requestedPermit.isAllowed }, preparingOnly: true)
+            // Unknown AX cannot downgrade a previously known secure field.
+            // Global SecureInput is independently sampled by Engine/Typist.
+            var protectedField: Bool?
+            let captured = Target.capture(expectedPID: expectedPID, allowed: { requestedPermit.isAllowed },
+                preparingOnly: true, failure: { failure in
+                    if case .protectedField = failure { protectedField = true }
+                })
+            if captured != nil { protectedField = false }
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 self.sampling = false
                 guard self.timer != nil, self.permit === requestedPermit, self.shouldSample?() != false else { return }
+                let changedProtectedApplication = self.isProtectedField
+                    && expectedPID != nil && expectedPID != self.protectedFieldPID
+                if let protection = protectedField ?? (changedProtectedApplication ? false : nil) {
+                    self.protectedFieldPID = protection ? expectedPID : nil
+                    if self.isProtectedField != protection {
+                        self.isProtectedField = protection
+                        self.invalidate()
+                        return
+                    }
+                }
                 let unchanged = self.target.flatMap { old in captured.map { old.matches($0) } } ?? (captured == nil && self.target == nil)
                 if self.target == nil, let captured {
                     _ = self.bind(captured, generation: requestedPermit)

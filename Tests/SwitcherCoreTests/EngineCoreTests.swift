@@ -260,4 +260,95 @@ final class EngineCoreTests: XCTestCase {
         XCTAssertEqual(out.command,
             .replaceLast(len: 7, with: "привет ", switchTo: .ru))
     }
+    func testLiveProposalUsesHighConfidenceAndDefersUnfinishedPunctuation() {
+        let core = EngineCore(detector: Detector(), snippets: SnippetStore())
+        type(core, "ghbdtn")
+        XCTAssertEqual(core.liveCorrection().command, .replaceLast(len: 6, with: "привет", switchTo: .ru))
+        XCTAssertEqual(core.liveCorrection().command, .none)
+        _ = core.handle(.reset)
+        type(core, "gthtrk.")
+        XCTAssertEqual(core.liveCorrection().command, .none)
+        _ = core.handle(.char("x"))
+        XCTAssertEqual(core.liveCorrection().command, .replaceLast(len: 8, with: "переключ", switchTo: .ru))
+    }
+
+    func testUndoOfLiveWordProtectsItsNextBoundary() {
+        let core = EngineCore(detector: Detector(), snippets: SnippetStore())
+        type(core, "ghbdtn")
+        _ = core.liveCorrection()
+        XCTAssertEqual(core.handle(.hotkey(.convert)).command, .replaceLast(len: 6, with: "ghbdtn", switchTo: .en))
+        XCTAssertEqual(core.liveCorrection().command, .none)
+        XCTAssertEqual(core.handle(.boundary(" ")).command, .none)
+        XCTAssertEqual(core.handle(.hotkey(.convert)).expectedText, "ghbdtn ")
+    }
+
+    func testTrackedOverflowStaysInvalidUntilBoundaryAndReset() {
+        let core = EngineCore(detector: Detector(), snippets: SnippetStore())
+        type(core, String(repeating: "g", count: 65))
+        _ = core.handle(.backspace)
+        type(core, "ghbdtn")
+        XCTAssertEqual(core.liveCorrection().command, .none)
+        XCTAssertEqual(core.handle(.hotkey(.convert)).command, .none)
+        XCTAssertEqual(core.handle(.boundary(" ")).command, .none)
+        type(core, "ghbdtn")
+        XCTAssertEqual(core.handle(.boundary(" ")).command, .replaceLast(len: 6, with: "привет", switchTo: .ru))
+    }
+
+    func testCaretJumpProtectsEditedFragmentOnlyUntilFirstBoundary() {
+        let core = EngineCore(detector: Detector(), snippets: SnippetStore())
+        _ = core.handle(.caretJump)
+        _ = core.handle(.backspace)
+        type(core, "г")
+        XCTAssertEqual(core.handle(.boundary(" ")).command, .none)
+        _ = core.handle(.caretJump)
+        _ = core.handle(.boundary(" "))
+        _ = core.handle(.backspace)
+        type(core, "г")
+        XCTAssertEqual(core.handle(.boundary(" ")).command, .replaceLast(len: 1, with: "u", switchTo: .en))
+        _ = core.handle(.caretJump)
+        _ = core.handle(.backspace)
+        type(core, "г")
+        XCTAssertEqual(core.handle(.hotkey(.convert)).command, .replaceLast(len: 1, with: "u", switchTo: .en))
+        _ = core.handle(.reset)
+        type(core, "г")
+        XCTAssertEqual(core.handle(.boundary(" ")).command, .replaceLast(len: 1, with: "u", switchTo: .en))
+    }
+
+    func testManualChoiceSurvivesLiveContinuationUntilBoundary() {
+        let core = EngineCore(detector: Detector(), snippets: SnippetStore())
+        type(core, "hello")
+        _ = core.handle(.hotkey(.convert))
+        type(core, "ц")
+        XCTAssertEqual(core.liveCorrection().command, .none)
+        XCTAssertEqual(core.handle(.boundary(" ")).command, .none)
+        type(core, "ghbdtn")
+        XCTAssertEqual(core.liveCorrection().command, .replaceLast(len: 6, with: "привет", switchTo: .ru))
+    }
+
+    func testLivePreservesSnippetAndItsCaseSensitivePrefix() throws {
+        for trigger in ["ghbdtn", "ghbdtnX"] {
+            let store = try makeSnippetStore("{\"\(trigger)\":\"My custom snippet\"}")
+            XCTAssertTrue(store.hasTrigger(startingWith: "ghbdtn"))
+            XCTAssertFalse(store.hasTrigger(startingWith: "GHBDTN"))
+            let core = EngineCore(detector: Detector(), snippets: store)
+            type(core, "ghbdtn")
+            XCTAssertEqual(core.liveCorrection().command, .none)
+            if trigger == "ghbdtnX" { type(core, "X") }
+            XCTAssertEqual(core.handle(.boundary(" ")).command,
+                           .replaceLast(len: trigger.count, with: "My custom snippet", switchTo: nil))
+        }
+    }
+
+    func testTechnicalFocusResetPreservesCaretEditGuard() {
+        for editBeforeRefresh in [false, true] {
+            let core = EngineCore(detector: Detector(), snippets: SnippetStore())
+            _ = core.handle(.caretJump)
+            if editBeforeRefresh { _ = core.handle(.backspace) }
+            core.resetTrackingPreservingCaretJump()
+            if !editBeforeRefresh { _ = core.handle(.backspace) }
+            type(core, "г")
+            XCTAssertEqual(core.handle(.boundary(" ")).command, .none)
+        }
+    }
+
 }

@@ -110,3 +110,66 @@ and does not claim to be Linux `swift test`. `check-packaging.sh` moves the real
 SwiftPM resource bundle into a standalone app-shaped directory, checks default
 loading, removes it, and checks fail-closed behavior. These are deterministic
 language/packaging checks, not real editor acceptance or an accuracy estimate.
+
+
+## Keyboard replacement and event ordering port
+
+`Typist.replaceBuffered`/`bufferedPresses` and the live gates in Engine adapt
+Keyboop `Sources/Keyboop/TextReplacer.swift` (`replace`, `replaceInline`,
+`typeUnicode`, `synthPostTap`) and `Sources/Keyboop/Engine.swift` at the same
+**fb9bdde4eb8f13a486974cf102a8bec9d607e5d2** commit. The Keyboop MIT license
+packaged above covers this code adaptation as well as the language engine.
+
+- A private CGEvent source, Backspace pairs, Unicode pairs in chunks of at most
+  12 UTF-16 units, and the physical separator form the replacement. All events
+  are allocated before deletion. The port fixes upstream's surrogate-splitting
+  chunk boundary. Event pairs always release an already posted key-down.
+- The default global HID route is retained. Keyboop explicitly documents that
+  unconditional annotated-session posting misses nonactivating Spotlight.
+  We do not target buffered text to NSWorkspace's foreground PID; that PID is
+  only an application-change guard. Rival-tap detection and Spotlight suggestion
+  deletion are not imported; the separate Next/stable launch guard handles our
+  own applications, and no claim covers arbitrary neighbouring event filters.
+- This port uses our existing serial Typist queue and suppresses/replays physical
+  input while it is occupied, instead of importing inline tap-proxy bursts or
+  Keyboop's self-healing retries. Live corrections wait for 150 ms of quiet,
+  require the imported high-confidence verdict and conversion, and reject
+  edited words, manual conversions until their next boundary, registered snippet
+  triggers/prefixes, held modifiers and Chromium/Electron (including framework
+  identification). Snippet matching remains exact and case-sensitive. There is
+  no mid-word fallback after context cancellation.
+- `Detector.verdict(for:afterCaretJump:)` passes the one-shot caret-fragment gate
+  to the unchanged upstream rules. EngineCore records click/navigation and an
+  intervening Backspace; with unknown AX left context a single edited fragment
+  is protected, while a single fresh letter without Backspace remains eligible,
+  matching upstream's unknown-context rule. The next boundary consumes the gate.
+  Technical AX/environment refreshes clear text authority while retaining that
+  one-shot guard; a delayed app-change notification cannot erase the user's
+  click. Explicit Option and snippets retain priority over this automatic gate.
+- The keyboard callback uses prepared input-source data and app/security caches;
+  resource decoding, AX, TIS, framework I/O and waits run outside it. The posting
+  worker rechecks SecureInput, physical modifiers, application and a cancellable
+  generation. A known AX secure field stays protected across unreadable AX
+  samples in the same application until a positively captured ordinary target
+  clears it. A confirmed non-nil PID change retires the old application's
+  protected-field state; a missing PID does not. Global SecureInput remains an
+  independent check. Modifiers may settle for at most
+  400 ms before an untouched abort.
+- A tracked source has at most 64 Characters, with at most one retained trailing
+  separator; a snippet result has at most 4096 UTF-16 units. Overflow invalidates
+  the current word until a boundary. Backspace counts describe the observed
+  stream and do not establish editor readback. `.posted` is deliberately distinct
+  from the existing AX `.confirmed` result. An interrupted mutation revokes
+  dependent replacements and retains original/planned/held text without retry.
+- Selected/preexisting Option and GigaAM insertion retain the parent's verified
+  AX path. No clipboard history, translation, voice implementation or automatic
+  clipboard fallback was copied from Keyboop. Own-field direct replacement,
+  canvas/Spotlight suggestion deletion and anti-resonance self-heal are omitted;
+  this bounded transport therefore does not promise all upstream app behavior.
+
+The native `tools/test-keyboard-next.sh` suite exercises production Engine with
+nil AX through the final-post seam into owned NSTextViews, including ordering,
+interruption recovery and no retry. `tools/test-keyboard-engine.sh` runs that
+suite plus the retained AX Option tests; adapter/WebKit/dictation tests retain
+readback-specific coverage. These fixtures do not prove real WindowServer or
+physical Spotlight delivery.

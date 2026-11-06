@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 work=$(mktemp -d /tmp/mls-keyboard-webkit.XXXXXX)
 mkdir -p "$work/Sources" "$work/Compiled" "$work/SafariFixture.app/Contents"
 cp -R Sources/SwitcherCore "$work/Sources/"
-for name in InputFocusGuard Typist SelectionConverter; do
+for name in InputFocusGuard Typist TrackedInputBatch SelectionConverter; do
     cp "Sources/MacLayoutSwitcher/System/$name.swift" "$work/Sources/"
 done
 if [[ -n "${MLS_WEBKIT_BASE_REF:-}" ]]; then
@@ -31,5 +31,5 @@ paths=sorted((root/'Sources').rglob('*.swift'))+[root/'main.swift',root/'Compile
 PY
 printf 'WebKit snapshot: %s\n' "$work"
 swiftc -emit-library -emit-module -module-name SwitcherCore "$work"/Sources/SwitcherCore/*.swift -o "$work/libSwitcherCore.dylib" -emit-module-path "$work/SwitcherCore.swiftmodule"
-swiftc -suppress-warnings -I "$work" -L "$work" -lSwitcherCore -Xlinker -rpath -Xlinker "$work" "$work/Sources/InputFocusGuard.swift" "$work/Sources/Typist.swift" "$work/Sources/SelectionConverter.swift" "$work/Compiled/DictationTarget.swift" "$work/Sources/SecureInput.swift" "$work/main.swift" -o "$work/test-webkit"
+swiftc -suppress-warnings -I "$work" -L "$work" -lSwitcherCore -Xlinker -rpath -Xlinker "$work" "$work/Sources/InputFocusGuard.swift" "$work/Sources/Typist.swift" "$work/Sources/TrackedInputBatch.swift" "$work/Sources/SelectionConverter.swift" "$work/Compiled/DictationTarget.swift" "$work/Sources/SecureInput.swift" "$work/main.swift" -o "$work/test-webkit"
 MLS_WEBKIT_TEST_BUNDLE="$work/SafariFixture.app" "$work/test-webkit" 2>&1 | tee "$work/run.log"

@@ -21,6 +21,8 @@ public enum InputEvent: Equatable {
     /// Сброс без исправления: комбинация с Cmd/Ctrl, автоповтор удержания,
     /// перемещение курсора (стрелки, мышь) — текущее слово больше не «наше».
     case reset
+    /// Pointer/caret navigation; the first edited token may be only a fragment.
+    case caretJump
 }
 
 /// Действие настраиваемого хоткея (таск 08). `convert` — прежнее поведение
@@ -48,7 +50,8 @@ public enum EngineCommand: Equatable {
 public struct EngineOutcome: Equatable {
     /// Что должен сделать исполнитель.
     public let command: EngineCommand
-    /// Exact existing text an executor must validate before deleting anything.
+    /// Exact observed source: AX executors validate it; buffered executors use
+    /// its bounded character count without claiming editor readback.
     public let expectedText: String?
     /// Непусто, когда ядро добавило слово в исключения `Detector` (откат
     /// авто-исправления по Option достиг порога): `Engine` обязан сохранить
@@ -102,6 +105,12 @@ public struct EngineOutcome: Equatable {
 public final class EngineCore {
 
     private let buffer = WordBuffer()
+    private var wordEdited = false
+    private var liveApplied = false
+    private var wordOverflowed = false
+    private var manuallyCorrectedWord = false
+    private var afterCaretJump = false
+    private static let trackedWordLimit = 64
     private let detector: Detector
     private let snippets: SnippetStore
     private let now: () -> Double
@@ -134,6 +143,7 @@ public final class EngineCore {
         didSet {
             guard isPaused, !oldValue else { return }
             buffer.reset()
+            wordEdited = false; liveApplied = false; wordOverflowed = false; manuallyCorrectedWord = false; afterCaretJump = false
             lastRegion = nil
             lastAuto = nil
             detector.resetContext()
@@ -194,8 +204,10 @@ public final class EngineCore {
             return .none
         }
 
-        if event == .reset {
+        if event == .reset || event == .caretJump {
+            wordEdited = false; liveApplied = false; wordOverflowed = false; manuallyCorrectedWord = false; afterCaretJump = false
             buffer.reset()
+            afterCaretJump = event == .caretJump
             lastAuto = nil
             lastRegion = nil
             detector.resetContext()
@@ -205,6 +217,10 @@ public final class EngineCore {
 
         switch event {
         case .char(let c):
+            guard !wordOverflowed else { return .none }
+            guard buffer.word.count < Self.trackedWordLimit else {
+                _ = handle(.reset); wordOverflowed = true; return .none
+            }
             buffer.append(char: c)
             // Печать после исправления закрывает окно отката и начинает новое
             // слово — прошлая завершённая область больше не «последняя».
@@ -213,13 +229,21 @@ public final class EngineCore {
             return .none
 
         case .backspace:
-            if buffer.word.isEmpty { return handle(.reset) }
+            wordEdited = true
+            if wordOverflowed { return .none }
+            if buffer.word.isEmpty {
+                let jumped = afterCaretJump
+                _ = handle(.reset)
+                afterCaretJump = jumped
+                wordEdited = true
+                return .none
+            }
             lastRegion = nil
             buffer.backspace()
             lastAuto = nil
             return .none
 
-        case .reset:
+        case .reset, .caretJump:
             return .none // Handled above, including while paused.
 
         case .boundary(let sep):
@@ -237,6 +261,16 @@ public final class EngineCore {
         }
     }
 
+    /// A technical focus/environment refresh invalidates text authority but
+    /// must not erase the one-shot fragment guard established by a user click.
+    public func resetTrackingPreservingCaretJump() {
+        let jumped = afterCaretJump
+        let edited = wordEdited
+        _ = handle(.reset)
+        afterCaretJump = jumped
+        wordEdited = jumped && edited
+    }
+
     /// Executors call this when a proposed replacement was not completed.
     /// Undo teaching is provisional until the corresponding text really moved.
     public func discardReplacement(_ outcome: EngineOutcome, resetContext: Bool = true) {
@@ -247,12 +281,45 @@ public final class EngineCore {
         if resetContext { _ = handle(.reset) }
     }
 
+    /// Quiet-time high-confidence decision. The platform enforces context,
+    /// app-family, modifier and queue gates before requesting this proposal.
+    public func liveCorrection() -> EngineOutcome {
+        let word = buffer.word
+        guard autoSwitch, !isPaused, !wordEdited, !liveApplied, !wordOverflowed, !manuallyCorrectedWord,
+              (4...16).contains(word.count), !snippets.hasTrigger(startingWith: word) else { return .none }
+        let language: Lang
+        switch detector.liveVerdict(for: word) {
+        case .ru: language = .ru
+        case .en: language = .en
+        case .unsure: return .none
+        }
+        guard let converted = detector.liveConvertedText(for: word, to: language), converted != word else { return .none }
+        setBuffer(to: converted)
+        liveApplied = true
+        lastAuto = AutoCorrection(original: word, corrected: converted, separator: "",
+            originalLang: language == .ru ? .en : .ru, time: now())
+        return EngineOutcome(command: .replaceLast(len: word.count, with: converted, switchTo: language), expectedText: word)
+    }
+
     // MARK: - Граница слова
 
     private func handleBoundary(_ sep: Character) -> EngineOutcome {
         let word = buffer.word
+        let liveUndo = liveApplied ? lastAuto : nil
+        let protectWord = manuallyCorrectedWord
+        // Pinned Keyboop's unknown-AX rule: a single letter after a jump is
+        // protected when Backspace preceded it; otherwise a fresh start is allowed.
+        let guardFragment = afterCaretJump && (word.count != 1 || wordEdited)
+        wordEdited = false; liveApplied = false; wordOverflowed = false; manuallyCorrectedWord = false; afterCaretJump = false
         buffer.boundary()
         lastAuto = nil
+        if let auto = liveUndo, auto.corrected == word {
+            _ = detector.verdict(for: word)
+            lastRegion = Region(word: word, separator: String(sep))
+            lastAuto = AutoCorrection(original: auto.original, corrected: word, separator: String(sep),
+                originalLang: auto.originalLang, time: auto.time)
+            return .none
+        }
 
         guard !word.isEmpty else {
             lastRegion = nil
@@ -267,9 +334,14 @@ public final class EngineCore {
             return boundaryReplace(original: word, with: expansion, sep: sep, switchTo: nil)
         }
 
+        if protectWord {
+            lastRegion = Region(word: word, separator: sepStr)
+            return .none
+        }
+
         // 2) Автоисправление по детектору (если глобально включено).
         if autoSwitch {
-            switch detector.verdict(for: word) {
+            switch detector.verdict(for: word, afterCaretJump: guardFragment) {
             case .ru: return autoCorrect(word: word, sep: sepStr, to: .ru)
             case .en: return autoCorrect(word: word, sep: sepStr, to: .en)
             case .unsure: break
@@ -283,7 +355,7 @@ public final class EngineCore {
     }
 
     private func autoCorrect(word: String, sep: String, to lang: Lang) -> EngineOutcome {
-        let converted = KeyMap.convert(word, to: lang)
+        let converted = detector.convertedText(for: word, to: lang)
         let originalLang: Lang = (lang == .ru) ? .en : .ru
         lastRegion = Region(word: converted, separator: sep)
         // Для отката запоминаем разделитель: к моменту хоткея он уже стоит в
@@ -318,6 +390,12 @@ public final class EngineCore {
         // Откат недавнего авто-исправления: всегда возвращаем как было; в
         // исключения слово уходит только по достижении порога отмен (spec G03).
         if let auto = lastAuto, now() - auto.time <= undoWindow {
+            if auto.separator.isEmpty {
+                setBuffer(to: auto.original)
+                liveApplied = false
+                wordEdited = true
+                manuallyCorrectedWord = true
+            }
             lastAuto = nil
             lastRegion = Region(word: auto.original, separator: auto.separator)
             let command = EngineCommand.replaceLast(
@@ -352,6 +430,7 @@ public final class EngineCore {
             let target = Self.conversionTarget(for: word)
             let converted = KeyMap.convert(word, to: target)
             setBuffer(to: converted)
+            manuallyCorrectedWord = true
             lastRegion = nil
             return EngineOutcome(command: .replaceLast(
                 len: word.count, with: converted, switchTo: target), expectedText: word)

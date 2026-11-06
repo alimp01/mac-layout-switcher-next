@@ -3,11 +3,10 @@
 import Foundation
 import CoreGraphics
 
-/// Serial execution of targeted text replacements, speech insertion and
-/// physical-key replays. Word replacement uses one AXSelectedText write; it
-/// never deletes text incrementally or rewrites the entire field value.
-/// CGEvents remain necessary for physical separators/keys, carry the
-/// synthetic marker, and always finish an already-posted down/up pair.
+/// Serial execution of buffered keyboard batches, guarded AX replacements,
+/// speech insertion and physical-key replays. Fresh tracked words may use
+/// Backspace/Unicode; selected/preexisting words and speech retain AX readback.
+/// CGEvents carry our marker and always finish an already-posted down/up pair.
 public final class Typist {
 
     /// Готовая пара keyDown/keyUp, созданная заранее и ждущая своей очереди.
@@ -42,6 +41,12 @@ public final class Typist {
     public init() { postEvent = Self.post }
     /// System event boundary for the native queue harness; production posts CGEvents.
     init(postEvent: @escaping (CGEvent) -> Void) { self.postEvent = postEvent }
+
+    /// Create (but never post) representative events before the tap is active.
+    static func warmUp() {
+        _ = makeKeyPress(keyCode: 51, flags: [])
+        _ = makeUnicodePress("a")
+    }
 
     /// `true`, пока очередь не опустела (перепечатка/досылка ещё идёт).
     public var isBusy: Bool {
@@ -87,6 +92,82 @@ public final class Typist {
                 if let withheld { self?.onWithheldInput?(withheld) }
             }
         }
+    }
+
+    /// Adapted from Keyboop TextReplacer at fb9bdde4: private event source,
+    /// prebuilt Backspace/Unicode pairs, bounded chunks, then the native boundary.
+    /// Unlike AX ReplacementResult, `posted` means submission only, never readback.
+    enum BufferedResult { case posted, untouched, interrupted }
+
+    func replaceBuffered(expected: String, with text: String, batch: TrackedInputBatch,
+                         separator: KeyPress?, completion: @escaping (BufferedResult) -> Void) {
+        enqueue {
+            var result = BufferedResult.untouched
+            // Allocate EVERY event before deleting anything. Partial allocation
+            // must leave the source intact and still replay its physical key.
+            let presses = Self.bufferedPresses(deleteCount: expected.count, text: text)
+            let deadline = Date().addingTimeInterval(0.4)
+            while batch.canReplace && !TrackedInputBatch.modifiersReleased && Date() < deadline {
+                Thread.sleep(forTimeInterval: 0.005)
+            }
+            if let presses, batch.canReplace, TrackedInputBatch.modifiersReleased {
+                result = .posted
+                var started = false
+                for press in presses {
+                    guard batch.canReplace, TrackedInputBatch.modifiersReleased else {
+                        result = started ? .interrupted : .untouched
+                        break
+                    }
+                    started = true
+                    self.postPair(press)
+                }
+            }
+            if result != .posted { batch.reject(interrupted: result == .interrupted) }
+            var withheld: String?
+            if let separator {
+                if batch.canReplay { self.postPair(separator) }
+                else { withheld = separator.recoveryText }
+            }
+            DispatchQueue.main.async { [weak self] in
+                if result == .interrupted { self?.onUnconfirmedReplacement?(expected, text) }
+                completion(result)
+                if let withheld { self?.onWithheldInput?(withheld) }
+            }
+        }
+    }
+
+    func send(_ press: KeyPress, batch: TrackedInputBatch) {
+        enqueue {
+            guard batch.canReplay else {
+                DispatchQueue.main.async { [weak self] in self?.onWithheldInput?(press.recoveryText) }
+                return
+            }
+            self.postPair(press)
+        }
+    }
+
+    private static func bufferedPresses(deleteCount: Int, text: String) -> [KeyPress]? {
+        guard deleteCount > 0, deleteCount <= 65, text.utf16.count <= 4096 else { return nil }
+        var presses: [KeyPress] = []
+        for _ in 0..<deleteCount {
+            guard let press = makeKeyPress(keyCode: 51, flags: []) else { return nil }
+            presses.append(press)
+        }
+        // Upstream uses 12 UTF-16 units. Preserve that bound but never split a
+        // surrogate pair (the pinned upstream blindly slices the unit array).
+        var chunk = ""
+        for scalar in text.unicodeScalars {
+            if chunk.utf16.count + scalar.utf16.count > 12 {
+                guard let press = makeUnicodePress(text: chunk) else { return nil }
+                presses.append(press); chunk = ""
+            }
+            chunk.unicodeScalars.append(scalar)
+        }
+        if !chunk.isEmpty {
+            guard let press = makeUnicodePress(text: chunk) else { return nil }
+            presses.append(press)
+        }
+        return presses
     }
 
     /// Replay only real physical input. Planned Tab/Enter transitions may update
@@ -153,18 +234,22 @@ public final class Typist {
     /// Для переигрывания букв, набранных во время перепечатки: ядро уже
     /// получило именно этот символ, приложение получит его же.
     public static func makeUnicodePress(_ character: Character) -> KeyPress? {
+        makeUnicodePress(text: String(character))
+    }
+
+    private static func makeUnicodePress(text: String) -> KeyPress? {
         let source = CGEventSource(stateID: .privateState)
         guard let down = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: true),
               let up = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: false)
         else { return nil }
-        let utf16 = Array(String(character).utf16)
+        let utf16 = Array(text.utf16)
         utf16.withUnsafeBufferPointer { buffer in
             down.keyboardSetUnicodeString(stringLength: buffer.count, unicodeString: buffer.baseAddress)
             up.keyboardSetUnicodeString(stringLength: buffer.count, unicodeString: buffer.baseAddress)
         }
         down.flags = []
         up.flags = []
-        return KeyPress(down: down, up: up, recoveryText: String(character))
+        return KeyPress(down: down, up: up, recoveryText: text)
     }
 
     /// Виртуальный код для символа-разделителя: `\n`/`\r` → Return, `\t` → Tab,

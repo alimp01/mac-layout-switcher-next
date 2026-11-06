@@ -20,6 +20,12 @@ public final class SnippetStore {
         snippets = decoded
     }
 
+    /// Exact, case-sensitive matching, just like expansion(for:). A live
+    /// correction must not consume a complete trigger or its unfinished prefix.
+    public func hasTrigger(startingWith prefix: String) -> Bool {
+        snippets.keys.contains { $0.hasPrefix(prefix) }
+    }
+
     /// Возвращает развёрнутый текст для сокращения, если шаблон есть.
     public func expansion(for abbrev: String) -> String? {
         return snippets[abbrev]

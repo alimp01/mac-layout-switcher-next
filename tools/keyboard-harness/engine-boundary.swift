@@ -8,12 +8,13 @@ import SwitcherCore
 // while this owned fixture runs; its input source must remain internally
 // consistent. No source is selected in macOS and UCKeyTranslate is unchanged.
 private let harnessKeyboardSource: TISInputSource? = {
-    if let identifier = ProcessInfo.processInfo.environment["MLS_FIXTURE_INPUT_SOURCE_ID"] {
-        let properties = [kTISPropertyInputSourceID as String: identifier] as CFDictionary
+    let identifier = ProcessInfo.processInfo.environment["MLS_FIXTURE_INPUT_SOURCE_ID"] ?? "com.apple.keylayout.ABC"
+    guard ["com.apple.keylayout.ABC", "com.apple.keylayout.RussianWin"].contains(identifier) else { return nil }
+    do {
+        let properties = [kTISPropertyInputSourceID as String: identifier, kTISPropertyInputSourceIsEnabled as String: true] as CFDictionary
         guard let sources = TISCreateInputSourceList(properties, false)?.takeRetainedValue() as? [TISInputSource] else { return nil }
         return sources.first
     }
-    return TISCopyCurrentKeyboardInputSource()?.takeRetainedValue()
 }()
 private let harnessKeyboardData: CFData? = {
     guard let source = harnessKeyboardSource,

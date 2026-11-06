@@ -1,53 +1,60 @@
-# Native keyboard regression fixtures
+# Native keyboard regression fixtures — Next
 
-Run `bash tools/test-keyboard-engine.sh` on macOS to exercise the real
-EventTap parser, unchanged KeyTranslator, Engine callbacks, InputFocusGuard,
-SelectionConverter, Typist and Target replacement. The fixture uses private,
-unshown NSTextViews and fresh temporary configuration directories. It does not
-register a global event tap, type into another application, change input sources,
-request TCC permissions, use the microphone or mutate the clipboard.
+`bash tools/test-keyboard-next.sh` exercises the production EventTap parser,
+KeyTranslator, Engine, EngineCore, Typist and optional InputFocusGuard with no
+AX target, using owned unshown NSTextViews. `bash tools/test-keyboard-engine.sh`
+runs this suite and then the retained AX Option suite. `MLS_OPTION_ONLY=1`
+selects only the latter; `MLS_PHYSICAL_ONLY=1` selects the Next suite. No live
+application, global tap, input-source selection, TCC, clipboard or microphone
+is accessed. The GigaAM coordinator's interruption fixture is explicitly paused.
 
-The runner prints its scratch directory. It saves compiled source copies,
-`seams.patch`, source/compiled hashes in `source-provenance.json`, `run.log` and
-`SHA256SUMS`. Every rewrite asserts its exact occurrence count. Production event
-handling and replacement decisions are unchanged in those copies.
+The old automatic AX-selection hooks have been moved to the appropriate seam:
+new buffered auto cancellation uses a held-modifier preflight and native
+navigation/click/tap events; partial mutation uses a final-post interruption.
+AX hooks still cover selected/preexisting Option capture and replacement.
+The original navigation matrix covers normal/repeated arrows, Home/End,
+Escape, F1/F12 and Forward Delete in auto, Option capture, Option write and idle
+phases. Tap timeout/user interruption retains shortcut, modifier, dictation and
+recorder ownership tests. Enter/ShiftEnter/Tab repeats and rapid letters follow
+complete replacement; a posted key-down always receives its matching key-up.
 
-Explicit system boundaries are injected: frontmost PID and bundle, SecureInput
-(false only inside the fixture), AX against the private view, inert event-tap
-registration, and in-memory destination layout selection. EventTap.process gets
-test-only access; the probe feeds real CGEvents through it. Typist retains its
-real Self.post marker and delay; only the final global CGEvent.post is replaced.
-Unicode insertion preserves SystemDictationAccessibility event construction,
-payload, CGEvent serialization and NSEvent interpretation. Raw physical replays
-are recorded with their original keycodes/flags/down-up order, then resolved
-through real KeyTranslator into NSEvent.keyEvent at the receiver boundary.
-WindowServer is absent from this local fixture; this resolution is an explicit
-substitute for that boundary, not proof of actual cross-process delivery.
+The Next suite additionally checks nil-AX Space/Option/live, protected AX fields
+with global SecureInput off, PID/secure/recorder/click/tap cancellation,
+400 ms held-modifier timeout, interrupted deletion recovery without retry,
+Chromium/Electron and edited-word live gates, undo and an emoji at a UTF-16
+chunk boundary. Assertions observe literal editor text, separator-time text,
+original flags, generated event pairs and the owned recovery panel.
 
-The current RU/EN source is read without switching it. The fixture checks a
-literal wrong-layout word **before** the separator, so a correct final word
-cannot be confused with ordinary typing in the correct layout. Tests cover
-Space/Enter/Shift+Enter/Tab autorepeat precisely after temporary selection,
-repeat counts, original/repeated keyUp ownership, synthetic markers, printable
-and Backspace repeats, fast input after Enter/Space, outside-busy reset,
-unrelated command/navigation/click cancellation, and uncertain Enter recovery.
-Recovery assertions inspect only windows created by the current case.
-Changing or locking the real system input source during a run can invalidate
-the startup RU/EN assumptions. A source-before-separator failure prints the
-startup/current translation, observed per-key characters and actual private
-editor value; such a run does not establish a replacement regression.
+Every runner prints its frozen scratch directory and records source hashes,
+compiled sources, resource data, seam diff, run output and checksums. System
+boundaries are injected: foreground metadata, secure/modifier state, framework
+classification, AX, inert tap registration, local layout selection and final
+CGEvent post. Production event creation and CGEvent → NSEvent interpretation
+remain in use. Native physical key identities are resolved at the receiver
+because this local fixture has no WindowServer; final posting is not proof of
+cross-process delivery or confirmed editor readback by the product.
 
-To reproduce the pre-fix failure using the same fixture and unchanged checkout:
+TIS is pinned to an enabled immutable `com.apple.keylayout.ABC` by default.
+The dedicated `MLS_NEXT_REPAIR=caret` case uses
+`MLS_FIXTURE_INPUT_SOURCE_ID=com.apple.keylayout.RussianWin` without changing
+macOS. The default full Next runner also invokes that Russian fixture plus the
+manual-choice and snippet/prefix repair cases against the same frozen binary. The raw TIS source and uchr blob
+are retained/copied and SHA-256 logged; the production translator warms before
+input and can refresh safely even if the user's real layout changes. AX-ready
+scenarios wait up to three seconds for readiness; nil-AX cases assert absence.
 
-```sh
-MLS_ENGINE_BASE_REF=eb11af4 bash tools/test-keyboard-engine.sh
-```
+T37 literal baseline RED snapshots (stable pre-port source):
+`/tmp/mls-keyboard-engine.bCRzvB` leaves `ghbdtn ` after Space;
+`/tmp/mls-keyboard-engine.FZc372` leaves `ghbdtn` after Option.
+Both preserve source-provenance and checksum manifests. Their local outcomes
+are independent of hardware acceptance. Restricted builds use
+`CLANG_MODULE_CACHE_PATH=/tmp/mls-t37-clang-cache` and
+`SWIFT_MODULECACHE_PATH=/tmp/mls-t37-swift-cache`.
 
-This overrides only Engine.swift from that commit; other compiled project files
-come from the selected source root. The initial automatic-repeat test fails with
-only a separator in the private editor instead of the complete corrected word.
-To run from a frozen source tree, use `MLS_ENGINE_SOURCE_ROOT=/absolute/root`.
-The runner and fixture always come from this checkout.
+The following notes document the retained AX adapter suites and historical
+stable regressions. Historical auto-selection scenarios are now represented by
+the buffered-post equivalents above, while selected/preexisting/dictation AX
+readback checks remain applicable.
 
 `test-keyboard-adapter.sh` separately checks Target/Typist failure and recovery
 outcomes plus production Unicode payload generation; its local AppKit checks
@@ -255,7 +262,7 @@ immutable CFData copy outlive every raw property read; production KeyTranslator
 still performs UCKeyTranslate and all modifier math. The runner records these
 two raw TIS substitutions in seams.patch. `MLS_FIXTURE_INPUT_SOURCE_ID` can choose
 an available source by ID for a read-only RU/EN startup check; it never selects
-that source in macOS. The default captures the user's current source once.
+that source in macOS. The default is enabled ABC; only ABC/RussianWin are accepted.
 The literal source-before-separator assertion remains in place.
 
 This test-only stabilization follows a recorded invalid run where startup key5
@@ -263,7 +270,7 @@ was `g`, but later real TIS reads produced `п` and typed `привет` instead
 fixture's expected `ghbdtn` before any correction. Such user layout changes are
 not a product failure. The additional capture-final process validation applies
 only to Spotlight; native/Chromium samples retain their existing number of AX
-round trips. No Engine or Typist production behavior changes for this harness.
+round trips. That historical fixture change did not alter Engine/Typist; Next now has the separately documented buffered transport above.
 
 The Engine fixture also waits up to three seconds for a cached target before
 ready-field scenarios. Its existing test seam exposes only cached readiness,

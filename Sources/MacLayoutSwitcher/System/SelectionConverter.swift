@@ -62,7 +62,7 @@ final class SelectionConverter {
                             else { result = .selected(Selection(target: target, range: range, text: text,
                                                                originalSelection: range, sourceValue: value)) }
                         } else { result = .unavailable(.changed) }
-                    } else { result = .unavailable(.unavailableText) }
+                    } else { result = .unavailable(range.length > 0 ? .unreadableSelection : .unavailableText) }
                 } else { result = .unavailable(.unavailableSelection) }
             } else { result = .unavailable(failure) }
             DispatchQueue.main.async {

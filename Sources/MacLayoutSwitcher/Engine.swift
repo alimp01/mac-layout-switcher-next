@@ -6,13 +6,11 @@ import CoreGraphics
 import AppKit
 import SwitcherCore
 
-/// Translates the event tap into core decisions. Replacement requests carry an
-/// exact source-text precondition and a focus-generation ticket. AX reads/writes
-/// run outside the tap on Typist's serial queue; only completed replacements
-/// change layout, play sounds or persist undo teaching.
-///
-/// Physical input arriving during a write is replayed in order. Tab/Enter may
-/// intentionally move its destination; correction text never follows that route.
+/// Translates the event tap into core decisions. Fresh tracked words use a
+/// cancellable Backspace/Unicode batch even without AX; its result is event
+/// submission, not editor readback. Selected/preexisting text and dictation
+/// retain exact AX source/selection checks and confirmed replacement results.
+/// Physical input shares Typist's serial queue, with native separator flags.
 public final class Engine {
 
     private let core: EngineCore
@@ -22,9 +20,12 @@ public final class Engine {
     private let config: Config
     private let tap = EventTap()
     private let inputFocus = InputFocusGuard()
+    private let environment = KeyboardEnvironment()
+    private var physicalFlags: CGEventFlags = []
     private let selectionConverter = SelectionConverter()
     private lazy var conversionNotice = ConversionNotice()
     private var queuedNavigation = false
+    private var trackedBatch: TrackedInputBatch?
     private var inputApplicationPID: pid_t?
     private var inputSequence: UInt64 = 0
     let dictation = DictationCoordinator()
@@ -105,9 +106,10 @@ public final class Engine {
             undoThreshold: config.config.undoThreshold,
             undoCounts: undoCounts,
             separatorAlreadyTyped: false)
+        environment.onChange = { [weak self] in self?.inputFocus.invalidate() }
         inputFocus.onChange = { [weak self] in
             self?.selectionConverter.cancel()
-            _ = self?.core.handle(.reset)
+            self?.core.resetTrackingPreservingCaretJump()
             self?.queuedNavigation = false
         }
         typist.onWithheldInput = { [weak self] text in self?.conversionNotice.appendWithheldInput(text) }
@@ -117,6 +119,7 @@ public final class Engine {
         inputFocus.shouldSample = { [weak self] in self?.typist.isBusy == false && self?.selectionConverter.isPending == false }
         typist.onIdle = { [weak self] in
             guard let self, !self.typist.isBusy else { return }
+            self.trackedBatch = nil
             if self.queuedNavigation { self.inputFocus.invalidate() }
             else { self.inputFocus.finishBatch() }
         }
@@ -135,6 +138,9 @@ public final class Engine {
     @discardableResult
     public func start() -> Bool {
         resetPhysicalInputState()
+        KeyTranslator.start()
+        Typist.warmUp()
+        environment.start()
         let started = tap.start { [weak self] stroke in
             self?.handle(keyEvent: stroke) ?? .pass
         }
@@ -154,6 +160,7 @@ public final class Engine {
         resetPhysicalInputState()
         _ = core.handle(.reset)
         tap.stop()
+        environment.stop()
         inputFocus.stop()
     }
 
@@ -196,7 +203,8 @@ public final class Engine {
     /// на одном слове, тяжёлая работа уходит на очередь `Typist`.
     @discardableResult
     public func handle(keyEvent stroke: KeyStroke) -> TapDecision {
-        if stroke.kind == .keyDown || stroke.kind == .contextChanged || stroke.kind == .tapInterrupted { inputSequence &+= 1 }
+        physicalFlags = stroke.flags
+        if stroke.kind != .keyUp { inputSequence &+= 1 }
         if stroke.kind == .tapInterrupted {
             // Unlike a click, suspension can hide releases. Retire ownership
             // synchronously before the tap accepts any fresh physical input.
@@ -222,19 +230,21 @@ public final class Engine {
         }
         if stroke.kind == .contextChanged {
             dictation.invalidateInsertion()
+            inputApplicationPID = environment.pid
             inputFocus.invalidate()
+            _ = core.handle(.caretJump)
             modifierGestureDirty = true
             return .pass
         }
         // Dictation is explicitly requested even in auto-excluded editors.
         // The event callback only tracks keys and schedules work on main.
-        let secure = SecureInput.isActive
-        let currentPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        let secure = environment.secure
+        let currentPID = environment.pid
         if currentPID != inputApplicationPID {
             inputApplicationPID = currentPID
             inputFocus.invalidate()
         }
-        core.isPaused = secure || isExcludedApp()
+        core.isPaused = secure || inputFocus.isProtectedField || isExcludedApp()
         if core.isPaused { inputFocus.invalidate() }
         if stroke.kind == .keyUp {
             shortcutKeysDown.remove(stroke.keyCode)
@@ -339,18 +349,19 @@ public final class Engine {
             // Letting it pass would replace that source with the repeated key
             // before the worker can write. Reset word decisions, but keep the
             // active replacement and serialize the actual text-editing input.
-            if typist.isBusy, let ticket = inputFocus.ticket,
+            if typist.isBusy, trackedBatch?.permit.isAllowed == true || inputFocus.ticket != nil,
                let event = Self.textEditingRepeat(for: stroke),
                let replay = Self.replayPress(for: stroke, events: [event]) {
                 _ = core.handle(.reset)
                 let navigates = Self.isNavigationBoundary(event)
-                typist.send(replay, ticket: ticket, navigates: navigates)
+                replayPhysical(replay, navigates: navigates)
                 if navigates { queuedNavigation = true }
                 suppressedKeyUps.insert(stroke.keyCode)
                 return .suppress
             }
             if events.contains(.reset) {
                 inputFocus.invalidate()
+                _ = core.handle(.caretJump)
                 return .pass
             }
 
@@ -358,11 +369,11 @@ public final class Engine {
             // очередью ПОСЛЕ синтетики; ядро получает его прямо сейчас, чтобы
             // порядок решений совпадал с порядком доставки. Не смогли создать
             // событие для переигрывания — ведём себя как в спокойном режиме.
-            if typist.isBusy, let ticket = inputFocus.ticket, let replay = Self.replayPress(for: stroke, events: events) {
+            if typist.isBusy, trackedBatch?.permit.isAllowed == true || inputFocus.ticket != nil, let replay = Self.replayPress(for: stroke, events: events) {
                 let navigates = events.contains(where: Self.isNavigationBoundary)
                 if queuedNavigation {
                     _ = core.handle(.reset)
-                    typist.send(replay, ticket: ticket, navigates: navigates)
+                    replayPhysical(replay, navigates: navigates)
                     suppressedKeyUps.insert(stroke.keyCode)
                     return .suppress
                 }
@@ -375,7 +386,7 @@ public final class Engine {
                     }
                 }
                 if !consumed {
-                    typist.send(replay, ticket: ticket, navigates: navigates)
+                    replayPhysical(replay, navigates: navigates)
                 }
                 if navigates { queuedNavigation = true }
                 suppressedKeyUps.insert(stroke.keyCode)
@@ -395,6 +406,11 @@ public final class Engine {
             if decision == .suppress { suppressedKeyUps.insert(stroke.keyCode) }
             return decision
         }
+    }
+
+    private func replayPhysical(_ press: Typist.KeyPress, navigates: Bool) {
+        if let batch = trackedBatch, batch.permit.isAllowed { typist.send(press, batch: batch) }
+        else { typist.send(press, ticket: inputFocus.ticket, navigates: navigates) }
     }
 
     private static func isNavigationBoundary(_ event: InputEvent) -> Bool {
@@ -447,6 +463,7 @@ public final class Engine {
         }
         let outcome = core.handle(event)
         let decision = execute(outcome, stroke: stroke, prepared: prepared)
+        if case .char = event { scheduleLiveCorrection() }
         if case .hotkey(.toggleAuto) = event {
             config.update { $0.autoSwitch = core.autoSwitch }
             onAutoSwitchChanged?(core.autoSwitch)
@@ -454,15 +471,27 @@ public final class Engine {
         return decision
     }
 
-    /// Selection takes priority before the core can choose stale undo/last-word
-    /// state. An inaccessible selection never falls through to word conversion.
+    private func scheduleLiveCorrection() {
+        let sequence = inputSequence
+        let generation = inputFocus.generation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard let self, generation.isAllowed, self.inputSequence == sequence,
+                  !self.typist.isBusy, !self.selectionConverter.isPending,
+                  !self.environment.secure, !self.inputFocus.isProtectedField, !self.environment.chromium, !self.isRecordingHotkey,
+                  !self.dictation.isActive, !self.dictationRequested,
+                  self.physicalFlags.intersection([.maskShift, .maskAlternate, .maskCommand, .maskControl]).isEmpty else { return }
+            self.execute(self.core.liveCorrection())
+        }
+    }
+
+    /// Explicit layout switching does not read or mutate editor text.
     private func toggleLayout() {
         guard let current = LayoutSwitcher.current() else {
             conversionNotice.show(message: "Не удалось определить раскладку. Включите русскую и английскую раскладки в настройках macOS.")
             return
         }
         let next: Lang = current == .ru ? .en : .ru
-        if LayoutSwitcher.select(next) { onLayoutSwitched?(next) }
+        if LayoutSwitcher.select(next) { KeyTranslator.refresh(); onLayoutSwitched?(next) }
         else { conversionNotice.show(message: "Не удалось переключить раскладку. Включите русскую и английскую раскладки в настройках macOS.") }
     }
 
@@ -479,6 +508,18 @@ public final class Engine {
             switch captured {
             case .unavailable(let reason):
                 self.selectionConverter.finish(permit)
+                // Missing AX is not a veto for a fresh physical-key stream.
+                // Protected/changed destinations still revoke that authority.
+                switch reason {
+                case .protectedField, .secureInput, .changed, .unavailableApplication, .selectionTooLarge, .unreadableSelection:
+                    break
+                default:
+                    let outcome = self.core.handle(.hotkey(.convert))
+                    if outcome.command != .none {
+                        self.execute(outcome)
+                        return
+                    }
+                }
                 _ = self.core.handle(.reset)
                 self.toggleLayout()
                 self.conversionNotice.show(message: "Текст не изменён: \(reason.message)")
@@ -519,6 +560,7 @@ public final class Engine {
             _ = self.core.handle(.reset)
             if result == .confirmed {
                 LayoutSwitcher.select(language)
+                KeyTranslator.refresh()
                 self.onLayoutSwitched?(language)
                 self.sounds?.playCorrection()
             } else { self.conversionNotice.show() }
@@ -627,9 +669,9 @@ public final class Engine {
 
     // MARK: - Исполнение команд
 
-    /// Schedule a guarded targeted replacement; suppress a separator only when
-    /// its replay already exists. Failed preconditions preserve physical input
-    /// in the same target and discard provisional core state on completion.
+    /// Schedule fresh-buffer posting or guarded AX conversion. Suppress a
+    /// separator only after its replay was constructed. A known interrupted
+    /// mutation retains recovery text and cannot authorize dependent retries.
     @discardableResult
     private func execute(
         _ outcome: EngineOutcome, stroke: KeyStroke? = nil, prepared: Typist.KeyPress? = nil,
@@ -638,6 +680,38 @@ public final class Engine {
         guard case .replaceLast(_, let text, let switchTo) = outcome.command else {
             if let conversionPermit { selectionConverter.finish(conversionPermit) }
             return .pass
+        }
+        if conversionPermit == nil, let expected = outcome.expectedText,
+           let pid = inputApplicationPID, expected.count <= 65 {
+            let separator: Typist.KeyPress?
+            if let sep = outcome.reinjectSeparator {
+                guard let press = prepared ?? separatorPress(stroke: stroke, sep: sep) else {
+                    core.discardReplacement(outcome); return .pass
+                }
+                separator = press
+            } else { separator = nil }
+            let batch: TrackedInputBatch
+            if let active = trackedBatch, active.permit === inputFocus.generation { batch = active }
+            else { batch = TrackedInputBatch(permit: inputFocus.generation, applicationPID: pid); trackedBatch = batch }
+            typist.replaceBuffered(expected: expected, with: text, batch: batch, separator: separator) { [weak self] result in
+                guard let self else { return }
+                guard result == .posted else {
+                    self.core.discardReplacement(outcome, resetContext: batch.permit === self.inputFocus.generation)
+                    return
+                }
+                if batch.permit.isAllowed, let lang = switchTo {
+                    LayoutSwitcher.select(lang)
+                    KeyTranslator.refresh()
+                    self.onLayoutSwitched?(lang)
+                }
+                self.playSound(for: outcome)
+                if outcome.excludedWordToPersist != nil { self.config.saveExclusions(self.detector.exclusionList) }
+                if let update = outcome.undoCountUpdate {
+                    self.undoCounts[update.word.lowercased()] = update.count
+                    self.config.saveUndoCounts(self.undoCounts)
+                }
+            }
+            return separator == nil ? .pass : .suppress
         }
         guard let expected = outcome.expectedText, let ticket = inputFocus.ticket else {
             core.discardReplacement(outcome)
@@ -670,6 +744,7 @@ public final class Engine {
             }
             if ticket.permit.isAllowed, conversionPermit?.isAllowed != false, let lang = switchTo {
                 LayoutSwitcher.select(lang)
+                KeyTranslator.refresh()
                 self.onLayoutSwitched?(lang)
             }
             self.playSound(for: outcome)
@@ -695,7 +770,7 @@ public final class Engine {
     }
 
     private func isExcludedApp() -> Bool {
-        guard let bundle = FrontApp.bundleID else { return false }
+        guard let bundle = environment.bundleID else { return false }
         return config.config.excludedApps.contains(bundle)
     }
 }

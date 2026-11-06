@@ -12,13 +12,31 @@ import Carbon.HIToolbox
 ///
 /// Внутренний помощник `EventTap`'а; наверх наружу не выставляется.
 enum KeyTranslator {
+    private static var cachedLayoutData: Data?
+    private static var keyboardType: UInt32 = 0
+    private static var observer: NSObjectProtocol?
+
+    /// Warm before installing the tap. TIS never runs from characters().
+    static func start() {
+        refresh()
+        if observer == nil {
+            observer = DistributedNotificationCenter.default().addObserver(
+                forName: Notification.Name(kTISNotifySelectedKeyboardInputSourceChanged as String),
+                object: nil, queue: .main) { _ in refresh() }
+        }
+    }
+    static func refresh() {
+        cachedLayoutData = currentLayoutData()
+        keyboardType = UInt32(LMGetKbdType())
+    }
+
 
     /// Символ(ы) для кода клавиши с данными модификаторами по текущей
     /// раскладке, включая управляющие символы для навигации/F-клавиш.
     /// Пустая строка, если перевод или данные раскладки недоступны (например,
     /// у IME-источников `kTISPropertyUnicodeKeyLayoutData` равен NULL).
     static func characters(keyCode: UInt16, flags: CGEventFlags) -> String {
-        guard let layoutData = currentLayoutData() else { return "" }
+        guard let layoutData = cachedLayoutData else { return "" }
 
         // UCKeyTranslate принимает модификаторы в формате EventRecord >> 8.
         // Для печатного символа значимы Shift/Option (и CapsLock).
@@ -41,7 +59,7 @@ enum KeyTranslator {
                 keyCode,
                 UInt16(kUCKeyActionDisplay),
                 modifiers,
-                UInt32(LMGetKbdType()),
+                keyboardType,
                 // Именно ...Mask: ...Bit — это номер бита (0), а не маска.
                 OptionBits(kUCKeyTranslateNoDeadKeysMask),
                 &deadKeyState,

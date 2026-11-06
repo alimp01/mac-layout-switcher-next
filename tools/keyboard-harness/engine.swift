@@ -20,6 +20,8 @@ final class FixtureAX: DictationAccessibility {
  let unicode: Bool
  var isTrusted = true
  var isSecure = false
+ var chromium = true
+ var physicalModifiers: CGEventFlags = []
  var unavailableField = false
  var unavailableSelection = false
  var unavailableText = false
@@ -122,9 +124,10 @@ func awaitFixture(_ message: String, condition: () -> Bool) {
  require(condition(), message)
 }
 
-func fixture(unicode:Bool, configure: (inout AppConfig) -> Void = { _ in }) -> Engine {
+func fixture(unicode:Bool, chromium: Bool = true, configure: (inout AppConfig) -> Void = { _ in }) -> Engine {
  harnessFrontPID=harnessPID
  currentFixture=FixtureAX(unicode:unicode)
+ currentFixture.chromium=chromium
  currentFixture.editor.string=""; currentFixture.editor.setSelectedRange(NSRange(location:0,length:0))
  let directory=URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
  let config=Config(directory:directory); config.update { $0.excludedApps=[]; $0.sounds=false; configure(&$0) }
@@ -154,6 +157,7 @@ func physical(_ engine:Engine, code:UInt16, autorepeat:Bool=false, flags:CGEvent
 // OS layout. Verify private source text before every separator, even while the
 // user independently changes their active input source during this long run.
 print("Frozen TIS fixture: " + harnessKeyboardSnapshotDescription())
+KeyTranslator.start()
 let g=KeyTranslator.characters(keyCode:5,flags:[])
 require(g=="g" || g=="п","harness requires an enabled RU/EN keyboard source")
 let startsEnglish=g=="g"
@@ -341,6 +345,12 @@ drain(0.4)
 require(currentFixture.editor.string==beforeCaptureText,"physical input before deferred Option begins cancels input sequence")
 beforeCapture.stop(); drain()
 print("PASS: Option keeps editable-field bootstrap identity, validates full capture before every write route, and cancels before dispatch")
+let unreadableSelection=fixture(unicode:false); typeSource(unreadableSelection)
+currentFixture.editor.setSelectedRange(NSRange(location:2,length:2)); currentFixture.unavailableText=true
+option(unreadableSelection); drain(0.5)
+require(currentFixture.editor.string==original && currentFixture.posted.isEmpty,"known nonempty unreadable selection cannot fall through to fresh-buffer deletion")
+unreadableSelection.stop(); drain()
+print("PASS: unreadable nonempty selection preserves source instead of buffered fallback")
 if ProcessInfo.processInfo.environment["MLS_OPTION_ONLY"] == "1" { exit(0) }
 for unicode in [false,true] {
  let route=unicode ? "Unicode" : "AX"

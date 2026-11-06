@@ -68,7 +68,7 @@ public final class Detector {
         earlierWord = nil
     }
 
-    public func verdict(for word: String) -> Verdict {
+    public func verdict(for word: String, afterCaretJump: Bool = false) -> Verdict {
         guard isReady else { return .unsure }
         let decision: SwapDecision
         if isDecisionExcluded(word) || Self.isTechnicalToken(word) {
@@ -79,7 +79,8 @@ public final class Detector {
             decision = LayoutDetector.mixedRescue(word: word, data: data)
         } else {
             decision = LayoutDetector.decide(word: word, exceptions: exceptionSnapshot,
-                                             data: data, prev: previousWord, earlier: earlierWord)
+                                             data: data, prev: previousWord, earlier: earlierWord,
+                                             afterCaretJump: afterCaretJump)
         }
         let result = Self.verdict(decision)
         let displayed: String

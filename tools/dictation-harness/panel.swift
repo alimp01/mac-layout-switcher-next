@@ -12,7 +12,7 @@ let sample = "Проверка: русский текст 🦆 виден.\n" + 
 let clipboardCount = NSPasteboard.general.changeCount
 hud.show("Поле изменилось. Скопируйте результат вручную.", primaryTitle: "Копировать", text: sample)
 RunLoop.current.run(until: Date().addingTimeInterval(0.1))
-let window = app.windows.first { $0.title == "Диктовка · GigaAM v3" }!
+let window = app.windows.first { $0.title == "Next · Диктовка · GigaAM v3" }!
 let content = window.contentView!
 content.layoutSubtreeIfNeeded()
 let text = descendants(content).compactMap { $0 as? NSTextView }.first!

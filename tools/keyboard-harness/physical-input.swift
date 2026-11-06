@@ -19,7 +19,12 @@ private func testNavigationIntegrity() {
    for (code,name) in controls {
     for phase in ["auto", "option-write", "option-capture", "idle"] {
      let label="\(unicode ? "Unicode" : "AX")/\(name)/repeat=\(repeated)/\(phase)"
-     let engine=fixture(unicode:unicode); typeSource(engine)
+     let engine=fixture(unicode:unicode, chromium:true)
+     if phase == "option-write" || phase == "option-capture" {
+      currentFixture.unavailableField=false
+      awaitFixture("AX Option fixture bound") { engine.probeFocusReady }
+     }
+     typeSource(engine)
      var observed=false
      let navigate={
       observed=true
@@ -27,8 +32,10 @@ private func testNavigationIntegrity() {
      }
      switch phase {
      case "auto":
-      currentFixture.selectionHook=navigate
+      currentFixture.physicalModifiers = .maskShift
       require(physical(engine,code:49) == .suppress,"\(label): auto correction starts")
+      navigate()
+      currentFixture.physicalModifiers=[]
      case "option-write":
       currentFixture.selectionHook=navigate
       option(engine)
@@ -98,6 +105,8 @@ private func testTapInterruptionIntegrity() {
   modifiers(modifier,.maskAlternate); interrupt(modifier,type); modifiers(modifier,[])
   drain()
   require(currentFixture.editor.string==original,"interrupted Option release cannot convert")
+  currentFixture.unavailableField=false
+  awaitFixture("preexisting word after interruption uses AX") { modifier.probeFocusReady }
   option(modifier); drain()
   require(currentFixture.editor.string==converted,"fresh Option works after interrupted gesture")
   modifier.stop(); drain()
@@ -119,15 +128,17 @@ private func testTapInterruptionIntegrity() {
 
   for unicode in [false,true] {
    let pending=fixture(unicode:unicode); typeSource(pending)
-   currentFixture.selectionHook={ interrupt(pending,type) }
+   currentFixture.physicalModifiers = .maskShift
    require(physical(pending,code:49) == .suppress,"replacement started before tap interruption")
+   interrupt(pending,type)
+   currentFixture.physicalModifiers=[]
    drain()
    require(currentFixture.editor.string==original && currentFixture.posted.isEmpty,"tap interruption cancels pending replacement without mutation")
    require(physical(pending,code:49) == .pass,"fresh separator not owned by interrupted stream")
    require(currentFixture.editor.string==original+" ","fresh separator survives interruption")
    pending.stop(); drain()
   }
-  print("PASS: \(type) retires convert/toggle/dictation/modifier ownership and cancels AX/Unicode pending replacement")
+  print("PASS: \(type) retires convert/toggle/dictation/modifier ownership and cancels buffered pending replacement")
  }
 
  // Counterexample: click cancels text ownership, but a shortcut still held

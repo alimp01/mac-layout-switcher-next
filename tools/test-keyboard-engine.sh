@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+if [[ "${MLS_OPTION_ONLY:-0}" != "1" ]]; then
+    bash tools/test-keyboard-next.sh
+    if [[ "${MLS_PHYSICAL_ONLY:-0}" == "1" ]]; then exit 0; fi
+fi
+export MLS_OPTION_ONLY=1
 engine_probe_dir=$(mktemp -d /tmp/mls-keyboard-engine.XXXXXX)
 engine_source_root="${MLS_ENGINE_SOURCE_ROOT:-$PWD}"
 engine_source_file="$engine_source_root/Sources/MacLayoutSwitcher/Engine.swift"
@@ -13,7 +18,7 @@ python3 - "$engine_source_root" "$engine_source_file" "$engine_probe_dir" <<'PY'
 import difflib, hashlib, json, shutil, sys
 from pathlib import Path
 root, engine, dest = map(Path, sys.argv[1:])
-files = ['Engine.swift', 'Config.swift', 'System/InputFocusGuard.swift', 'System/Typist.swift',
+files = ['System/KeyboardEnvironment.swift', 'System/TrackedInputBatch.swift', 'Engine.swift', 'Config.swift', 'System/InputFocusGuard.swift', 'System/Typist.swift',
  'System/SelectionConverter.swift', 'System/SecureInput.swift', 'System/FrontApp.swift',
  'System/EventTap.swift', 'System/KeyTranslator.swift', 'System/KeyStroke.swift',
  'Speech/DictationTarget.swift', 'Speech/DictationCoordinator.swift', 'Speech/DictationRecorder.swift',
@@ -28,11 +33,18 @@ for name in files:
     before = path.read_text()
     source = before
     if name == 'Engine.swift':
-        source = exact(source, 'NSWorkspace.shared.frontmostApplication?.processIdentifier', 'Optional(harnessFrontPID)', 2)
+        source = exact(source, 'let detector = Detector()', 'let detector = Detector(dataDirectory: URL(fileURLWithPath: '+json.dumps(str(dest/'SwitcherCore/Resources'))+'))')
+        source = exact(source, 'NSWorkspace.shared.frontmostApplication?.processIdentifier', 'Optional(harnessFrontPID)')
         source = exact(source, 'tap.start {', 'tap.installProbeHandler {')
         source = exact(source, 'ConversionNotice()', 'ConversionNotice(presentsWindow: false)')
         source = exact(source, '    private func isExcludedApp() -> Bool {',
           '    func probeEvent(_ event: CGEvent) -> TapDecision { tap.process(type: event.type, event: event) }\n    var probeFocusReady: Bool { inputFocus.ticket != nil }\n\n    private func isExcludedApp() -> Bool {')
+    elif name == 'System/KeyboardEnvironment.swift':
+        source = exact(source, 'NSWorkspace.shared.frontmostApplication?.processIdentifier', 'Optional(harnessFrontPID)')
+        source = exact(source, 'Self.isChromium(pid: nextPID, bundleID: nextBundle)', 'currentFixture.chromium')
+    elif name == 'System/TrackedInputBatch.swift':
+        source = exact(source, 'NSWorkspace.shared.frontmostApplication?.processIdentifier', 'Optional(harnessFrontPID)')
+        source = exact(source, 'CGEventSource.flagsState(.combinedSessionState)', 'CGEventFlags()')
     elif name == 'System/InputFocusGuard.swift':
         source = exact(source, 'SystemDictationAccessibility()', 'harnessAccessibility', 2)
         source = exact(source, 'NSWorkspace.shared.frontmostApplication?.processIdentifier', 'Optional(harnessFrontPID)', 2)
@@ -59,7 +71,7 @@ for name in files:
       'compiled_sha256': hashlib.sha256(source.encode()).hexdigest(), 'transformed': source != before})
     patch.extend(difflib.unified_diff(before.splitlines(True), source.splitlines(True), fromfile=str(path), tofile=str(target)))
 shutil.copytree(root/'Sources/SwitcherCore', dest/'SwitcherCore')
-for path in sorted((root/'Sources/SwitcherCore').glob('*.swift')):
+for path in sorted(p for p in (root/'Sources/SwitcherCore').rglob('*') if p.is_file()):
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     records.append({'source': str(path), 'source_sha256': digest, 'compiled_sha256': digest, 'transformed': False})
 shutil.copy(Path.cwd()/'tools/keyboard-harness/engine.swift', dest/'main.swift')
