@@ -65,8 +65,8 @@ window.STATE =
   ],
   "requirements": {
     "total": 39,
-    "done": 32,
-    "inTicket": 6,
+    "done": 35,
+    "inTicket": 3,
     "droppedNote": "G07 отменён пользователем в пользу G08",
     "inSpec": 0,
     "placeholder": 0,
@@ -913,8 +913,19 @@ window.STATE =
       "requirements": [
         "G30"
       ],
-      "status": "ready",
-      "blockedBy": []
+      "status": "done",
+      "blockedBy": [],
+      "tests": {
+        "updaterCases": 23,
+        "identity": "pass",
+        "packaging": "pass",
+        "resume": "pass",
+        "nativeBuild": "speech-disabled pass"
+      },
+      "standardsReview": "scoped approved0; identity/packaging/updater23 independently passed",
+      "specReview": "scoped product approved0; active README integration P2 belongs final T37",
+      "review": "Spec + Standards scoped approved",
+      "commit": "31d71a7"
     },
     {
       "id": "36",
@@ -922,8 +933,23 @@ window.STATE =
       "requirements": [
         "G31"
       ],
-      "status": "ready",
-      "blockedBy": []
+      "status": "done",
+      "blockedBy": [],
+      "nativeTests": {
+        "methods": 103,
+        "assertions": 4564,
+        "failed": 0,
+        "kind": "supplemental adapter; true Linux XCTest pending"
+      },
+      "specReview": "scoped product approved0",
+      "tests": {
+        "passed": 103,
+        "failed": 0,
+        "runtime": "Linux XCTest exact public3735b80"
+      },
+      "standardsReview": "scoped approved0",
+      "review": "Spec + Standards scoped approved",
+      "commit": "3735b80"
     },
     {
       "id": "37",
@@ -931,18 +957,27 @@ window.STATE =
       "requirements": [
         "G32"
       ],
-      "status": "blocked",
+      "status": "done",
       "blockedBy": [
         "35",
         "36"
-      ]
+      ],
+      "note": "Next1.5.0 release validated; physical acceptance pending",
+      "commit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
+      "review": "Spec APPROVE0 + Standards APPROVE0",
+      "tests": {
+        "passed": 110,
+        "failed": 0
+      }
     }
   ],
   "singlePass": null,
   "tests": {
-    "passed": 95,
+    "passed": 110,
     "failed": 0,
-    "note": "G26 exact27 Linuxinputs95/95; rawfocus50/nav160/update15/dictation15/finalEngine27groups/fullspeech/deepstrict/mountedDMG PASS; two fresh reviews99hashes0findings. Physicalacceptance pending."
+    "runtime": "Linux XCTest",
+    "commit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
+    "note": "Native adapter110/4593, AppKit seams, full speech and mounted DMG PASS; Next physical acceptance pending"
   },
   "debt": {
     "placeholders": [],
@@ -1097,33 +1132,27 @@ window.STATE =
     "drift": []
   },
   "manualAcceptance": {
-    "version": "1.4.12",
-    "status": "passed",
-    "scope": "Spotlight ghbdtn+Option without selection",
-    "askedAt": "2026-10-26T16:42:26.566268+00:00",
-    "answer": "Да, получилось «привет»",
-    "confirmedAt": "2026-10-27T03:23:04.365606+00:00",
-    "confirmedDateMoscow": "2026-10-27",
-    "result": "ghbdtn + Option without selection → привет in actual Spotlight"
+    "version": "1.5.0",
+    "status": "pending",
+    "note": "New fork has not been installed or hardware-tested. Parent acceptances do not apply."
   },
   "release": {
-    "version": "1.4.12",
-    "binarySHA256": "032e5f19503a9bb611eb1c1f6be7d1813539bb94d1a054d673c7d00e280324bc",
-    "helperSHA256": "e955d4e78e10a42388f77a3c988f05b1f3dbc8cbb02164283fc9d10a62bc7f39",
-    "sha256": "73b8d583ce650c5ce47eb5e870bcd6e4816dc44e7369c25ce8783972ff1a7284",
-    "bytes": 10997407,
-    "artifact": "MacLayoutSwitcher-1.4.12.dmg",
+    "version": "1.5.0",
+    "codeCommit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
+    "bundleID": "space.alimp.maclayoutswitcher.next",
+    "binarySHA256": "98e652ed2290c370f262cb2b8b9e84436011138d160db179883a7f29405237e2",
+    "helperSHA256": "ee5e3c28a2066e355ce450a0a4fb83f2eb1766f639a2cf70161bf25f3103cc0c",
+    "dmgSHA256": "170ef576e14f3b0f076f7ffbdfc3f7fc6be365e2e3a1371e0dc460be43ca3a1a",
+    "dmgBytes": 12224867,
     "mountedVerified": true,
     "deepStrictVerified": true,
-    "publication": "raw VERSION/public HTTPS archive/PAX/all384 files verified; metadata-only sync follows; final receipt in outputs",
-    "physicalAcceptance": "passed: user confirmed Spotlight ghbdtn+Option → привет without selection on2026-10-27",
-    "installedPID": 46563,
-    "installedBackup": "/Users/ilyaalimpiev/Documents/Codex/2026-09-16/mac-layout-switcher-punto-caramba-switcher/outputs/MacLayoutSwitcher-1.4.11-before-G29-backup.zip",
-    "frozenManifestSHA256": "6170dbc8f72a6754a851a8fa0954be8d1c392ab8ee2f6acffd0250081df0a164",
-    "codeCommit": "dba351ccdd82cd737661531e744dc0bd2c5b33e7",
-    "publicCodeArchiveSHA256": "b1f2e4ea6fb08cc901608bec34d1ee2a887bb642357a496225ab4a58b1206fc7",
-    "allTrackedFilesVerified": 384,
-    "verifiedAt": "2026-10-26T16:43:25.254023+00:00"
+    "allBundledFilesCompared": true,
+    "resourcesVerified": true,
+    "manualAcceptance": "pending; not installed",
+    "artifact": "MacLayoutSwitcherNext-1.5.0.dmg",
+    "repository": "alimp01/mac-layout-switcher-next",
+    "status": "validated release",
+    "publication": "Next main and separate archive; final verification receipt in workspace outputs/keyboop-fork"
   },
   "wordCoverageAudit": {
     "independentRU": 459,
@@ -1335,8 +1364,86 @@ window.STATE =
     "repository": "alimp01/mac-layout-switcher-next",
     "base": "7043925e2f4f7028c6cb1539669290dbf5e0d446",
     "upstream": "iffuno/keyboop@fb9bdde4eb8f13a486974cf102a8bec9d607e5d2",
-    "status": "implementing",
+    "status": "release validated",
     "version": "1.5.0",
-    "manualAcceptance": "pending"
+    "manualAcceptance": "pending",
+    "repositoryCreated": true,
+    "baselineBranch": "upstream-base",
+    "validation": {
+      "nilAXSpace": "native GREEN",
+      "nilAXOption": "native GREEN",
+      "rapidInput": "native GREEN",
+      "live": "native GREEN including manual/snippet/caret repairs",
+      "detectorAssertions": 4325,
+      "manualAcceptance": "pending",
+      "linuxDetectorTests": {
+        "passed": 103,
+        "failed": 0,
+        "commit": "3735b80aa9e4c213bdeeea6b14c6b6900382d762",
+        "logSHA256": "007cad9f23430f244ff53b8d1f7d5711271644bd61610dae5f7710eed78c2ecf"
+      },
+      "dictation": "root adapter + completion + panel PASS",
+      "speechBuild": "final v3 full native arm64 PASS",
+      "nativeCore": {
+        "methods": 110,
+        "assertions": 4593,
+        "failed": 0,
+        "kind": "native supplemental assertion adapter; final Linux pending"
+      },
+      "linuxFinal": {
+        "passed": 110,
+        "failed": 0,
+        "commit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f"
+      },
+      "dmg": "mounted/deepstrict/allfiles/helper/resources PASS"
+    },
+    "reviewedCommits": {
+      "T35": "31d71a7",
+      "T36": "3735b80aa9e4c213bdeeea6b14c6b6900382d762",
+      "T37": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f"
+    },
+    "reviewRepairs": [
+      "preserve manual Option choice during live correction",
+      "reserve snippet triggers and prefixes during quiet-time decisions",
+      "preserve caret-edit guard through app/AX context resets",
+      "keep known protected fields blocked while AX unavailable; scope by application PID"
+    ],
+    "codeCommit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
+    "finalManifestSHA256": "77fc86007fefe2b1a6962f3a76639bfc023cb611f73bc362f15080cb54fa550b",
+    "review": "Spec APPROVE0 / Standards APPROVE0"
+  },
+  "upstreamRelease": {
+    "version": "1.4.12",
+    "binarySHA256": "032e5f19503a9bb611eb1c1f6be7d1813539bb94d1a054d673c7d00e280324bc",
+    "helperSHA256": "e955d4e78e10a42388f77a3c988f05b1f3dbc8cbb02164283fc9d10a62bc7f39",
+    "sha256": "73b8d583ce650c5ce47eb5e870bcd6e4816dc44e7369c25ce8783972ff1a7284",
+    "bytes": 10997407,
+    "artifact": "MacLayoutSwitcher-1.4.12.dmg",
+    "mountedVerified": true,
+    "deepStrictVerified": true,
+    "publication": "raw VERSION/public HTTPS archive/PAX/all384 files verified; metadata-only sync follows; final receipt in outputs",
+    "physicalAcceptance": "passed: user confirmed Spotlight ghbdtn+Option → привет without selection on2026-10-27",
+    "installedPID": 46563,
+    "installedBackup": "/Users/ilyaalimpiev/Documents/Codex/2026-09-16/mac-layout-switcher-punto-caramba-switcher/outputs/MacLayoutSwitcher-1.4.11-before-G29-backup.zip",
+    "frozenManifestSHA256": "6170dbc8f72a6754a851a8fa0954be8d1c392ab8ee2f6acffd0250081df0a164",
+    "codeCommit": "dba351ccdd82cd737661531e744dc0bd2c5b33e7",
+    "publicCodeArchiveSHA256": "b1f2e4ea6fb08cc901608bec34d1ee2a887bb642357a496225ab4a58b1206fc7",
+    "allTrackedFilesVerified": 384,
+    "verifiedAt": "2026-10-26T16:43:25.254023+00:00"
+  },
+  "upstreamManualAcceptance": {
+    "version": "1.4.12",
+    "status": "passed",
+    "scope": "Spotlight ghbdtn+Option without selection",
+    "askedAt": "2026-10-26T16:42:26.566268+00:00",
+    "answer": "Да, получилось «привет»",
+    "confirmedAt": "2026-10-27T03:23:04.365606+00:00",
+    "confirmedDateMoscow": "2026-10-27",
+    "result": "ghbdtn + Option without selection → привет in actual Spotlight"
+  },
+  "upstreamTests": {
+    "passed": 95,
+    "failed": 0,
+    "note": "G26 exact27 Linuxinputs95/95; rawfocus50/nav160/update15/dictation15/finalEngine27groups/fullspeech/deepstrict/mountedDMG PASS; two fresh reviews99hashes0findings. Physicalacceptance pending."
   }
 };

@@ -1,0 +1,14 @@
+{
+  "version": "1.5.0",
+  "codeCommit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
+  "bundleID": "space.alimp.maclayoutswitcher.next",
+  "binarySHA256": "98e652ed2290c370f262cb2b8b9e84436011138d160db179883a7f29405237e2",
+  "helperSHA256": "ee5e3c28a2066e355ce450a0a4fb83f2eb1766f639a2cf70161bf25f3103cc0c",
+  "dmgSHA256": "170ef576e14f3b0f076f7ffbdfc3f7fc6be365e2e3a1371e0dc460be43ca3a1a",
+  "dmgBytes": 12224867,
+  "mountedVerified": true,
+  "deepStrictVerified": true,
+  "allBundledFilesCompared": true,
+  "resourcesVerified": true,
+  "manualAcceptance": "pending; not installed"
+}

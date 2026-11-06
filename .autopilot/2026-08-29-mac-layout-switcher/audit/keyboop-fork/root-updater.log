@@ -1,0 +1,210 @@
+Updater lifecycle scratch: /tmp/mls-update-lifecycle.t_qtohz9
+[
+  {
+    "scenario": "offline",
+    "exit": 6,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "invalid_archive",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "build_fail",
+    "exit": 71,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "copy_fail",
+    "exit": 75,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "install_fail",
+    "exit": 72,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "launch_fail",
+    "exit": 74,
+    "installed_text": "old working binary",
+    "app_launch_requests": 2,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "rollback_fail",
+    "exit": 72,
+    "installed_text": "<missing>",
+    "app_launch_requests": 0,
+    "accepted_launches": 0,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "success",
+    "exit": 0,
+    "installed_text": "new working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 0,
+    "passed": true
+  },
+  {
+    "scenario": "wait_for_exit",
+    "exit": 0,
+    "installed_text": "new working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 0,
+    "passed": true
+  },
+  {
+    "scenario": "parent_timeout",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 0,
+    "accepted_launches": 0,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "untrusted_cleanup_path",
+    "exit": 0,
+    "installed_text": "new working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 0,
+    "passed": true
+  },
+  {
+    "scenario": "owned_cleanup_path",
+    "exit": 0,
+    "installed_text": "new working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 0,
+    "passed": true
+  },
+  {
+    "scenario": "relaunch_fail",
+    "exit": 6,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 0,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "log_failure",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "log_open_failure",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "installed_stable",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 0,
+    "accepted_launches": 0,
+    "reports": 0,
+    "passed": true
+  },
+  {
+    "scenario": "installed_missing_identity",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 0,
+    "accepted_launches": 0,
+    "reports": 0,
+    "passed": true
+  },
+  {
+    "scenario": "candidate_stable",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "candidate_missing_identity",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "candidate_wrong_executable",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "candidate_downgrade",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "candidate_same_version",
+    "exit": 1,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  },
+  {
+    "scenario": "candidate_unsigned",
+    "exit": 76,
+    "installed_text": "old working binary",
+    "app_launch_requests": 1,
+    "accepted_launches": 1,
+    "reports": 1,
+    "passed": true
+  }
+]

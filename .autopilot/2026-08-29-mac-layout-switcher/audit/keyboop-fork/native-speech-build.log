@@ -1,0 +1,30 @@
+==> swift build -c release
+[0/1] Planning build
+Building for production...
+[0/5] Write sources
+[2/5] Write swift-version--1AB21518FC5DEDBE.txt
+[4/5] Compiling SwitcherCore Detector.swift
+[5/6] Compiling MacLayoutSwitcher Config.swift
+[5/7] Write Objects.LinkFileList
+[6/7] Linking MacLayoutSwitcher
+Build complete! (10.22s)
+==> Собираю бандл /tmp/mls-next-release-source/dist/MacLayoutSwitcherNext.app
+/tmp/mls-next-release-source/dist/MacLayoutSwitcherNext.app/Contents/Helpers/SpeechRecognizer: replacing existing signature
+==> codesign (ad-hoc)
+/tmp/mls-next-release-source/dist/MacLayoutSwitcherNext.app: replacing existing signature
+
+Готово: /tmp/mls-next-release-source/dist/MacLayoutSwitcherNext.app
+
+Первый запуск:
+  1. Открыть приложение: open "/tmp/mls-next-release-source/dist/MacLayoutSwitcherNext.app"
+     (ad-hoc подпись — Gatekeeper может ругнуться: правый клик по .app → «Открыть».)
+  2. Выдать разрешения по подсказке приложения:
+       Системные настройки → Конфиденциальность и безопасность →
+         • Универсальный доступ (Accessibility)
+         • Мониторинг ввода (Input Monitoring)
+     Включить «Mac Layout Switcher Next» в обоих списках.
+  3. Перезапустить приложение (пункт меню-бара «Я выдал разрешения»).
+
+Иконка появится в меню-баре (клавиатура). Dock-иконки нет — это ожидаемо.
+
+Для .dmg-дистрибутива (установка перетаскиванием в «Программы»): ./build-dmg.sh

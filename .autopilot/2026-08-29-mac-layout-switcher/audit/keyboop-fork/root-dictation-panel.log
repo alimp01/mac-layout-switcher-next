@@ -1,0 +1,4 @@
+2026-11-06 06:57:32.925 test-panel[71775:11896960] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 06:57:32.926 test-panel[71775:11896911] Error received in message reply handler: Connection invalid
+PASS: production panel visible glyphs, long text scrolling, selection, nonactivation, clipboard preservation
+Panel image: /tmp/mls-dictation-panel.TlkNyC/panel.png

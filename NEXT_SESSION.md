@@ -1,3 +1,26 @@
+# Продолжение Next — отдельный форк, 2026-11-06
+
+Актуальный репозиторий: https://github.com/alimp01/mac-layout-switcher-next .
+Основа 7043925 (stable1.4.12), Keyboop fb9bdde4. Требования G30–G32,
+тикеты35–37, keyboop-fork-spec.md / keyboop-fork-qa.md и ADR0014.
+Читайте верхний Next override в CLAUDE.md и fork/release/manualAcceptance
+в .autopilot/state.js. Они важнее исторической памяти ниже.
+
+Приложение MacLayoutSwitcherNext.app / space.alimp.maclayoutswitcher.next;
+отдельные настройки, модель и обновления. Публиковать только в Next main
+и mac-layout-switcher-next.tar.gz; стабильные main/archive/app не менять.
+Root ведёт /autopilot и релиз, код пишет исполнитель с двумя независимыми ревью.
+
+Новый buffered Backspace/Unicode путь не требует AX для свежего набранного
+слова; выделенный/старый текст и диктовка сохраняют AX-проверки. События
+отправлены не означает подтверждённое чтением изменение поля. Реальная
+аппаратная приёмка Next пока не проводилась; успешные проверки stable
+в Codex/Битрикс24/Spotlight не считаются приёмкой форка.
+
+---
+
+# Историческая передача родительского проекта
+
 # Продолжение работы — Mac Layout Switcher
 
 Проект: аналог Punto/Caramba для macOS, SwiftPM, ядро SwitcherCore без платформенных зависимостей.

@@ -1,0 +1,105 @@
+{
+  "base": "3735b80aa9e4c213bdeeea6b14c6b6900382d762",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "16f15d5862a8c4e4224e9b0d9c85fa195ed753dc059a6fbd20211ea953d7b83f"
+    },
+    {
+      "path": "Sources/MacLayoutSwitcher/Engine.swift",
+      "sha256": "13ba8ccad90fef88adf938265e4b3f5a97a4515d368ab1c9355688e66ed26072"
+    },
+    {
+      "path": "Sources/MacLayoutSwitcher/System/InputFocusGuard.swift",
+      "sha256": "e21fc674f749208ca76d17c1cb84232fb5de072c9922cb6983453608e691b26b"
+    },
+    {
+      "path": "Sources/MacLayoutSwitcher/System/KeyTranslator.swift",
+      "sha256": "a629235f404a0e39eaa90617c6ed8564f00ebd4454d9f88d770be663517fae63"
+    },
+    {
+      "path": "Sources/MacLayoutSwitcher/System/KeyboardEnvironment.swift",
+      "sha256": "fe819e5128a65674823ff83ffa76aa4b9977110d07bd4b0633a0daf441e4c19f"
+    },
+    {
+      "path": "Sources/MacLayoutSwitcher/System/SelectionConverter.swift",
+      "sha256": "854c908b03bcba3db153c14a6309b6ab27a717a36fbe78143ebff61532fa28f7"
+    },
+    {
+      "path": "Sources/MacLayoutSwitcher/System/TrackedInputBatch.swift",
+      "sha256": "b7862142498d8d877e28ca150c713705d2d038051508409cfad044456f9941df"
+    },
+    {
+      "path": "Sources/MacLayoutSwitcher/System/Typist.swift",
+      "sha256": "6941b97b504d2022978db4bc3eacc21b258e94dbe386f18553d474b984442b65"
+    },
+    {
+      "path": "Sources/SwitcherCore/Detector.swift",
+      "sha256": "be6ab3c0b191f7173fe9bb10fcfcf595ff4a7d5e95c871cb6f6915aef9066261"
+    },
+    {
+      "path": "Sources/SwitcherCore/EngineCore.swift",
+      "sha256": "1a1536ab8e5f9eb78a4eecf39575e393b11fa00799b692987e8354bc98bd3245"
+    },
+    {
+      "path": "Sources/SwitcherCore/SnippetStore.swift",
+      "sha256": "da55267ec6ec1135c1d89672b555bcf4b3b0627d6f3cd62abfcd8afd882f8eaa"
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "sha256": "c9d5084621d6a587ca385fc6af414266ad6b9e37e73979520e74b5f616370551"
+    },
+    {
+      "path": "Tests/SwitcherCoreTests/EngineCoreTests.swift",
+      "sha256": "aac80aec12d2fdcd881c06fb36b466bfb1fddb4d75c874c27d78675f8b612ae8"
+    },
+    {
+      "path": "tools/dictation-harness/panel.swift",
+      "sha256": "021d78a029d874f550ba73a793e9b73161dc008f2b199dd6c65b07cb7a221fd3"
+    },
+    {
+      "path": "tools/keyboard-harness/README.md",
+      "sha256": "04e3b834f556eb5e4f1240168a2a47c11fd913c9b59b5ab151d28607ed81d061"
+    },
+    {
+      "path": "tools/keyboard-harness/engine-boundary.swift",
+      "sha256": "fe434fcb98b4b246f029f1353134ae1559b80d30691859c48e9a310816926d24"
+    },
+    {
+      "path": "tools/keyboard-harness/engine.swift",
+      "sha256": "3762c94f1f789dd89ce6883480a4c637dc397774e926925f191a2fca82b00017"
+    },
+    {
+      "path": "tools/keyboard-harness/next-engine.swift",
+      "sha256": "1a35bc43e44773850268aaf71a727a921812e8c55eb73c488535ccf935b846c8"
+    },
+    {
+      "path": "tools/keyboard-harness/physical-input.swift",
+      "sha256": "68c4c63a7e9f6a338e89fa1b897ec34f3b659382c1a5b83e171904d3ac0173ac"
+    },
+    {
+      "path": "tools/test-keyboard-adapter.sh",
+      "sha256": "5f0e9abb3379738590cfb2ea608e2ed710833d6b3450e6cdf82cbc7a5aa2c4a3"
+    },
+    {
+      "path": "tools/test-keyboard-engine.sh",
+      "sha256": "54b6a7d7fecacd730a9c7774d9687b484bd23bebaa6f028efa4774f59ff4edf3"
+    },
+    {
+      "path": "tools/test-keyboard-next.sh",
+      "sha256": "b6513097a4595fed53efa52e757137f2f76fe2fc66b4c2d36ead8bbf1425ec5c"
+    },
+    {
+      "path": "tools/test-keyboard-selection-delay.sh",
+      "sha256": "f83f47a9a3385c982a07323fa0d68b7972b41047ebba407b2ad069f57c04fc71"
+    },
+    {
+      "path": "tools/test-keyboard-webkit.sh",
+      "sha256": "34df5f64dfef4e7767a769eba2df1f3641116c5e4ff7b1d35c7fa8ca10c7b5d2"
+    },
+    {
+      "path": "tools/test-system-focus.sh",
+      "sha256": "6307ba39d053942e2f6d34beb46bffe9275faeb493007a5724f54fe7329a7674"
+    }
+  ]
+}

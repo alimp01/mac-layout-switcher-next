@@ -1,0 +1,46 @@
+2026-11-06 07:05:39.933 test-engine[72646:11911749] Error received in message reply handler: Connection invalid
+2026-11-06 07:05:39.933 test-engine[72646:11911764] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 07:05:40.019 test-engine[72646:11911749] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-06 07:06:04.665 test-engine[72646:11911772] Spell server connection invalidated
+2026-11-06 07:06:04.666 test-engine[72646:11911772] Spell server connection invalidated
+2026-11-06 07:06:04.666 test-engine[72646:11911772] dataFromCheckingGrammarInString received error Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.naturallanguaged was invalidated: failed at lookup with error 159 - Sandbox restriction." UserInfo={NSDebugDescription=The connection to service named com.apple.naturallanguaged was invalidated: failed at lookup with error 159 - Sandbox restriction.}
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: production Engine+EventTap+Typist, nil AX, owned NSTextView ghbdtn+Space
+PASS: fresh Option without AX
+PASS: rapid physical text ordered behind replacement without AX
+PASS: quiet-time live correction without AX
+PASS: Enter/ShiftEnter/Tab, repeated navigation and fast next text
+PASS: printable, Backspace and Space repeats
+PASS: abort before deletion for click/navigation/secure/recorder/tap/PID
+PASS: interrupted deletion retains recovery and never retries/submits Enter
+PASS: Chromium and edited-word live gates
+PASS: Option undo and emoji snippet chunks
+Next native Engine suite passed; final posting seam uses owned NSTextViews, not WindowServer/readback confirmation.
+PASS: live undo protects following Space
+PASS: known AX secure field excludes fresh-buffer path
+PASS: bounded held-modifier abort preserves ShiftEnter
+PASS: AX navigation repeat=false, auto/Option capture/Option write/idle, source and native Space preserved
+PASS: AX navigation repeat=true, auto/Option capture/Option write/idle, source and native Space preserved
+PASS: Unicode navigation repeat=false, auto/Option capture/Option write/idle, source and native Space preserved
+PASS: Unicode navigation repeat=true, auto/Option capture/Option write/idle, source and native Space preserved
+PASS: CGEventType(rawValue: -2) retires convert/toggle/dictation/modifier ownership and cancels buffered pending replacement
+PASS: CGEventType(rawValue: -1) retires convert/toggle/dictation/modifier ownership and cancels buffered pending replacement
+PASS: clicks retain actual held shortcut ownership; recording transitions clear stale ownership and modifier taps
+2026-11-06 07:55:21.953 test-engine[73027:11919845] Error received in message reply handler: Connection invalid
+2026-11-06 07:55:21.953 test-engine[73027:11919848] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 07:55:22.497 test-engine[73027:11919845] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: explicit manual choice survives quiet-time continuation
+2026-11-06 07:55:24.484 test-engine[73030:11919917] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 07:55:24.484 test-engine[73030:11919916] Error received in message reply handler: Connection invalid
+2026-11-06 07:55:24.557 test-engine[73030:11919916] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-06 07:55:26.319 test-engine[73030:11919916] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-06 07:55:26.325 test-engine[73030:11919916] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-06 07:55:28.072 test-engine[73030:11919916] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: quiet-time snippet and longer trigger prefix
+2026-11-06 07:55:28.120 test-engine[73032:11919992] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 07:55:28.120 test-engine[73032:11919990] Error received in message reply handler: Connection invalid
+2026-11-06 07:55:28.192 test-engine[73032:11919990] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: caret edit fragment and next-boundary reset

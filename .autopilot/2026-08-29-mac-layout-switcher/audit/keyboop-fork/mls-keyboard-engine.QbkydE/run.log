@@ -1,0 +1,20 @@
+2026-11-06 06:49:25.202 test-engine[70381:11879626] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 06:49:25.202 test-engine[70381:11879526] Error received in message reply handler: Connection invalid
+2026-11-06 06:49:25.337 test-engine[70381:11879526] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-06 06:49:50.036 test-engine[70381:11879635] Spell server connection invalidated
+2026-11-06 06:49:50.036 test-engine[70381:11879632] Spell server connection invalidated
+2026-11-06 06:49:50.036 test-engine[70381:11879632] dataFromCheckingGrammarInString received error Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.naturallanguaged was invalidated: failed at lookup with error 159 - Sandbox restriction." UserInfo={NSDebugDescription=The connection to service named com.apple.naturallanguaged was invalidated: failed at lookup with error 159 - Sandbox restriction.}
+FAIL: known AX secure field blocks buffered replacement even if global SecureInput is off
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: production Engine+EventTap+Typist, nil AX, owned NSTextView ghbdtn+Space
+PASS: fresh Option without AX
+PASS: rapid physical text ordered behind replacement without AX
+PASS: quiet-time live correction without AX
+PASS: Enter/ShiftEnter/Tab, repeated navigation and fast next text
+PASS: printable, Backspace and Space repeats
+PASS: abort before deletion for click/navigation/secure/recorder/tap/PID
+PASS: interrupted deletion retains recovery and never retries/submits Enter
+PASS: Chromium and edited-word live gates
+PASS: Option undo and emoji snippet chunks
+Next native Engine suite passed; final posting seam uses owned NSTextViews, not WindowServer/readback confirmation.
+PASS: live undo protects following Space

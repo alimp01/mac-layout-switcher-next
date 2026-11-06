@@ -1,0 +1,54 @@
+Sources snapshot: /tmp/mls-dictation-completion.KMsZJR
+2026-11-06 06:55:01.842 test-completion[71093:11890704] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 06:55:01.842 test-completion[71093:11890687] Error received in message reply handler: Connection invalid
+duplicate-own-notification: result=inserted actual="Давай проверим, работает ли вставка." posts=3 caret={36, 0}
+queued-recording-receipt: result=fallback(main.DictationInsertionFailure.changed) posts=0
+PASS: literal completion, chunks, Unicode paragraphs, selected replacement, duplicate/delayed/coalesced notifications, delayed value/caret, sticky external cancellation, no-op/partial/no retry, clipboard
+Sources snapshot: /tmp/mls-dictation-completion.prAjEc
+foreign-value / concurrent own-state publication: result=fallback(main.DictationInsertionFailure.unconfirmed) posts=1 allowed=false value="Давай проверим, "
+PASS: sampled foreign AX state remains cancellation after confirmWrite advances
+Sources snapshot: /tmp/mls-dictation-completion.PhkFMU
+foreign-range / concurrent own-state publication: result=fallback(main.DictationInsertionFailure.unconfirmed) posts=1 allowed=false value="Давай проверим, "
+PASS: sampled foreign AX state remains cancellation after confirmWrite advances
+Sources snapshot: /tmp/mls-dictation-completion.nr0Zcg
+previous-own / concurrent own-state publication: result=inserted posts=3 allowed=true value="Давай проверим, работает ли вставка."
+PASS: legitimate concurrent own snapshot completes once
+Sources snapshot: /tmp/mls-dictation-completion.hUOfrU
+next-own / concurrent own-state publication: result=inserted posts=3 allowed=true value="Давай проверим, работает ли вставка."
+PASS: legitimate concurrent own snapshot completes once
+Sources snapshot: /tmp/mls-dictation-completion.YNsssK
+Captured intermediate legitimate own value/range at chunk2
+four: next-own / concurrent own-state publication: result=inserted posts=7 allowed=true units=108
+PASS: legitimate concurrent own snapshot completes once
+Sources snapshot: /tmp/mls-dictation-completion.i4GF8w
+Captured intermediate legitimate own value/range at chunk2
+capacity: next-own / concurrent own-state publication: result=inserted posts=27 allowed=true units=432
+PASS: legitimate concurrent own snapshot completes once
+Sources snapshot: /tmp/mls-dictation-completion.xVk5yO
+Captured intermediate legitimate own value/range at chunk2
+PASS: stalled at capacity: posts=16 elapsed=0.6046199798583984, unconfirmed + sticky cancel + late-reader cleanup
+Sources snapshot: /tmp/mls-dictation-completion.AV2DkI
+Captured intermediate legitimate own value/range at chunk2
+PASS: cancel at capacity: posts=16 elapsed=0.055459022521972656, unconfirmed + sticky cancel + late-reader cleanup
+Sources snapshot: /tmp/mls-dictation-completion.7dCDvF
+Captured intermediate legitimate own value/range at chunk2
+PASS: focus at capacity: posts=16 elapsed=0.05498397350311279, unconfirmed + sticky cancel + late-reader cleanup
+Sources snapshot: /tmp/mls-dictation-completion.rWp6Jf
+Captured intermediate legitimate own value/range at chunk2
+PASS: completed read's own history cannot exempt later foreign restoration
+Sources snapshot: /tmp/mls-dictation-completion.RN74It
+Captured intermediate legitimate own value/range at chunk2
+mutate-value after capacity wait: result=fallback(main.DictationInsertionFailure.unconfirmed) posts=16 allowed=false value="FOREIGN"
+PASS: exact target/value/caret/permit rechecked after capacity wait, no further write/retry
+Sources snapshot: /tmp/mls-dictation-completion.8vXLH3
+Captured intermediate legitimate own value/range at chunk2
+mutate-range after capacity wait: result=fallback(main.DictationInsertionFailure.unconfirmed) posts=16 allowed=false value="Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Дава"
+PASS: exact target/value/caret/permit rechecked after capacity wait, no further write/retry
+Sources snapshot: /tmp/mls-dictation-completion.nosGsA
+Captured intermediate legitimate own value/range at chunk2
+mutate-field after capacity wait: result=fallback(main.DictationInsertionFailure.unconfirmed) posts=16 allowed=false value="Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Дава"
+PASS: exact target/value/caret/permit rechecked after capacity wait, no further write/retry
+Sources snapshot: /tmp/mls-dictation-completion.f97wqK
+Captured intermediate legitimate own value/range at chunk2
+mutate-secure after capacity wait: result=fallback(main.DictationInsertionFailure.unconfirmed) posts=16 allowed=false value="Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Давай проверим, работает ли вставка.Дава"
+PASS: exact target/value/caret/permit rechecked after capacity wait, no further write/retry

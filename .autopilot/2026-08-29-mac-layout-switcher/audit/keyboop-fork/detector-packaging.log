@@ -1,0 +1,2 @@
+relocated app Contents/Resources: PASS
+missing packaged resources: fail-closed PASS

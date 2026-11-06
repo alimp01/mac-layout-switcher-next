@@ -1,0 +1,6 @@
+2026-11-06 06:34:47.767 test-engine[67369:11845161] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 06:34:47.767 test-engine[67369:11845141] Error received in message reply handler: Connection invalid
+2026-11-06 06:34:47.872 test-engine[67369:11845141] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: production Engine+EventTap+Typist, nil AX, owned NSTextView ghbdtn+Space
+PASS: fresh Option without AX

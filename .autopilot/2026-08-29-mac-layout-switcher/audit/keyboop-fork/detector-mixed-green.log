@@ -1,0 +1,5 @@
+привtn: expected=ru actual=ru
+приdет: expected=ru actual=ru
+ghbdет: expected=ru actual=ru
+heддщ: expected=en actual=en
+mixed boundary failures: 0

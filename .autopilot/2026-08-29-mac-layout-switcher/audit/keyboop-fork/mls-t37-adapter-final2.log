@@ -1,0 +1,25 @@
+2026-11-06 06:56:28.186 test-adapter[71517:11894341] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-06 06:56:28.186 test-adapter[71517:11894316] Error received in message reply handler: Connection invalid
+PASS: no-op setter is uncertain, no retry
+PASS: lazy AX capture
+PASS: verified Unicode without setter
+PASS: native replacement and prefix boundary
+PASS: sticky permission and focus guards
+PASS: partial write and navigation disposition
+PASS: selected text
+Keyboard adapter harness passed (mock AX boundary, own NSTextView; not cross-app delivery).
+PASS: selection timeout and failed restoration
+PASS: stale prefix and same-snapshot source guard
+PASS: cold word, empty field and bounded scan
+PASS: production Typist Shift+Enter and fast key ordering
+PASS: production queue retains uncertain/dependent separators, preserves ordinary key
+PASS: partial selected write retains queued text
+PASS: deletion-only keeps original, planned replacement and withheld Enter
+PASS: deletion-only after real production Unicode pair remains uncertain
+PASS: production SelectionConverter retains source and converted text
+PASS: shared dictation queue retains selected source after unconfirmed write
+PASS: cold bind preserves core, idle uncertainty cannot suppress fresh Enter
+PASS: production recovery panel retention, width, long scrolling, selection and clipboard preservation
+2026-11-06 06:56:33.187 test-transport[71552:11894705] Error received in message reply handler: Connection invalid
+2026-11-06 06:56:33.187 test-transport[71552:11894729] Connection Invalid error for service com.apple.hiservices-xpcservice.
+PASS: production Unicode payload, serialized CGEvents, AppKit interpretation, full text/caret/tail; no WindowServer delivery claimed

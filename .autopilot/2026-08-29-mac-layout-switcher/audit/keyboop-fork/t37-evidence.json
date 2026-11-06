@@ -1,0 +1,87 @@
+{
+  "initial_red": {
+    "nil_ax_space": "/tmp/mls-keyboard-engine.bCRzvB",
+    "nil_ax_option": "/tmp/mls-keyboard-engine.FZc372"
+  },
+  "incremental_red_green": [
+    {
+      "case": "fresh Option",
+      "red": "/tmp/mls-keyboard-engine.VbmedL",
+      "green": "/tmp/mls-keyboard-engine.P8yVid"
+    },
+    {
+      "case": "rapid physical replay",
+      "red": "/tmp/mls-keyboard-engine.QPS9rB",
+      "green": "/tmp/mls-keyboard-engine.QMgOBF"
+    },
+    {
+      "case": "live high confidence",
+      "red": "/tmp/mls-keyboard-engine.J6SZte",
+      "green": "/tmp/mls-keyboard-engine.gGZvgF"
+    },
+    {
+      "case": "known AX secure field / global secure false",
+      "red": "/tmp/mls-keyboard-engine.QbkydE",
+      "green": "/tmp/mls-keyboard-engine.fYYxBl"
+    },
+    {
+      "case": "nonempty unreadable selection never falls through",
+      "red": "/tmp/mls-keyboard-engine.OMIY1W",
+      "green": "/tmp/mls-keyboard-engine.EBdBZi"
+    },
+    {
+      "case": "manual live choice",
+      "red": "/tmp/mls-keyboard-engine.zldX8h",
+      "green": "/tmp/mls-keyboard-engine.A3uOKc"
+    },
+    {
+      "case": "snippet trigger/prefix",
+      "red_source": "/tmp/mls-keyboard-engine.zldX8h",
+      "red_log": "/tmp/mls-t37-snippet-red.log",
+      "green": "/tmp/mls-keyboard-engine.jcd8l3"
+    },
+    {
+      "case": "caret fragment",
+      "red_source": "/tmp/mls-keyboard-engine.zldX8h",
+      "red_log": "/tmp/mls-t37-caret-red.log",
+      "green": "/tmp/mls-keyboard-engine.Qa0AVF"
+    },
+    {
+      "case": "caret marker survives app/environment refresh",
+      "red": "/tmp/mls-keyboard-engine.x4eLkN",
+      "green_source": "/tmp/mls-keyboard-engine.iTyP2O",
+      "green_log": "/tmp/mls-t37-caret-app-final.log"
+    },
+    {
+      "case": "sticky protected survives unknown AX",
+      "red": "/tmp/mls-keyboard-engine.qk9evm",
+      "green": "/tmp/mls-keyboard-engine.iTyP2O"
+    },
+    {
+      "case": "new nonnil PID retires old protected field",
+      "red": "/tmp/mls-keyboard-engine.RlU2zb",
+      "green": "/tmp/mls-keyboard-engine.iTyP2O"
+    }
+  ],
+  "regressions": {
+    "full_next_matrix_plus_three_reviews": "/tmp/mls-keyboard-engine.kVP4qp",
+    "final_protected_and_new_pid": "/tmp/mls-keyboard-engine.iTyP2O",
+    "final_retained_ax_log": "/tmp/mls-t37-ax-final.log",
+    "full_native_core": "/tmp/mls-t37-core-native-v2.log",
+    "core_summary": "110 methods, 4593 assertions, 0 failures; assertion adapter, not Linux XCTest",
+    "keyboard_adapter": "/tmp/mls-t37-adapter-final2.log",
+    "selection_delay": "/tmp/mls-t37-selection-final.log",
+    "webkit": "/tmp/mls-t37-webkit-final.log",
+    "dictation_root": "Root independently reran dictation adapter/completion/panel; root owns final speech build and Linux XCTest"
+  },
+  "commands": [
+    "CLANG_MODULE_CACHE_PATH=/tmp/mls-t37-clang-cache SWIFT_MODULECACHE_PATH=/tmp/mls-t37-swift-cache bash tools/test-keyboard-next.sh",
+    "CLANG_MODULE_CACHE_PATH=/tmp/mls-t37-clang-cache SWIFT_MODULECACHE_PATH=/tmp/mls-t37-swift-cache MLS_OPTION_ONLY=1 bash tools/test-keyboard-engine.sh",
+    "MLS_NEXT_REPAIR=protected <frozen-native-binary>",
+    "MLS_NEXT_REPAIR=caret MLS_NEXT_CHANGED_APP=1 MLS_FIXTURE_INPUT_SOURCE_ID=com.apple.keylayout.RussianWin <frozen-native-binary>",
+    "python3 Tests/KeyboopParity/run-native-tests.py EngineCoreTests HotkeyEngineTests InputIntegrityTests DictationTests HotkeyTests KeyMapTests SnippetStoreTests WordBufferTests SemVerTests DetectorTests WordCoverageTests KeyboopDetectorTests ShortWordsTests"
+  ],
+  "scope": "Owned hidden NSTextViews; real CGEvent/NSEvent and immutable enabled TIS ABC/RussianWin. Final OS posting and external AX are injected. Posted events are not product readback or WindowServer/physical acceptance.",
+  "retention": "Each native scratch has run.log, source-provenance.json, seams.patch, SHA256SUMS and frozen source/resource copies. Keep text metadata and logs in audit; no binaries required. Extra red logs used exactly the already frozen zldX8h binary.",
+  "permission": "Direct scp of source snapshot was rejected by automatic approval review; no workaround used. Root separately arranged authorized reviewed-public-source Linux testing."
+}

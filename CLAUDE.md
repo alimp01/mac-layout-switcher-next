@@ -6,6 +6,13 @@ Next identity: space.alimp.maclayoutswitcher.next, MacLayoutSwitcherNext.app, ve
 
 Release only to alimp01/mac-layout-switcher-next and /var/www/cat.alimp.space/mac-layout-switcher-next.tar.gz. Never publish experimental code to mac-layout-switcher or replace installed stable app.
 
+Next1.5.0 code a0b0600: both final reviews APPROVE0, actual Linux110/0,
+native110methods/4593assertions, full arm64 speech build and mounted signed DMG
+PASS. See keyboop-fork-qa.md for evidence. Next is not installed/hardware accepted;
+parent manual acceptance below must never be promoted to this fork. Live guards
+reserve manual choices/snippet prefixes and retain edited-caret provenance;
+known AX protected fields remain blocked through unknown AX within the same PID.
+
 <!-- autopilot:start -->
 # Mac Layout Switcher
 

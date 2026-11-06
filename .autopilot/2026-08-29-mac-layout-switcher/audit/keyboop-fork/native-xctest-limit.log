@@ -1,0 +1,125 @@
+warning: /Users/ilyaalimpiev/Library/org.swift.swiftpm/configuration is not accessible or not writable, disabling user-level cache features.
+warning: /Users/ilyaalimpiev/Library/org.swift.swiftpm/security is not accessible or not writable, disabling user-level cache features.
+warning: /Users/ilyaalimpiev/Library/Caches/org.swift.swiftpm is not accessible or not writable, disabling user-level cache features.
+warning: 'mac-layout-switcher-next-20261106': failed storing manifest for 'mac-layout-switcher-next-20261106' in cache: attempt to write a readonly database
+[0/1] Planning build
+Building for debugging...
+[0/7] /tmp/t36-keyboop-build/arm64-apple-macosx/debug/MacLayoutSwitcherPackageTests.derived/runner.swift
+[1/9] Write sources
+[2/15] Copying keyboop-reference.json
+[3/15] Write sources
+[4/15] Copying KEYBOOP_PROVENANCE.json
+[4/15] Copying KEYBOOP_LICENSE.txt
+[5/15] Copying KEYSWITCHER_LICENSE.txt
+[7/15] Write sources
+[9/15] Write swift-version--1AB21518FC5DEDBE.txt
+[11/32] Compiling SwitcherCore WordBuffer.swift
+[12/33] Compiling SwitcherCore SemVer.swift
+[13/33] Compiling SwitcherCore ShortWords.swift
+[14/33] Compiling SwitcherCore resource_bundle_accessor.swift
+[15/33] Compiling SwitcherCore EngineCore.swift
+[16/33] Compiling SwitcherCore ExtraWords.swift
+[17/33] Emitting module SwitcherCore
+[18/33] Compiling SwitcherCore SnippetStore.swift
+[19/33] Compiling SwitcherCore Lang.swift
+[20/33] Compiling SwitcherCore LayoutData.swift
+[21/33] Compiling SwitcherCore KeyMap.swift
+[22/33] Compiling SwitcherCore KeyboopKeymap.swift
+[23/33] Compiling SwitcherCore Hotkey.swift
+[24/33] Compiling SwitcherCore InputReplayPolicy.swift
+[25/33] Compiling SwitcherCore Detector.swift
+[26/33] Compiling SwitcherCore DictationSession.swift
+[27/33] Compiling SwitcherCore LayoutDetector.swift
+[28/33] Compiling SwitcherCore ReplacementSource.swift
+error: emit-module command failed with exit code 1 (use -v to see invocation)
+[29/73] Emitting module SwitcherCoreTests
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[30/74] Compiling MacLayoutSwitcher KeyStroke.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[31/74] Compiling MacLayoutSwitcher KeyTranslator.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[32/74] Compiling SwitcherCoreTests WordCoverageTests.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[33/74] Compiling SwitcherCoreTests SnippetStoreTests.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[34/74] Compiling SwitcherCoreTests ShortWordsTests.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[35/74] Compiling SwitcherCoreTests WordBufferTests.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[36/74] Compiling SwitcherCoreTests SemVerTests.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[37/74] Compiling MacLayoutSwitcher KeyboardEnvironment.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[38/74] Compiling MacLayoutSwitcher Config.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[39/74] Compiling MacLayoutSwitcher EventTap.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[40/74] Compiling MacLayoutSwitcher FrontApp.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[41/74] Compiling MacLayoutSwitcher Engine.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[42/74] Compiling MacLayoutSwitcher DictationCoordinator.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+[43/74] Compiling SwitcherCoreTests resource_bundle_accessor.swift
+/private/tmp/mac-layout-switcher-next-20261106/Tests/SwitcherCoreTests/DetectorTests.swift:1:8: error: no such module 'XCTest'
+  1 | import XCTest
+    |        `- error: no such module 'XCTest'
+  2 | import Foundation
+  3 | import SwitcherCore
+error: fatalError
