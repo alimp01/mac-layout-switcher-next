@@ -962,7 +962,7 @@ window.STATE =
         "35",
         "36"
       ],
-      "note": "Next1.5.0 release validated; physical acceptance pending",
+      "note": "Next1.5.0 published/installed; user confirmed Codex ghbdtn+Space and ghbdtn+Option on2026-11-06",
       "commit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
       "review": "Spec APPROVE0 + Standards APPROVE0",
       "tests": {
@@ -977,7 +977,7 @@ window.STATE =
     "failed": 0,
     "runtime": "Linux XCTest",
     "commit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
-    "note": "Native adapter110/4593, AppKit seams, full speech and mounted DMG PASS; Next physical acceptance pending"
+    "note": "Linux110 and native/build/DMG PASS; user confirmed Codex physical Space and Option on2026-11-06; other physical paths untested"
   },
   "debt": {
     "placeholders": [],
@@ -1133,8 +1133,12 @@ window.STATE =
   },
   "manualAcceptance": {
     "version": "1.5.0",
-    "status": "pending",
-    "note": "New fork has not been installed or hardware-tested. Parent acceptances do not apply."
+    "status": "passed",
+    "scope": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
+    "answer": "Оба раза получилось «привет»",
+    "confirmedAt": "2026-11-06T05:47:29.988899+00:00",
+    "confirmedDateMoscow": "2026-11-06",
+    "note": "User enabled Next Accessibility/Input Monitoring and relaunched. Only these two physical paths are accepted; other apps, Enter, rapid typing and speech are not covered."
   },
   "release": {
     "version": "1.5.0",
@@ -1148,11 +1152,13 @@ window.STATE =
     "deepStrictVerified": true,
     "allBundledFilesCompared": true,
     "resourcesVerified": true,
-    "manualAcceptance": "pending; not installed",
+    "manualAcceptance": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
     "artifact": "MacLayoutSwitcherNext-1.5.0.dmg",
     "repository": "alimp01/mac-layout-switcher-next",
-    "status": "validated release",
-    "publication": "Next main and separate archive; final verification receipt in workspace outputs/keyboop-fork"
+    "status": "published and installed; scoped physical acceptance passed",
+    "publication": "Next main and separate archive; final verification receipt in workspace outputs/keyboop-fork",
+    "installedPID": 75271,
+    "installedPath": "/Applications/MacLayoutSwitcherNext.app"
   },
   "wordCoverageAudit": {
     "independentRU": 459,
@@ -1364,9 +1370,9 @@ window.STATE =
     "repository": "alimp01/mac-layout-switcher-next",
     "base": "7043925e2f4f7028c6cb1539669290dbf5e0d446",
     "upstream": "iffuno/keyboop@fb9bdde4eb8f13a486974cf102a8bec9d607e5d2",
-    "status": "release validated",
+    "status": "released; scoped physical acceptance passed",
     "version": "1.5.0",
-    "manualAcceptance": "pending",
+    "manualAcceptance": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
     "repositoryCreated": true,
     "baselineBranch": "upstream-base",
     "validation": {
@@ -1375,7 +1381,7 @@ window.STATE =
       "rapidInput": "native GREEN",
       "live": "native GREEN including manual/snippet/caret repairs",
       "detectorAssertions": 4325,
-      "manualAcceptance": "pending",
+      "manualAcceptance": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
       "linuxDetectorTests": {
         "passed": 103,
         "failed": 0,

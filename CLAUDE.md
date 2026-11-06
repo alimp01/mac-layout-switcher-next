@@ -8,8 +8,10 @@ Release only to alimp01/mac-layout-switcher-next and /var/www/cat.alimp.space/ma
 
 Next1.5.0 code a0b0600: both final reviews APPROVE0, actual Linux110/0,
 native110methods/4593assertions, full arm64 speech build and mounted signed DMG
-PASS. See keyboop-fork-qa.md for evidence. Next is not installed/hardware accepted;
-parent manual acceptance below must never be promoted to this fork. Live guards
+PASS. Installed /Applications/MacLayoutSwitcherNext.app on2026-11-06; stable closed.
+User enabled permissions and confirmed Codex ghbdtn+Space and ghbdtn+Option:
+«Оба раза получилось «привет»». Only these two paths are physically accepted;
+see keyboop-fork-qa.md. Parent acceptance below does not extend this scope. Live guards
 reserve manual choices/snippet prefixes and retain edited-caret provenance;
 known AX protected fields remain blocked through unknown AX within the same PID.
 

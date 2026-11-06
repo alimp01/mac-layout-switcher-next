@@ -15,4 +15,4 @@ Zone: EngineCore, Engine, EventTap/Typist/keyboard transport, related harness/te
 
 Root-approved investigation clarification: T37 may change KeyTranslator cache and related fixture seam to remove TIS calls from callback. Cache immutable layout data and safety/application classification outside callback, warm before tap start. Global synthetic routing must preserve Spotlight target. Prebuild full batch before first delete, bounded modifier-release deferral with original ShiftEnter flags retained.
 
-Final code commit: `a0b060076612c5fe0c4cb98056a9f10e775a8d2f`. Native/full Linux/speech/DMG evidence: keyboop-fork-qa.md. Hardware acceptance remains pending.
+Final code commit: `a0b060076612c5fe0c4cb98056a9f10e775a8d2f`. Native/full Linux/speech/DMG evidence: keyboop-fork-qa.md. Physical acceptance passed for Codex ghbdtn+Space and ghbdtn+Option on2026-11-06; other paths remain untested.
