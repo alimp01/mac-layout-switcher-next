@@ -6,11 +6,11 @@ final class DetectorTests: XCTestCase {
 
     // MARK: - Защитные правила: короткие, смешанные, с цифрами → .unsure
 
-    func testShortMixedAndDigitWordsAreUnsure() {
+    func testShortAndNonWordGuardsFollowKeyboopDictionaries() {
         let detector = Detector()
 
-        // Короче 3 символов — всегда .unsure, даже явный транслит.
-        XCTAssertEqual(detector.verdict(for: "gh"), .unsure)
+        // Keyboop uses its full short-word dictionaries (gh is the RU abbreviation пр).
+        XCTAssertEqual(detector.verdict(for: "gh"), .ru)
         XCTAssertEqual(detector.verdict(for: "ы"), .unsure)
         XCTAssertEqual(detector.verdict(for: ""), .unsure)
 
@@ -177,43 +177,26 @@ final class DetectorTests: XCTestCase {
         XCTAssertEqual(Detector().verdict(for: "ерфе"), .en)
     }
 
-    func testCollisionsAreResolvedByContextOfPreviousWord() {
+    func testStrictValidWordsAndExplicitShortAmbiguitiesUseKeyboopContext() {
+        // Next replaces the old symmetric short-word collision rule with Keyboop's
+        // strict source dictionary gate. Real of/ща/her/vs stay as typed in either language.
+        for seed in ["hello", "привет"] {
+            for word in ["of", "ща", "her", "here", "vs", "рук"] {
+                let detector = Detector()
+                _ = detector.verdict(for: seed)
+                XCTAssertEqual(detector.verdict(for: word), .unsure, "\(seed) → \(word)")
+            }
+        }
         let detector = Detector()
-
-        // «of» ↔ «ща»: обе стороны частотны. Без контекста — не трогать.
-        XCTAssertEqual(detector.verdict(for: "of"), .unsure)
-
-        // После русского слова (исправленного) — латинское «of» = «ща».
-        XCTAssertEqual(detector.verdict(for: "ghbdtn"), .ru)
-        XCTAssertEqual(detector.verdict(for: "of"), .ru)
-
-        // После валидного английского — «of» остаётся английским.
         XCTAssertEqual(detector.verdict(for: "hello"), .unsure)
-        XCTAssertEqual(detector.verdict(for: "of"), .unsure)
-        XCTAssertEqual(detector.verdict(for: "vs"), .unsure)
-
-        // Симметрично: «ща» после английского в RU-наборе → «of»,
-        // после валидного русского — остаётся русским.
-        XCTAssertEqual(detector.verdict(for: "руддщ"), .en)
-        XCTAssertEqual(detector.verdict(for: "ща"), .en)
-        XCTAssertEqual(detector.verdict(for: "привет"), .unsure)
-        XCTAssertEqual(detector.verdict(for: "ща"), .unsure)
-        XCTAssertEqual(detector.verdict(for: "рук"), .unsure)
-
-        // Контекст даёт и слово, оставленное как есть: «Как» — валидное
-        // русское, после него «vs» = «мы».
-        XCTAssertEqual(detector.verdict(for: "Как"), .unsure)
-        XCTAssertEqual(detector.verdict(for: "vs"), .ru)
-
-        // resetContext() возвращает к «без контекста».
-        detector.resetContext()
-        XCTAssertEqual(detector.verdict(for: "vs"), .unsure)
-
-        // Смешанное слово контекст не трогает: после русского «ghb123» не
-        // мешает «of» решиться в RU.
+        XCTAssertEqual(detector.verdict(for: "ns"), .unsure)
         XCTAssertEqual(detector.verdict(for: "ghbdtn"), .ru)
-        XCTAssertEqual(detector.verdict(for: "ghb123"), .unsure)
-        XCTAssertEqual(detector.verdict(for: "of"), .ru)
+        XCTAssertEqual(detector.verdict(for: "ns"), .ru)
+        detector.resetContext()
+        XCTAssertEqual(detector.verdict(for: "ns"), .ru, "Keyboop chooses ты at a fresh boundary")
+        XCTAssertEqual(detector.verdict(for: "ghbdtn"), .ru)
+        XCTAssertEqual(detector.verdict(for: "helloмир"), .unsure)
+        XCTAssertEqual(detector.verdict(for: "ns"), .ru, "unresolved mixed tokens keep prior context")
     }
 
     func testShortWordCaseSurvivesConversionEndToEnd() {

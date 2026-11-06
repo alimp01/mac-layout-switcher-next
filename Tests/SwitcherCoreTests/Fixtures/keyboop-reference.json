@@ -1,0 +1,1813 @@
+[
+  {
+    "boundary" : "ru",
+    "converted" : "привет",
+    "live" : "ru",
+    "liveConverted" : "привет",
+    "mixed" : "unsure",
+    "word" : "ghbdtn"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "Привет",
+    "live" : "ru",
+    "liveConverted" : "Привет",
+    "mixed" : "unsure",
+    "word" : "Ghbdtn"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ПРИВЕТ",
+    "live" : "ru",
+    "liveConverted" : "ПРИВЕТ",
+    "mixed" : "unsure",
+    "word" : "GHBDTN"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "chat",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "срфе"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "спасибо",
+    "live" : "ru",
+    "liveConverted" : "спасибо",
+    "mixed" : "unsure",
+    "word" : "cgfcb,j"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "хорошо",
+    "live" : "ru",
+    "liveConverted" : "хорошо",
+    "mixed" : "unsure",
+    "word" : "[jhjij"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "озон"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ozon"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "claude"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "gameboy"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "portal",
+    "live" : "en",
+    "liveConverted" : "portal",
+    "mixed" : "unsure",
+    "word" : "зщкефд"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "claude",
+    "live" : "en",
+    "liveConverted" : "claude",
+    "mixed" : "unsure",
+    "word" : "сдфгву"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "gameboy",
+    "live" : "en",
+    "liveConverted" : "gameboy",
+    "mixed" : "unsure",
+    "word" : "пфьуищн"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "привет"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "hello"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "question"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "api"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "json"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "API",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ФЗШ"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "SQL",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ЫЙД"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "MACBOOK",
+    "live" : "en",
+    "liveConverted" : "MACBOOK",
+    "mixed" : "unsure",
+    "word" : "ЬФСИЩЩЛ"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "УФНС"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "en",
+    "liveConverted" : "OPENAI",
+    "mixed" : "unsure",
+    "word" : "ЩЗУТФШ"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "и",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "b"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "И",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "B"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "я",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "z"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "Я",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "Z"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "а",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "f"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "в",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "d"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "с",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "c"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "у",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "e"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "i",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ш"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "u",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "г"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "a",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ф"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "не",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "yt"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ты",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "her"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "here"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ты"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "мы"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ща"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "руки"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ем"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ум"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "иду"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "привет123",
+    "live" : "ru",
+    "liveConverted" : "привет123",
+    "mixed" : "unsure",
+    "word" : "ghbdtn123"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ghb123"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "1привет2",
+    "live" : "ru",
+    "liveConverted" : "1привет2",
+    "mixed" : "unsure",
+    "word" : "1ghbdtn2"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "b2b"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "h2o"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "i18n"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "https://example.com"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "user@example.com"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "example.com"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "node.js"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "hello_world"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "snake_case"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "camelCase"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "someVariable"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "HTTPServer"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "a+b=c"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "С++",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "C++"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "С#",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "C#"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : ":D"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : ":-D"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "=D"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : ";D"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "XD"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "же",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : ";t"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ЧП",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "XG"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "что-то",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "xnj-nj"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "где-то",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ult-nj"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "из-за",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "bp-pf"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "во-первых",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "dj-gthds["
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "dry-run"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "--xnj-nj"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "xnj-nj-"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "5-3"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "API-ключ"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "C++код"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "helloмир"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ноутбукmac"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "ru",
+    "word" : "привtn"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "ru",
+    "word" : "приdет"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "ru",
+    "word" : "ghbdет"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "en",
+    "word" : "heддщ"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "приvet"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "helло"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "круууто"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "coooool"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "ubar",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "гифк"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "перекл.",
+    "live" : "ru",
+    "mixed" : "unsure",
+    "word" : "gthtrk."
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "переключ",
+    "live" : "ru",
+    "liveConverted" : "переключ",
+    "mixed" : "unsure",
+    "word" : "gthtrk.x"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "баг",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : ",fu"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ab"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ат",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "fn"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "txt."
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "yml,"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "lgtm."
+  },
+  {
+    "boundary" : "en",
+    "converted" : "txt",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ече"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ини"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ке"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ть"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "привет.",
+    "live" : "ru",
+    "mixed" : "unsure",
+    "word" : "ghbdtn."
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "привет!",
+    "live" : "ru",
+    "liveConverted" : "привет!",
+    "mixed" : "unsure",
+    "word" : "ghbdtn!"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "(привет",
+    "live" : "ru",
+    "liveConverted" : "(привет",
+    "mixed" : "unsure",
+    "word" : "(ghbdtn"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "привет)",
+    "live" : "ru",
+    "liveConverted" : "привет)",
+    "mixed" : "unsure",
+    "word" : "ghbdtn)"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "!привет",
+    "live" : "ru",
+    "liveConverted" : "!привет",
+    "mixed" : "unsure",
+    "word" : "!ghbdtn"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "привет()",
+    "live" : "ru",
+    "liveConverted" : "привет()",
+    "mixed" : "unsure",
+    "word" : "ghbdtn()"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "(не)!",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "(yt)!"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "((не))",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "((yt))"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "(K><K>)?!"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "люблю",
+    "live" : "ru",
+    "liveConverted" : "люблю",
+    "mixed" : "unsure",
+    "word" : "k.,k."
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "хлеб",
+    "live" : "ru",
+    "liveConverted" : "хлеб",
+    "mixed" : "unsure",
+    "word" : "[kt,"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "нож",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "yj;"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "it."
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ею",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "t."
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "уж",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "e;"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ухф,"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "keyboop,",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "лунищщзб"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "[JHJИJ"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "K><K>"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "это",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "’nj"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "«привет»",
+    "live" : "ru",
+    "liveConverted" : "«привет»",
+    "mixed" : "unsure",
+    "word" : "«ghbdtn»"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "Eat",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "New,"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "и",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "b"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "И",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "B"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "в",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "d"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "г"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "гб"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ты",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "Rfr"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "(И)!",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "привет",
+    "word" : "(B)!"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "и",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "b"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "И",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "B"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "в",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "d"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "u",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "г"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "u,",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "гб"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "Rfr"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "(И)!",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "hello",
+    "word" : "(B)!"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "b"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "B"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "d"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "u",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "г"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "u,",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "гб"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "Rfr"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "plan",
+    "word" : "(B)!"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "b"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "B"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "d"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "u",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "г"
+  },
+  {
+    "boundary" : "en",
+    "converted" : "u,",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "гб"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "Rfr"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "vitamin",
+    "word" : "(B)!"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "и",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "b"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "И",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "B"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "в",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "d"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "г"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "гб"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ты",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "Rfr"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "(И)!",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "5",
+    "word" : "(B)!"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "и",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "b"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "И",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "B"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "в",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "d"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "г"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "гб"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ты",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "Rfr"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "(И)!",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "100",
+    "word" : "(B)!"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "b"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "B"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "d"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "г"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "гб"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ты",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "ns"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "of"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "herb"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "tv"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "ev"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "иду",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "ble"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "ой",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "jq"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "Уфе"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "Rfr"
+  },
+  {
+    "boundary" : "unsure",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "витамин",
+    "word" : "(B)!"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "то",
+    "earlier" : "нашего",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "EPG,",
+    "word" : "nj"
+  },
+  {
+    "boundary" : "unsure",
+    "earlier" : "the",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "EPG,",
+    "word" : "nj"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "то",
+    "earlier" : "касается",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "iOS,",
+    "word" : "nj"
+  },
+  {
+    "boundary" : "unsure",
+    "earlier" : "Сегодня",
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "prev" : "Loko",
+    "word" : "vs"
+  },
+  {
+    "boundary" : "unsure",
+    "exclusions" : [
+      "ghbdtn"
+    ],
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "GHBDTN!"
+  },
+  {
+    "boundary" : "unsure",
+    "exclusions" : [
+      "ghbdtn"
+    ],
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ghbdtn"
+  },
+  {
+    "boundary" : "unsure",
+    "exclusions" : [
+      "1ghbdtn2"
+    ],
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "1GHBDTN2"
+  },
+  {
+    "boundary" : "unsure",
+    "exclusions" : [
+      "(rfr)?"
+    ],
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "(rfr)?"
+  },
+  {
+    "boundary" : "unsure",
+    "exclusions" : [
+      "привtn"
+    ],
+    "live" : "unsure",
+    "mixed" : "ru",
+    "word" : "привtn"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "прив",
+    "exclusions" : [
+      "ghbdtn"
+    ],
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "ghbd"
+  },
+  {
+    "boundary" : "ru",
+    "converted" : "1прив",
+    "exclusions" : [
+      "1ghbdtn2"
+    ],
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : "1ghbd"
+  },
+  {
+    "boundary" : "unsure",
+    "exclusions" : [
+      ":d"
+    ],
+    "live" : "unsure",
+    "mixed" : "unsure",
+    "word" : ":D"
+  }
+]

@@ -12,9 +12,10 @@ let speechEnabled = false
 
 var dependencies: [Package.Dependency] = []
 var targets: [Target] = [
-    .target(name: "SwitcherCore"),
+    .target(name: "SwitcherCore", resources: [.process("Resources")]),
     .executableTarget(name: "MacLayoutSwitcher", dependencies: ["SwitcherCore"]),
-    .testTarget(name: "SwitcherCoreTests", dependencies: ["SwitcherCore"])
+    .testTarget(name: "SwitcherCoreTests", dependencies: ["SwitcherCore"],
+                resources: [.process("Fixtures")])
 ]
 if speechEnabled {
     dependencies.append(.package(url: "https://github.com/ekhodzitsky/gigastt-swift", exact: "2.17.0"))

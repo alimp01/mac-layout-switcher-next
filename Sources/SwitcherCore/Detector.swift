@@ -1,142 +1,29 @@
 import Foundation
 
-/// Вердикт детектора для набранного слова.
+/// Decision for a completed token or a high-confidence live candidate.
 public enum Verdict: Equatable, Sendable {
-    /// Слово выглядит как русское, набранное в EN-раскладке — исправить в RU.
     case ru
-    /// Слово выглядит как английское, набранное в RU-раскладке — исправить в EN.
     case en
-    /// Уверенности нет — слово не трогать.
     case unsure
 }
 
-/// Детектор неправильной раскладки: детерминированные правила +
-/// биграммные частоты + пользовательские исключения.
-/// Перекос в осторожность: лучше промолчать, чем испортить валидное слово.
+/// Keyboop's dictionary/trigram cascade behind the existing per-session API.
+/// Construct before installing input callbacks: initialization reads all four JSON files.
+/// Calls and exclusions belong to the owning engine's serial context, as before.
 public final class Detector {
-
-    // MARK: - Пороги (см. комментарии «почему такие»)
-
-    /// Слова короче 3 символов не трогаем: на 1–2 символах ни правила,
-    /// ни биграммы не дают уверенности (id, ok, ты, не — всё валидно).
-    private static let minWordLength = 3
-
-    /// Штраф за биграмму вне таблицы: чуть ниже минимального табличного
-    /// значения (~-3.5), чтобы неизвестная биграмма весила как «очень редкая»,
-    /// но одна опечатка не перевешивала всё слово.
-    private static let unseenBigramLog = -4.5
-
-    /// Минимальная разница средних лог-вероятностей (на биграмму), чтобы
-    /// вынести вердикт по одним частотам. На проверочных валидных словах
-    /// максимум ~0.65 (экзотика вроде rhythm); 0.9 оставляет запас —
-    /// лучше промолчать, чем испортить валидное слово.
-    private static let bigramThreshold = 0.9
-
-    /// Средняя лог-вероятность конверсии должна быть не ниже этого уровня:
-    /// если конверсия сама по себе мусор (score < -3.5 ≈ сплошь редкие
-    /// биграммы), исправлять не во что — молчим.
-    private static let minPlausibleScore = -3.5
-
-    // MARK: - Алфавиты
-
-    /// Строчные кириллические буквы ЙЦУКЕН (включая ё).
-    private static let cyrillicLetters = Set("абвгдежзийклмнопрстуфхцчшщъыьэюяё")
-
-    /// Строчные латинские буквы.
-    private static let latinLetters = Set("abcdefghijklmnopqrstuvwxyz")
-
-    /// Символы, которые ANSI-клавиатура даёт в EN-раскладке там, где в ЙЦУКЕН
-    /// стоят буквы: они законны внутри «латинского кандидата»
-    /// (cgfcb,j = спасибо, [jhjij = хорошо).
-    private static let latinPunct = Set(";:'\"[]{},.<>`~")
-
-    private enum Alphabet {
-        case cyrillic   // целиком кириллица
-        case latin      // целиком латиница + пунктуация ЙЦУКЕН-позиций
-        case mixed      // смешанное / цифры / символы вне карты
-    }
-
-    private static func alphabet(of word: String) -> Alphabet {
-        var hasCyrillic = false
-        var hasLatin = false
-        for ch in word.lowercased() {
-            if cyrillicLetters.contains(ch) {
-                hasCyrillic = true
-            } else if latinLetters.contains(ch) || latinPunct.contains(ch) {
-                hasLatin = true
-            } else {
-                return .mixed // цифра или символ вне карты
-            }
-            if hasCyrillic && hasLatin { return .mixed }
-        }
-        if hasCyrillic { return .cyrillic }
-        if hasLatin { return .latin }
-        return .mixed
-    }
-
-    // MARK: - Правила невозможных сочетаний
-
-    /// Символы, не встречающиеся внутри английских слов, но означающие
-    /// буквы ЙЦУКЕН при наборе в EN-раскладке (апостроф намеренно исключён:
-    /// don't, it's — валидный английский).
-    private static let latinImpossiblePunct = Set(";:[]{}<>`~\",.")
-
-    /// Триграммы, не встречающиеся в английских словах, но типичные для
-    /// транслита ЙЦУКЕН: ghb=при, ghj=про, cnd/dcn=ств, cnf=ста.
-    private static let latinImpossibleTrigrams = ["ghb", "ghj", "cnd", "dcn", "cnf"]
-
-    /// После j в английском почти всегда гласная (или r/w в именах);
-    /// j+согласная — след ЙЦУКЕН («о»+согласная).
-    private static let jImpossibleFollowers = Set("bcdfghklmnpqstyvxz")
-
-    /// Биграммы, не встречающиеся в русских словах, но типичные для
-    /// QWERTY-набора («ы» на s, «щ» на o и т.п.).
-    private static let cyrillicImpossibleBigrams = ["кщ", "гь", "дщ", "щц", "щж", "ьу", "уы"]
-
-    /// Русские слова не начинаются с ь/ъ/ы, а с й — только перед гласной
-    /// (йод, йогурт).
-    private static let cyrillicImpossibleStarts = Set("ьъы")
-    private static let russianConsonants = Set("бвгджзйклмнпрстфхцчшщ")
-
-    /// Слово не может быть валидным английским.
-    private static func impossibleInEnglish(_ w: [Character]) -> Bool {
-        if w.contains(where: { latinImpossiblePunct.contains($0) }) { return true }
-        let s = String(w)
-        if latinImpossibleTrigrams.contains(where: { s.contains($0) }) { return true }
-        for i in 0..<(w.count - 1) {
-            if w[i] == "q" && w[i + 1] != "u" { return true }
-            if w[i] == "j" && jImpossibleFollowers.contains(w[i + 1]) { return true }
-        }
-        return false
-    }
-
-    /// Слово не может быть валидным русским.
-    private static func impossibleInRussian(_ w: [Character]) -> Bool {
-        guard let first = w.first else { return false }
-        if cyrillicImpossibleStarts.contains(first) { return true }
-        if first == "й", w.count > 1, russianConsonants.contains(w[1]) { return true }
-        let s = String(w)
-        return cyrillicImpossibleBigrams.contains(where: { s.contains($0) })
-    }
-
-    // MARK: - Биграммный скоринг
-
-    /// Средняя log10-вероятность биграмм слова (с маркерами границ ^слово$).
-    private static func score(_ word: String, table: [String: Double]) -> Double {
-        let padded = Array("^" + word + "$")
-        var sum = 0.0
-        for i in 0..<(padded.count - 1) {
-            sum += table[String(padded[i...(i + 1)])] ?? unseenBigramLog
-        }
-        return sum / Double(padded.count - 1)
-    }
-
-    // MARK: - Исключения
-
-    /// Пользовательские слова-исключения, хранятся в нижнем регистре.
+    private let data: LayoutData
     private var exclusions: Set<String> = []
+    private var previousWord: String?
+    private var earlierWord: String?
 
-    public init() {}
+    /// Explicit preparation status. Missing/corrupt resources disable all auto decisions.
+    public var isReady: Bool { data.isLoaded }
+
+    /// A directory override supports isolated CLI consumers/tests. App callers use the
+    /// bundled shared immutable tables; this never reads an environment/global override.
+    public init(dataDirectory: URL? = nil) {
+        data = dataDirectory.map { LayoutData(directory: $0) } ?? LayoutData.shared
+    }
 
     /// Добавляет слово в исключения (сравнение без учёта регистра).
     public func addExclusion(_ word: String) {
@@ -175,136 +62,89 @@ public final class Detector {
     /// синхронно, файл пишется без обращения к живому состоянию детектора.
     public var exclusionList: [String] { exclusions.sorted() }
 
-    // MARK: - Языковая инерция (контекст)
-
-    /// Язык последнего слова, прошедшего через `verdict`: целевой язык
-    /// исправления либо алфавит слова, которое оставили как есть. Решает
-    /// коллизии словарей коротких слов (of↔ща, vs↔мы, …). Смешанные слова
-    /// (цифры, символы вне карты) контекст не меняют. Намеренно: слово из
-    /// исключений (пользователь подтвердил, что оно валидно в своём алфавите)
-    /// и неизвестное слово, которое детектор не решился тронуть, тоже дают
-    /// инерцию по алфавиту — алфавит набора остаётся лучшим приором.
-    private var lastContextLang: Lang?
-
-    /// Забыть контекст последнего слова (новое поле ввода, тесты).
+    /// Forget both context words when the owning engine changes input context.
     public func resetContext() {
-        lastContextLang = nil
+        previousWord = nil
+        earlierWord = nil
     }
 
-    /// Отвечает на вопрос «это слово набрано не в той раскладке?».
-    /// Порядок: исключения → алфавит → словари коротких слов (G13) →
-    /// порог длины → невозможные сочетания + биграммы.
     public func verdict(for word: String) -> Verdict {
-        // Only !? suffixes and enclosing parentheses are removable wrappers.
-        // The executor still receives and converts the entire original token.
-        let core = Self.lexicalCore(of: word)
-        let alphabet = Self.alphabet(of: core)
-        let result = isExcluded(word) ? .unsure : decide(word: core, alphabet: alphabet)
-        switch (result, alphabet) {
-        case (.ru, _): lastContextLang = .ru
-        case (.en, _): lastContextLang = .en
-        case (.unsure, .latin): lastContextLang = .en
-        case (.unsure, .cyrillic): lastContextLang = .ru
-        case (.unsure, .mixed): break
+        guard isReady else { return .unsure }
+        let decision: SwapDecision
+        if isDecisionExcluded(word) || Self.isTechnicalToken(word) {
+            decision = .keep
+        } else if word.hasCyrillic && word.hasLatinLetter {
+            // Upstream invokes this in Engine before decide(); putting it at this
+            // public seam ensures every boundary caller receives mixed-word rescue.
+            decision = LayoutDetector.mixedRescue(word: word, data: data)
+        } else {
+            decision = LayoutDetector.decide(word: word, exceptions: exceptionSnapshot,
+                                             data: data, prev: previousWord, earlier: earlierWord)
+        }
+        let result = Self.verdict(decision)
+        let displayed: String
+        switch result {
+        case .ru: displayed = convertedText(for: word, to: .ru)
+        case .en: displayed = convertedText(for: word, to: .en)
+        case .unsure: displayed = word
+        }
+        // Keep the legacy rule that unresolved mixed tokens do not change language
+        // context. Numeric neighbours are retained for Keyboop's measurement guard.
+        if displayed.hasCyrillic != displayed.hasLatinLetter || LayoutDetector.isNumericToken(displayed) {
+            earlierWord = previousWord
+            previousWord = displayed
         }
         return result
     }
 
-    private static func lexicalCore(of word: String) -> String {
-        var core = word[...]
-        while let last = core.last, last == "!" || last == "?" { core.removeLast() }
-        while core.first == "(", core.last == ")" {
-            core.removeFirst()
-            core.removeLast()
+    /// Does not advance phrase context or learn exclusions. UI/platform live gates
+    /// (Chromium, secure input, focus ownership) remain the engine's responsibility.
+    public func liveVerdict(for word: String) -> Verdict {
+        guard isReady, !isDecisionExcluded(word), !Self.isTechnicalToken(word) else { return .unsure }
+        return Self.verdict(LayoutDetector.liveDecide(word: word, exceptions: exceptionSnapshot, data: data))
+    }
+
+    /// Boundary conversion retains punctuation unless it is part of a known RU word.
+    public func convertedText(for word: String, to language: Lang) -> String {
+        guard isReady else { return word }
+        if word.hasCyrillic && word.hasLatinLetter {
+            return Keymap.convert(word, toCyrillic: language == .ru)
         }
-        // Interior/unbalanced parentheses and leading/interior !? are not
-        // lexical wrappers. Keep them mixed, including empty punctuation.
-        guard !core.isEmpty, !core.contains(where: { "()!?".contains($0) }) else { return word }
-        return String(core)
+        return Keymap.smartConvert(word, toCyrillic: language == .ru,
+                                  isValidTarget: { self.data.wordsRu.contains($0) })
     }
 
-    private func decide(word: String, alphabet: Alphabet) -> Verdict {
-        guard alphabet != .mixed, !isExcluded(word) else { return .unsure }
-        let lowered = word.lowercased()
-        if let short = shortWordVerdict(lowered: lowered, alphabet: alphabet) {
-            return short
-        }
-        guard lowered.count >= Self.minWordLength else { return .unsure }
-        return bigramVerdict(lowered: lowered, alphabet: alphabet)
+    /// nil asks the live caller to wait: a final '.', ',' or ';' may be a letter in
+    /// the unfinished target, and the boundary punctuation rule must not truncate it.
+    public func liveConvertedText(for word: String, to language: Lang) -> String? {
+        guard isReady else { return nil }
+        return Keymap.liveConvert(word, toCyrillic: language == .ru,
+                                 isValidTarget: { self.data.wordsRu.contains($0) })
     }
 
-    /// Bounded G18 additions longer than ShortWords' 1–4-character contract.
-    /// Hand-audited everyday words; no threshold change or external corpus.
-    private static let everydayRussian: Set<String> = [
-        "когда", "тогда", "иногда", "пусть", "перед", "среди", "лучше", "меньше",
-        "супер", "круто", "вечер", "файлы", "могут", "будут", "люблю"
-    ]
+    private var exceptionSnapshot: LayoutExceptions { LayoutExceptions(ignored: exclusions) }
 
-    private static func isKnownWord(_ word: String, lang: Lang) -> Bool {
-        ShortWords.contains(word, lang: lang) || (lang == .ru && everydayRussian.contains(word))
+    private static func isTechnicalToken(_ word: String) -> Bool {
+        // Preserve our identifier protection when upstream letterCore would strip
+        // the terminal signs and mistake C++ / C# for the Russian preposition c.
+        word.contains { "+#_=@\\/".contains($0) }
     }
 
-    /// Правило коротких слов плюс ограниченный список повседневных слов G18.
-    /// `nil` — словари не решают, дальше прежний путь. Если конверсия — слово другого
-    /// языка, а само оно — не частотное слово своего, исправляется; если
-    /// частотны обе стороны (коллизия), решает контекст, без контекста —
-    /// `.unsure`. Слово из своего словаря — валидное, не трогаем.
-    /// Все восемь однобуквенных RU-слов исправляются из латинской буквы
-    /// без контекста, но подтверждённый EN-контекст сохраняет обозначения: «plan b» не должен стать
-    /// «plan и», а в «Rfr ns b z» контекст после «Rfr»→«Как» уже RU.
-    private func shortWordVerdict(lowered: String, alphabet: Alphabet) -> Verdict? {
-        let ownLang: Lang = (alphabet == .latin) ? .en : .ru
-        let otherLang: Lang = (alphabet == .latin) ? .ru : .en
-        let converted = KeyMap.convert(lowered, to: otherLang).lowercased()
-        let inOwn = Self.isKnownWord(lowered, lang: ownLang)
-        let inOther = Self.isKnownWord(converted, lang: otherLang)
-        let fix: Verdict = (otherLang == .ru) ? .ru : .en
-
-        switch (inOwn, inOther) {
-        case (false, true):
-            guard lowered.count > 1 else {
-                if alphabet == .latin, lowered.allSatisfy({ Self.latinLetters.contains($0) }),
-                   lastContextLang == nil { return .ru }
-                return lastContextLang == otherLang ? fix : .unsure
-            }
-            return fix
-        case (true, true):
-            guard let context = lastContextLang else { return .unsure }
-            return context == otherLang ? fix : .unsure
-        case (true, false):
-            return .unsure
-        case (false, false):
-            return nil
-        }
+    private func isDecisionExcluded(_ word: String) -> Bool {
+        let whole = word.lowercased()
+        let literal = LayoutDetector.letterCore(of: whole)
+        let typed = Keymap.core(of: literal)
+        var core = Substring(literal)
+        while core.first?.isNumber == true { core = core.dropFirst() }
+        while core.last?.isNumber == true { core = core.dropLast() }
+        return exclusions.contains(whole) || exclusions.contains(literal)
+            || exclusions.contains(typed) || exclusions.contains(String(core))
     }
 
-    private func bigramVerdict(lowered: String, alphabet: Alphabet) -> Verdict {
-        switch alphabet {
-        case .mixed:
-            return .unsure
-
-        case .latin:
-            // Кандидат «русское в EN-наборе»: сравниваем правдоподобие
-            // конверсии в RU с правдоподобием самого слова как английского.
-            let conv = KeyMap.convert(lowered, to: .ru).lowercased()
-            let ruScore = Self.score(conv, table: DetectorBigrams.ruBigrams)
-            guard ruScore >= Self.minPlausibleScore else { return .unsure }
-            let diff = ruScore - Self.score(lowered, table: DetectorBigrams.enBigrams)
-            if diff >= Self.bigramThreshold { return .ru }
-            // Правило сильнее порога: невозможное для английского сочетание
-            // означает, что портить нечего — достаточно перевеса в пользу RU.
-            if Self.impossibleInEnglish(Array(lowered)) && diff > 0 { return .ru }
-            return .unsure
-
-        case .cyrillic:
-            // Кандидат «английское в RU-наборе» — симметрично.
-            let conv = KeyMap.convert(lowered, to: .en).lowercased()
-            let enScore = Self.score(conv, table: DetectorBigrams.enBigrams)
-            guard enScore >= Self.minPlausibleScore else { return .unsure }
-            let diff = enScore - Self.score(lowered, table: DetectorBigrams.ruBigrams)
-            if diff >= Self.bigramThreshold { return .en }
-            if Self.impossibleInRussian(Array(lowered)) && diff > 0 { return .en }
-            return .unsure
+    private static func verdict(_ decision: SwapDecision) -> Verdict {
+        switch decision {
+        case .keep: return .unsure
+        case .convert(let toCyrillic): return toCyrillic ? .ru : .en
         }
     }
 }

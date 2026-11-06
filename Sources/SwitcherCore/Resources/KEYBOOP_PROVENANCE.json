@@ -1,0 +1,88 @@
+{
+  "repository": "https://github.com/iffuno/keyboop",
+  "commit": "fb9bdde4eb8f13a486974cf102a8bec9d607e5d2",
+  "retrieved": "2026-11-06",
+  "files": [
+    {
+      "upstreamPath": "Sources/Keyboop/LayoutDetector.swift",
+      "upstreamSHA256": "091bf4971ffa7276682fe8e2bce660b67bfc3210e2bf97e91220728e9558e565",
+      "importedPath": "Sources/SwitcherCore/LayoutDetector.swift",
+      "importedSHA256": "43b856a564d564ca21b887331e68f6a3be7a80a6b1abbb6e6efe7e7118395800",
+      "byteIdentical": false
+    },
+    {
+      "upstreamPath": "Sources/Keyboop/LayoutData.swift",
+      "upstreamSHA256": "3799380af0a6e3d6051b0334845a51ae4dc9726f4f6a4281cc72c6e167293859",
+      "importedPath": "Sources/SwitcherCore/LayoutData.swift",
+      "importedSHA256": "2aa0405af5a1c4888b4b8fac380ff13c727df43a2f46f8d863a8dfb04f20d0eb",
+      "byteIdentical": false
+    },
+    {
+      "upstreamPath": "Sources/Keyboop/ExtraWords.swift",
+      "upstreamSHA256": "a84118f35a743933061672f752c3a2a41c3dbe759ce040da712e53f3f903cd5b",
+      "importedPath": "Sources/SwitcherCore/ExtraWords.swift",
+      "importedSHA256": "a84118f35a743933061672f752c3a2a41c3dbe759ce040da712e53f3f903cd5b",
+      "byteIdentical": true
+    },
+    {
+      "upstreamPath": "Sources/Keyboop/Keymap.swift",
+      "upstreamSHA256": "7374fc2f1786a851ebdad92daa930f2b71135b8e86aad7e333d1243b3f48f471",
+      "importedPath": "Sources/SwitcherCore/KeyboopKeymap.swift",
+      "importedSHA256": "17959c6c7b7a0617b770139c7a769a8d7ba1d2f53934aa3e3ee9f4f58aed2321",
+      "byteIdentical": false
+    },
+    {
+      "upstreamPath": "LICENSE",
+      "upstreamSHA256": "885b18ae62a96210f9903246bd160162937c71915680bed81f3c2b02e544fd6a",
+      "importedPath": "Sources/SwitcherCore/Resources/KEYBOOP_LICENSE.txt",
+      "importedSHA256": "885b18ae62a96210f9903246bd160162937c71915680bed81f3c2b02e544fd6a",
+      "byteIdentical": true
+    },
+    {
+      "upstreamPath": "Sources/Keyboop/Resources/words_ru.json",
+      "upstreamSHA256": "704f45617f2b9aeea99e3abc21b0d2a3e795ab98a95d90292c8b04e7f962c4d2",
+      "importedPath": "Sources/SwitcherCore/Resources/words_ru.json",
+      "importedSHA256": "704f45617f2b9aeea99e3abc21b0d2a3e795ab98a95d90292c8b04e7f962c4d2",
+      "byteIdentical": true,
+      "entries": 162760
+    },
+    {
+      "upstreamPath": "Sources/Keyboop/Resources/words_en.json",
+      "upstreamSHA256": "1d16ce0065f60c0126ec24bf62179780c4203bb485eb1dcaa81e7e6b7385ee98",
+      "importedPath": "Sources/SwitcherCore/Resources/words_en.json",
+      "importedSHA256": "1d16ce0065f60c0126ec24bf62179780c4203bb485eb1dcaa81e7e6b7385ee98",
+      "byteIdentical": true,
+      "entries": 59276
+    },
+    {
+      "upstreamPath": "Sources/Keyboop/Resources/trigrams_ru.json",
+      "upstreamSHA256": "69056ac090486cfe6746b8910fa3dc1f45182bd47f5d08ee0b3688ad7d94adb3",
+      "importedPath": "Sources/SwitcherCore/Resources/trigrams_ru.json",
+      "importedSHA256": "69056ac090486cfe6746b8910fa3dc1f45182bd47f5d08ee0b3688ad7d94adb3",
+      "byteIdentical": true,
+      "entries": 11458
+    },
+    {
+      "upstreamPath": "Sources/Keyboop/Resources/trigrams_en.json",
+      "upstreamSHA256": "681b522337091c1518cdc8ea6a8654681fabd3a8356d59be49e98c441db469bf",
+      "importedPath": "Sources/SwitcherCore/Resources/trigrams_en.json",
+      "importedSHA256": "681b522337091c1518cdc8ea6a8654681fabd3a8356d59be49e98c441db469bf",
+      "byteIdentical": true,
+      "entries": 8110
+    }
+  ],
+  "dataAttribution": {
+    "origin": "https://github.com/graninilya/keyswitcher",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2026 Ilya Granin",
+    "evidencePath": "THIRD_PARTY.md",
+    "evidenceSHA256": "1c96179cd3e7c2c402f32547bf4f8e85def47665dd3a23ed773dbe1ec15daf4c"
+  },
+  "parity": {
+    "inputPath": "Tests/KeyboopParity/inputs.json",
+    "inputSHA256": "adbe5c87207433f53e93f6957a7f8f78360467f7487234bc099549fd43f61f56",
+    "referencePath": "Tests/SwitcherCoreTests/Fixtures/keyboop-reference.json",
+    "referenceSHA256": "a7a20296c91ced6c88b7985920ea16ef67bedf73d37bc7e13361ac46b00d4aa4",
+    "cases": 257
+  }
+}
