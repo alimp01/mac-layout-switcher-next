@@ -286,6 +286,25 @@ final class InputFocusGuard {
         }
     }
 
+    /// Read-only evidence captured for a fresh Option stream. It can veto the
+    /// buffered route without requiring an AX setter or claiming readback.
+    struct BufferedSource {
+        let target: Target
+        let selection: CFRange
+        let value: String
+        let permit: Permit
+
+        var isAllowed: Bool { permit.isAllowed && target.isCurrent() && permit.isAllowed }
+
+        func matches(_ expected: String) -> Bool {
+            guard isAllowed, selection.length == 0,
+                  target.selection().map({ $0.location == selection.location && $0.length == 0 }) == true,
+                  let range = target.sourceRange(expected), range.location + range.length == selection.location,
+                  target.value() == value else { return false }
+            return isAllowed
+        }
+    }
+
     struct Ticket {
         let target: Target
         let permit: Permit

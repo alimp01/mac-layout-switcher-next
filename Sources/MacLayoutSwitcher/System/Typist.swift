@@ -100,21 +100,24 @@ public final class Typist {
     enum BufferedResult { case posted, untouched, interrupted }
 
     func replaceBuffered(expected: String, with text: String, batch: TrackedInputBatch,
-                         separator: KeyPress?, completion: @escaping (BufferedResult) -> Void) {
+                         separator: KeyPress?, source: InputFocusGuard.BufferedSource? = nil,
+                         completion: @escaping (BufferedResult) -> Void) {
         enqueue {
             var result = BufferedResult.untouched
+            let allowed = { batch.canReplace && (source?.isAllowed ?? true) }
             // Allocate EVERY event before deleting anything. Partial allocation
             // must leave the source intact and still replay its physical key.
             let presses = Self.bufferedPresses(deleteCount: expected.count, text: text)
             let deadline = Date().addingTimeInterval(0.4)
-            while batch.canReplace && !TrackedInputBatch.modifiersReleased && Date() < deadline {
+            while allowed() && !TrackedInputBatch.modifiersReleased && Date() < deadline {
                 Thread.sleep(forTimeInterval: 0.005)
             }
-            if let presses, batch.canReplace, TrackedInputBatch.modifiersReleased {
+            if let presses, allowed(), TrackedInputBatch.modifiersReleased,
+               source?.matches(expected) ?? true {
                 result = .posted
                 var started = false
                 for press in presses {
-                    guard batch.canReplace, TrackedInputBatch.modifiersReleased else {
+                    guard allowed(), TrackedInputBatch.modifiersReleased else {
                         result = started ? .interrupted : .untouched
                         break
                     }

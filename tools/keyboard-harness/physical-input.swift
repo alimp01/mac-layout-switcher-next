@@ -17,10 +17,10 @@ private func testNavigationIntegrity() {
  for unicode in [false,true] {
   for repeated in [false,true] {
    for (code,name) in controls {
-    for phase in ["auto", "option-write", "option-capture", "idle"] {
+    for phase in ["auto", "option-preflight", "option-capture", "idle"] {
      let label="\(unicode ? "Unicode" : "AX")/\(name)/repeat=\(repeated)/\(phase)"
      let engine=fixture(unicode:unicode, chromium:true)
-     if phase == "option-write" || phase == "option-capture" {
+     if phase == "option-preflight" || phase == "option-capture" {
       currentFixture.unavailableField=false
       awaitFixture("AX Option fixture bound") { engine.probeFocusReady }
      }
@@ -36,8 +36,11 @@ private func testNavigationIntegrity() {
       require(physical(engine,code:49) == .suppress,"\(label): auto correction starts")
       navigate()
       currentFixture.physicalModifiers=[]
-     case "option-write":
-      currentFixture.selectionHook=navigate
+     case "option-preflight":
+      // Two reads capture the value; the next read validates the buffered
+      // source on Typist's queue before any destructive event is submitted.
+      currentFixture.valueReadsBeforeHook=2
+      currentFixture.valueReadHook=navigate
       option(engine)
      case "option-capture":
       currentFixture.valueReadHook=navigate
@@ -52,7 +55,7 @@ private func testNavigationIntegrity() {
      engine.stop(); drain()
     }
    }
-   print("PASS: \(unicode ? "Unicode" : "AX") navigation repeat=\(repeated), auto/Option capture/Option write/idle, source and native Space preserved")
+   print("PASS: \(unicode ? "Unicode" : "AX") navigation repeat=\(repeated), auto/Option capture/Option preflight/idle, source and native Space preserved")
   }
  }
 }

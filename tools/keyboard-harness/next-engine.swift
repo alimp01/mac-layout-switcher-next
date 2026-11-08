@@ -32,10 +32,13 @@ final class FixtureAX: DictationAccessibility {
  var bootstrapWrapper = false
  let wrapper = AXUIElementCreateApplication(harnessPID + 2)
  var selectionReadHook: (() -> Void)?
+ var valueReadCount = 0
  var valueReadsBeforeHook = 0
  var valueReadHook: (() -> Void)?
  var bootstrapHook: (() -> Void)?
  var selectionHook: (() -> Void)?
+ var unsupportedWrites = false
+ var axWrites = 0
  var ignoreWrites = false
  var suppressedUpsValid = true
  var syntheticFilter: ((CGEvent) -> TapDecision)?
@@ -53,6 +56,7 @@ final class FixtureAX: DictationAccessibility {
    if CFEqual(element,wrapper) { return name == kAXRoleAttribute ? kAXGroupRole as CFString : nil }
    switch name {
    case kAXValueAttribute:
+    valueReadCount += 1
     if unavailableText { return nil }
     let value=view(for: element).string as CFString
     if let hook=valueReadHook {
@@ -71,16 +75,20 @@ final class FixtureAX: DictationAccessibility {
    }
   }
  }
- func selectedTextIsSettable(_ element: AXUIElement) -> Bool { true }
- func supportsUnicodeInsertion(_ element: AXUIElement) -> Bool { true }
+ func selectedTextIsSettable(_ element: AXUIElement) -> Bool { !unsupportedWrites }
+ func supportsUnicodeInsertion(_ element: AXUIElement) -> Bool { !unsupportedWrites }
  func prefersUnicodeInsertion(pid: pid_t) -> Bool { unicode }
  func setSelectedText(_ text: String, in element: AXUIElement) -> AXError {
-  if !ignoreWrites { mainValue { view(for: element).setAccessibilitySelectedText(text) } }; return .success
+  axWrites += 1
+  if !ignoreWrites && !unsupportedWrites { mainValue { view(for: element).setAccessibilitySelectedText(text) } }; return .success
  }
  func postUnicode(_ text: String, pid: pid_t) -> Bool {
-  SystemDictationAccessibility(postEvent: { event, _ in if !self.ignoreWrites { self.receive(event) } }).postUnicode(text,pid:pid)
+  axWrites += 1
+  return SystemDictationAccessibility(postEvent: { event, _ in if !self.ignoreWrites { self.receive(event) } }).postUnicode(text,pid:pid)
  }
  func setSelection(_ range: CFRange, in element: AXUIElement) -> Bool {
+  axWrites += 1
+  if unsupportedWrites { return false }
   mainValue {
    view(for: element).setSelectedRange(NSRange(location:range.location,length:range.length))
    if range.length > 0, let hook=selectionHook { selectionHook=nil; hook() }
@@ -204,6 +212,180 @@ func option(_ engine: Engine) {
  }
 }
 
+
+// Fresh Option must keep its observed stream when AX is readable but cannot
+// mutate. Literal expected text is independent of the converter implementation.
+if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "option" {
+ for cached in [true, false] {
+  for suffix in ["", " хвост"] {
+  let e=fixture(unicode:false, configure: { $0.autoSwitch=false })
+  currentFixture.unsupportedWrites=true
+  if cached {
+   currentFixture.unavailableField=false
+   awaitFixture("readable AX target cached before physical typing") { e.probeFocusReady }
+  }
+  let keys: [UInt16] = startsEnglish ? [5,4,11,2,17,45] : [34,38,4,45,1,49,15,9,8,0]
+  let typed=startsEnglish ? "ghbdtn" : "шорты кмсф"
+  let converted=startsEnglish ? "привет" : "шорты rvca"
+  let source=typed+suffix
+  let result=converted+suffix
+  currentFixture.editor.string=suffix; currentFixture.editor.setSelectedRange(NSRange(location:0,length:0))
+  for code in keys { require(physical(e,code:code) == .pass,"fresh source key passes") }
+  require(currentFixture.editor.string==source,"literal source verified before Option")
+  let windows=Set(NSApplication.shared.windows.map(ObjectIdentifier.init))
+  currentFixture.unavailableField=false
+  option(e); drain(0.7)
+  let notice=NSApplication.shared.windows.filter { !windows.contains(ObjectIdentifier($0)) }.flatMap { $0.contentView.map(labels) ?? [] }.filter { !$0.isEmpty && $0 != "Закрыть" }.joined(separator:"\n")
+  require(currentFixture.editor.string==result,"fresh readable AX Option (cached=\(cached)): wanted=\(result.debugDescription), actual=\(currentFixture.editor.string.debugDescription), notice=\(notice.debugDescription)")
+  require(currentFixture.editor.selectedRange()==NSRange(location:converted.utf16.count,length:0),"fresh Option keeps collapsed caret after replacement")
+  require(currentFixture.axWrites==0,"fresh stream never attempts AX selection or mutation")
+  require(notice.isEmpty,"fresh Option has no conversion failure notice")
+  require(currentFixture.posted.filter { $0.0 == .keyDown && $0.1 == 51 }.count == (startsEnglish ? 6 : 4),"one replacement deletes exactly the fresh word")
+  e.stop(); drain()
+  }
+ }
+ print("PASS: readable AX / unsupported writes, fresh Option, cached and first capture, literal text/caret/no notice")
+ exit(0)
+}
+if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "option-interrupted-input" {
+ let e=fixture(unicode:false, configure: { $0.autoSwitch=false })
+ currentFixture.unavailableField=false
+ awaitFixture("readable target before interrupted Option") { e.probeFocusReady }
+ typeSource(e)
+ currentFixture.postHook={ event in
+  if event.type == .keyDown && event.getIntegerValueField(.keyboardEventKeycode)==51 {
+   currentFixture.postHook=nil
+   require(physical(e,code:49) == .suppress,"physical Space during first deletion queues and cancels manual")
+   for code in codes { require(physical(e,code:code) == .suppress,"new word queues behind interrupted manual") }
+  }
+ }
+ option(e); drain(0.8)
+ require(currentFixture.editor.string=="ghbdt" && currentFixture.posted.count==2,"interrupted manual withholds next word and releases first deletion pair")
+ e.setAutoSwitch(true)
+ require(physical(e,code:49) == .pass,"withheld word cannot authorize a later destructive correction")
+ drain(0.5)
+ require(currentFixture.editor.string=="ghbdt " && currentFixture.posted.count==2,"new separator preserves partial source without retry or undelivered-word deletion")
+ e.stop(); drain()
+ print("PASS: interrupted Option retires authority for withheld physical word")
+ exit(0)
+}
+
+if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "option-cancel" {
+ let e=fixture(unicode:false, configure: { $0.autoSwitch=false })
+ currentFixture.unavailableField=false
+ awaitFixture("readable target before cancelled Option") { e.probeFocusReady }
+ typeSource(e)
+ currentFixture.physicalModifiers = .maskShift; currentFixture.valueReadCount=0
+ option(e)
+ awaitFixture("capture before fresh physical word") { currentFixture.valueReadCount>=2 }
+ drain(0.02)
+ require(physical(e,code:49) == .suppress,"physical Space cancels pending manual and queues")
+ for code in codes { require(physical(e,code:code) == .suppress,"next fresh word queues after cancellation") }
+ currentFixture.physicalModifiers=[]; drain(0.6)
+ require(currentFixture.editor.string=="ghbdtn ghbdtn","cancelled manual preserves original and entire next fresh word")
+ e.setAutoSwitch(true)
+ require(physical(e,code:49) == .suppress,"late cancelled completion preserves next word's correction authority")
+ drain(0.6)
+ require(currentFixture.editor.string=="ghbdtn привет ","fresh word still corrects after cancellation of preceding manual")
+ e.stop(); drain()
+ print("PASS: cancelled Option completion preserves subsequently tracked word")
+ exit(0)
+}
+
+if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "option-guards" {
+ require(startsEnglish,"Option guard fixture pins ABC")
+ func ready() -> Engine {
+  let e=fixture(unicode:false, configure: { $0.autoSwitch=false })
+  currentFixture.unavailableField=false
+  awaitFixture("readable Option guard target") { e.probeFocusReady }
+  return e
+ }
+ // A fresh stream cannot erase a different word merely because its size fits.
+ for text in ["abcdef", "prefixghbdtn"] {
+  let e=ready(); typeSource(e)
+  currentFixture.editor.string=text; currentFixture.editor.setSelectedRange(NSRange(location:text.utf16.count,length:0))
+  option(e); drain(0.5)
+  require(currentFixture.editor.string==text && currentFixture.posted.isEmpty && currentFixture.axWrites==0,"positive source/boundary contradiction vetoes fresh deletion")
+  e.stop(); drain()
+ }
+ // Hold modifiers at the real queue preflight, after a stable source capture.
+ // Changes here must be checked again before the first Backspace is submitted.
+ for mode in ["value", "caret", "selection", "field", "pid", "secure", "protected", "key", "click", "tap", "recorder"] {
+  let e=ready()
+  currentFixture.editor.string="before "; currentFixture.editor.setSelectedRange(NSRange(location:7,length:0))
+  for code in codes { _=physical(e,code:code) }
+  require(currentFixture.editor.string=="before ghbdtn","guard source exists before Option")
+  currentFixture.editors[1].string="before ghbdtn"; currentFixture.editors[1].setSelectedRange(NSRange(location:13,length:0))
+  currentFixture.valueReadCount=0; currentFixture.physicalModifiers = .maskShift
+  option(e)
+  awaitFixture("Option captured source before queue intervention") { currentFixture.valueReadCount>=2 }
+  drain(0.02)
+  switch mode {
+  case "value": currentFixture.editor.string="change ghbdtn"; currentFixture.editor.setSelectedRange(NSRange(location:13,length:0))
+  case "caret": currentFixture.editor.setSelectedRange(NSRange(location:12,length:0))
+  case "selection": currentFixture.editor.setSelectedRange(NSRange(location:7,length:6))
+  case "field": currentFixture.activeField=1
+  case "pid": harnessFrontPID=harnessPID+1
+  case "secure": currentFixture.isSecure=true
+  case "protected": currentFixture.secureField=true
+  case "key": require(physical(e,code:0) == .suppress,"new physical key queues behind pending Option")
+  case "click":
+   let click=CGEvent(mouseEventSource:nil,mouseType:.leftMouseDown,mouseCursorPosition:.zero,mouseButton:.left)!
+   _=e.probeEvent(click)
+  case "tap": let event=CGEvent(source:nil)!; event.type = .tapDisabledByTimeout; _=e.probeEvent(event)
+  default: e.isRecordingHotkey=true
+  }
+  currentFixture.physicalModifiers=[]; drain(0.65)
+  let wanted=mode == "value" ? "change ghbdtn" : mode == "key" ? "before ghbdtna" : "before ghbdtn"
+  require(currentFixture.editors[0].string==wanted,"\(mode) before first deletion preserves source and real input")
+  require(currentFixture.editors[1].string=="before ghbdtn","\(mode) cannot redirect fresh mutation")
+  require(currentFixture.posted.allSatisfy { $0.1 != 51 } && currentFixture.axWrites==0,"\(mode) posts no deletion or legacy retry")
+  e.stop(); drain()
+ }
+ let unreadable=ready(); typeSource(unreadable)
+ currentFixture.editor.setSelectedRange(NSRange(location:2,length:2)); currentFixture.unavailableText=true
+ option(unreadable); drain(0.5)
+ require(currentFixture.editor.string=="ghbdtn" && currentFixture.posted.isEmpty && currentFixture.axWrites==0,"known unreadable nonempty selection never licenses deletion")
+ unreadable.stop(); drain()
+ for mode in ["preexisting", "selected", "known-other-field"] {
+  let e=ready()
+  if mode != "preexisting" { typeSource(e) }
+  if mode == "known-other-field" { currentFixture.activeField=1 }
+  currentFixture.editor.string="before ghbdtn after"
+  currentFixture.editor.setSelectedRange(NSRange(location:mode == "selected" ? 7 : 13,length:mode == "selected" ? 6 : 0))
+  option(e); drain(0.6)
+  require(currentFixture.editor.string=="before привет after","\(mode) retains guarded AX conversion")
+  require(currentFixture.axWrites>0 && currentFixture.posted.isEmpty,"\(mode) has no fresh-stream Backspace authority")
+  if mode == "known-other-field" { require(currentFixture.editors[0].string=="ghbdtn","old field untouched after fresh AX rebind") }
+  e.stop(); drain()
+ }
+ let undo=ready(); undo.setAutoSwitch(true); typeSource(undo)
+ _=physical(undo,code:49); drain(0.5)
+ require(currentFixture.editor.string=="привет ","readable AX auto correction before undo")
+ currentFixture.unsupportedWrites=true
+ option(undo); drain(0.5)
+ require(currentFixture.editor.string=="ghbdtn " && currentFixture.axWrites==0,"readable AX Option undo uses observed corrected word and space")
+ undo.stop(); drain()
+ let partial=ready(); typeSource(partial)
+ currentFixture.postHook={ event in
+  if event.type == .keyDown && event.getIntegerValueField(.keyboardEventKeycode)==51 {
+   currentFixture.postHook=nil
+   let click=CGEvent(mouseEventSource:nil,mouseType:.leftMouseDown,mouseCursorPosition:.zero,mouseButton:.left)!
+   _=partial.probeEvent(click)
+  }
+ }
+ option(partial); drain(0.8)
+ require(currentFixture.editor.string=="ghbdt" && currentFixture.posted.count==2 && currentFixture.axWrites==0,"interrupted readable Option releases one key pair and never retries")
+ drain(0.4)
+ require(currentFixture.posted.count==2,"no automatic retry after readable Option mutation")
+ partial.stop(); drain()
+ print("PASS: readable Option source/value/caret/selection/field/PID/secure/protected/physical cancellation; retained AX authority; undo; no retry")
+ exit(0)
+}
+
+func labels(_ view: NSView) -> [String] {
+ (view as? NSTextField).map { [$0.stringValue] } ?? view.subviews.flatMap(labels)
+}
 
 if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "protected" {
  let e=fixture(unicode:false)

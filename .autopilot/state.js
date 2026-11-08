@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "CLAUDE.md",
   "skillDir": "/home/claudebot/.claude/skills/autopilot",
   "startedAt": "2026-08-29T03:22:57+00:00",
-  "updatedAt": "2026-11-06",
+  "updatedAt": "2026-11-08",
   "stages": [
     {
       "id": "preflight",
@@ -64,9 +64,9 @@ window.STATE =
     }
   ],
   "requirements": {
-    "total": 39,
+    "total": 40,
     "done": 35,
-    "inTicket": 3,
+    "inTicket": 4,
     "droppedNote": "G07 отменён пользователем в пользу G08",
     "inSpec": 0,
     "placeholder": 0,
@@ -969,6 +969,15 @@ window.STATE =
         "passed": 110,
         "failed": 0
       }
+    },
+    {
+      "id": "38",
+      "title": "Fresh Option routing with readable AX",
+      "requirements": [
+        "G33"
+      ],
+      "status": "in-progress",
+      "blockedBy": []
     }
   ],
   "singlePass": null,
@@ -1451,5 +1460,14 @@ window.STATE =
     "passed": 95,
     "failed": 0,
     "note": "G26 exact27 Linuxinputs95/95; rawfocus50/nav160/update15/dictation15/finalEngine27groups/fullspeech/deepstrict/mountedDMG PASS; two fresh reviews99hashes0findings. Physicalacceptance pending."
+  },
+  "nextOptionRoutingAudit": {
+    "ticket": "38",
+    "baseline": "546f3f953fdb137048cbee623901c7f2618995b6",
+    "status": "investigating",
+    "version": "1.5.0",
+    "userConfirmation": "Только что набрал и нажал Option",
+    "scope": "Safari / yandex.ru / fresh кмсф before Option",
+    "physicalAcceptance": "failed in user screenshot; previous Codex two-case acceptance remains valid"
   }
 };

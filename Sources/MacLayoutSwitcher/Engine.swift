@@ -529,7 +529,9 @@ public final class Engine {
                     _ = self.core.handle(.reset)
                     return
                 }
-                if expected.map({ $0.matches(target) }) != true { _ = self.core.handle(.reset) }
+                // A first AX capture adds a guard to the observed stream. Only a
+                // positively different cached field revokes that stream.
+                if let expected, !expected.matches(target) { _ = self.core.handle(.reset) }
                 let outcome = self.core.handle(.hotkey(.convert))
                 if outcome.command == .none {
                     if let word, KeyMap.selectionConversion(word.text).text != word.text {
@@ -681,7 +683,7 @@ public final class Engine {
             if let conversionPermit { selectionConverter.finish(conversionPermit) }
             return .pass
         }
-        if conversionPermit == nil, let expected = outcome.expectedText,
+        if let expected = outcome.expectedText,
            let pid = inputApplicationPID, expected.count <= 65 {
             let separator: Typist.KeyPress?
             if let sep = outcome.reinjectSeparator {
@@ -693,13 +695,30 @@ public final class Engine {
             let batch: TrackedInputBatch
             if let active = trackedBatch, active.permit === inputFocus.generation { batch = active }
             else { batch = TrackedInputBatch(permit: inputFocus.generation, applicationPID: pid); trackedBatch = batch }
-            typist.replaceBuffered(expected: expected, with: text, batch: batch, separator: separator) { [weak self] result in
+            let source: InputFocusGuard.BufferedSource?
+            if let conversionPermit {
+                guard let ticket = inputFocus.ticket, let conversionSelection, let conversionValue else {
+                    selectionConverter.finish(conversionPermit)
+                    core.discardReplacement(outcome)
+                    return .pass
+                }
+                source = InputFocusGuard.BufferedSource(target: ticket.target, selection: conversionSelection,
+                                                        value: conversionValue, permit: conversionPermit)
+            } else { source = nil }
+            typist.replaceBuffered(expected: expected, with: text, batch: batch, separator: separator, source: source) { [weak self] result in
                 guard let self else { return }
+                if let conversionPermit { self.selectionConverter.finish(conversionPermit) }
                 guard result == .posted else {
-                    self.core.discardReplacement(outcome, resetContext: batch.permit === self.inputFocus.generation)
+                    // Untouched cancellation may already track the next word.
+                    // Interrupted posting withholds that input, so it cannot
+                    // leave deletion authority for text never delivered.
+                    let resetContext = batch.permit === self.inputFocus.generation
+                        && (result == .interrupted || conversionPermit?.isAllowed != false)
+                    self.core.discardReplacement(outcome, resetContext: resetContext)
+                    if result == .untouched, conversionPermit?.isAllowed == true { self.conversionNotice.show() }
                     return
                 }
-                if batch.permit.isAllowed, let lang = switchTo {
+                if batch.permit.isAllowed, conversionPermit?.isAllowed != false, let lang = switchTo {
                     LayoutSwitcher.select(lang)
                     KeyTranslator.refresh()
                     self.onLayoutSwitched?(lang)

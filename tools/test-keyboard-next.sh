@@ -80,9 +80,10 @@ swiftc -I "$engine_probe_dir" -L "$engine_probe_dir" -lSwitcherCore -Xlinker -rp
 engine_test_status=0
 "$engine_probe_dir/test-engine" > "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
 if [[ "$engine_test_status" == "0" && -z "${MLS_NEXT_REPAIR:-}" ]]; then
-    for repair in manual snippet protected; do
+    for repair in option option-guards option-cancel option-interrupted-input manual snippet protected; do
         MLS_NEXT_REPAIR="$repair" "$engine_probe_dir/test-engine" >> "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
     done
+    MLS_NEXT_REPAIR=option MLS_FIXTURE_INPUT_SOURCE_ID=com.apple.keylayout.RussianWin "$engine_probe_dir/test-engine" >> "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
     MLS_NEXT_REPAIR=caret MLS_FIXTURE_INPUT_SOURCE_ID=com.apple.keylayout.RussianWin "$engine_probe_dir/test-engine" >> "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
     MLS_NEXT_REPAIR=caret MLS_NEXT_CHANGED_APP=1 MLS_FIXTURE_INPUT_SOURCE_ID=com.apple.keylayout.RussianWin "$engine_probe_dir/test-engine" >> "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
 fi
