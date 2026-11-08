@@ -221,7 +221,7 @@ public final class StatusBarUI: NSObject {
         guard let button = statusItem?.button else { return }
         let paused = layoutPaused || state.paused
         let lang = layoutLang.map { $0.rawValue.uppercased() } ?? "--"
-        let text = "Next " + (paused ? "⏸ " + lang : lang) + (dictationStatus.isEmpty ? "" : " " + dictationStatus)
+        let text = (paused ? "⏸ " + lang : lang) + (dictationStatus.isEmpty ? "" : " " + dictationStatus)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: NSFont.monospacedSystemFont(ofSize: 12, weight: .bold),
             .foregroundColor: paused ? NSColor.secondaryLabelColor : NSColor.labelColor,

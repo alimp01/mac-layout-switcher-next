@@ -64,9 +64,9 @@ window.STATE =
     }
   ],
   "requirements": {
-    "total": 40,
+    "total": 41,
     "done": 35,
-    "inTicket": 4,
+    "inTicket": 5,
     "droppedNote": "G07 отменён пользователем в пользу G08",
     "inSpec": 0,
     "placeholder": 0,
@@ -984,6 +984,15 @@ window.STATE =
         "passed": 110,
         "failed": 0
       }
+    },
+    {
+      "id": "39",
+      "title": "Убрать Next из надписи в трее",
+      "requirements": [
+        "G34"
+      ],
+      "status": "in-progress",
+      "blockedBy": []
     }
   ],
   "singlePass": null,
@@ -1147,27 +1156,26 @@ window.STATE =
     "drift": []
   },
   "manualAcceptance": {
-    "version": "1.5.1",
+    "version": "1.5.2",
     "status": "pending",
     "scope": "Safari fresh шорты кмсф + Option without selection; expected шорты rvca"
   },
   "release": {
-    "version": "1.5.1",
-    "codeCommit": "5069c7b0f6b27d6bc2db68c057fdda30fec1514e",
-    "binarySHA256": "424068d1e12854912ab7c9f9abb86188793f15333bba2384a5ebe1ca70721bdb",
-    "helperSHA256": "6cb0c38d1e498ad3067479bb4fd254f41c4ea1714c7f4ab0eb5cbeee30c74226",
-    "dmgSHA256": "bdcdecfdc1e5b3f6a5637ff46850e36e54fa97a52031ed91b6b972a30887ae9d",
-    "dmgBytes": 12227297,
-    "frozenManifestSHA256": "5664465d696128258d8cc624b4afe94a8857b74348e0f9f648768d50ef33522f",
+    "version": "1.5.2",
+    "binarySHA256": "50a18d7396b11bee9423555c7be94f390821f18c1f9eb522f6bcaf31327bb41d",
+    "dmgSHA256": "70fe187a20a69c00fc34bd573bf4dc57577261ae030c08d753bafdfae1a351ff",
+    "dmgBytes": 12227191,
+    "bundleID": "space.alimp.maclayoutswitcher.next",
     "mountedVerified": true,
     "deepStrictVerified": true,
-    "allFilesAndResourcesVerified": true,
-    "physicalAcceptance": "pending Safari user test",
-    "bundleID": "space.alimp.maclayoutswitcher.next",
-    "repository": "alimp01/mac-layout-switcher-next",
-    "artifact": "MacLayoutSwitcherNext-1.5.1.dmg",
+    "allBundledFilesVerified": 23,
+    "uiFileSHA256": "5c5f5aa0ae3fe3d5196880035343f0f873cb6e244b87a2650e85d321d6557e72",
+    "productDeltaFromValidated151": "only visible Next prefix removal",
+    "physicalSafariAcceptance": "pending",
     "status": "validated; publication and installation pending",
-    "installedPath": "/Applications/MacLayoutSwitcherNext.app"
+    "repository": "alimp01/mac-layout-switcher-next",
+    "installedPath": "/Applications/MacLayoutSwitcherNext.app",
+    "artifact": "MacLayoutSwitcherNext-1.5.2.dmg"
   },
   "wordCoverageAudit": {
     "independentRU": 459,
@@ -1465,10 +1473,10 @@ window.STATE =
     "ticket": "38",
     "baseline": "546f3f953fdb137048cbee623901c7f2618995b6",
     "status": "implemented/reviewed; physical acceptance pending",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "userConfirmation": "Только что набрал и нажал Option",
     "scope": "Safari / yandex.ru / fresh кмсф before Option",
-    "physicalAcceptance": "pending Safari physical test of1.5.1",
+    "physicalAcceptance": "pending Safari physical test;1.5.2 contains validated1.5.1 fix",
     "codeCommit": "5069c7b0f6b27d6bc2db68c057fdda30fec1514e",
     "reviews": "Spec APPROVE0; Standards APPROVE0",
     "manifestSHA256": "5ec38dad3053cf146e5cc1541f06b2c13ed9c4bc3d0919d9030155a9fa56eb25",
@@ -1503,5 +1511,33 @@ window.STATE =
     "confirmedAt": "2026-11-06T05:47:29.988899+00:00",
     "confirmedDateMoscow": "2026-11-06",
     "note": "User enabled Next Accessibility/Input Monitoring and relaunched. Only these two physical paths are accepted; other apps, Enter, rapid typing and speech are not covered."
+  },
+  "intermediateNext151Release": {
+    "version": "1.5.1",
+    "codeCommit": "5069c7b0f6b27d6bc2db68c057fdda30fec1514e",
+    "binarySHA256": "424068d1e12854912ab7c9f9abb86188793f15333bba2384a5ebe1ca70721bdb",
+    "helperSHA256": "6cb0c38d1e498ad3067479bb4fd254f41c4ea1714c7f4ab0eb5cbeee30c74226",
+    "dmgSHA256": "bdcdecfdc1e5b3f6a5637ff46850e36e54fa97a52031ed91b6b972a30887ae9d",
+    "dmgBytes": 12227297,
+    "frozenManifestSHA256": "5664465d696128258d8cc624b4afe94a8857b74348e0f9f648768d50ef33522f",
+    "mountedVerified": true,
+    "deepStrictVerified": true,
+    "allFilesAndResourcesVerified": true,
+    "physicalAcceptance": "pending Safari user test",
+    "bundleID": "space.alimp.maclayoutswitcher.next",
+    "repository": "alimp01/mac-layout-switcher-next",
+    "artifact": "MacLayoutSwitcherNext-1.5.1.dmg",
+    "status": "published and installed; not yet launched; superseded by requested tray-label update1.5.2",
+    "installedPath": "/Applications/MacLayoutSwitcherNext.app",
+    "publicationCommit": "19909642dee82537e06525f0161f09bcac0e11ee",
+    "backup": "/Applications/.MacLayoutSwitcherNext-T38-vc5w8inr/previous.app"
+  },
+  "trayLabelAudit": {
+    "requirement": "G34",
+    "ticket": "39",
+    "version": "1.5.2",
+    "reviews": "Spec APPROVE0 / Standards APPROVE0",
+    "validation": "fullspeech/mountedDMG/23bundlefiles passed",
+    "status": "implemented; install pending"
   }
 };

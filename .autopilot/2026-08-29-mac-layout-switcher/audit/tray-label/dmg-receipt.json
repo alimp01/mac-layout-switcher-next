@@ -1,0 +1,13 @@
+{
+  "version": "1.5.2",
+  "binarySHA256": "50a18d7396b11bee9423555c7be94f390821f18c1f9eb522f6bcaf31327bb41d",
+  "dmgSHA256": "70fe187a20a69c00fc34bd573bf4dc57577261ae030c08d753bafdfae1a351ff",
+  "dmgBytes": 12227191,
+  "bundleID": "space.alimp.maclayoutswitcher.next",
+  "mountedVerified": true,
+  "deepStrictVerified": true,
+  "allBundledFilesVerified": 23,
+  "uiFileSHA256": "5c5f5aa0ae3fe3d5196880035343f0f873cb6e244b87a2650e85d321d6557e72",
+  "productDeltaFromValidated151": "only visible Next prefix removal",
+  "physicalSafariAcceptance": "pending"
+}

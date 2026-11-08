@@ -1,3 +1,7 @@
+# Next1.5.2 / G34 — 2026-11-08
+
+User asked to remove Next from tray. Only visible title prefix removed; RU/EN/pause/dictation preserved. Both independent reviews APPROVE0; fullspeech/build and mountedDMG23files PASS. Candidate1.5.2 includes Option fix1.5.1. Release/install pending; physical Safari acceptance G33 remains pending. See tray-label-spec/qa,T39 and state. Stable app/repo/archive remain unchanged.
+
 # Текущая работа — Next1.5.1 / G33, 2026-11-08
 
 Исправлен маршрут Option для свежего слова при читаемом AX. Код5069c7b, два независимых ревью APPROVE0, Linux110/0, native/диктовка/fullspeech/mountedDMG пройдены. QA честно сохраняет timing-сбой старого protected-PID теста и отдельный readiness-ремонт с успешными проверками.
