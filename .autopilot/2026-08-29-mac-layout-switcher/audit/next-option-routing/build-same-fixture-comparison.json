@@ -1,0 +1,12 @@
+{
+  "frozen_sources_verified": 108,
+  "baseline": "/tmp/mls-keyboard-engine.9NO37k",
+  "final": "/tmp/mls-keyboard-engine.6fNJ6c",
+  "identical_fixture_files": {
+    "main.swift": true,
+    "boundary.swift": true,
+    "physical-input.swift": true
+  },
+  "baseline_ru_log": "/tmp/mls-keyboard-engine.9NO37k/run-ru-red.log",
+  "baseline_en_log": "/tmp/mls-keyboard-engine.9NO37k/run.log"
+}

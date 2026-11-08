@@ -1,0 +1,174 @@
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/KeyboardEnvironment.swift
++++ /tmp/mls-keyboard-engine.fHdMte/KeyboardEnvironment.swift
+@@ -22,12 +22,12 @@
+     }
+     func stop() { timer?.cancel(); timer = nil }
+     private func refresh() {
+-        let nextPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
++        let nextPID = Optional(harnessFrontPID)
+         let nextBundle = FrontApp.bundleID
+         let nextSecure = SecureInput.isActive
+         let appChanged = pid != nextPID || bundleID != nextBundle
+         let changed = appChanged || secure != nextSecure
+-        if appChanged { chromium = Self.isChromium(pid: nextPID, bundleID: nextBundle) }
++        if appChanged { chromium = currentFixture.chromium }
+         pid = nextPID; bundleID = nextBundle; secure = nextSecure
+         if changed { onChange?() }
+     }
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/TrackedInputBatch.swift
++++ /tmp/mls-keyboard-engine.fHdMte/TrackedInputBatch.swift
+@@ -18,11 +18,11 @@
+ 
+     var canReplay: Bool {
+         permit.isAllowed && !uncertain && !SecureInput.isActive
+-            && NSWorkspace.shared.frontmostApplication?.processIdentifier == applicationPID
++            && Optional(harnessFrontPID) == applicationPID
+     }
+     var canReplace: Bool { replacementPermit.isAllowed && canReplay }
+     static var modifiersReleased: Bool {
+-        CGEventSource.flagsState(.combinedSessionState)
++        CGEventFlags()
+             .intersection([.maskShift, .maskAlternate, .maskCommand, .maskControl]).isEmpty
+     }
+     func reject(interrupted: Bool) {
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/Engine.swift
++++ /tmp/mls-keyboard-engine.fHdMte/Engine.swift
+@@ -23,7 +23,7 @@
+     private let environment = KeyboardEnvironment()
+     private var physicalFlags: CGEventFlags = []
+     private let selectionConverter = SelectionConverter()
+-    private lazy var conversionNotice = ConversionNotice()
++    private lazy var conversionNotice = ConversionNotice(presentsWindow: false)
+     private var queuedNavigation = false
+     private var trackedBatch: TrackedInputBatch?
+     private var inputApplicationPID: pid_t?
+@@ -86,7 +86,7 @@
+         self.config = config
+         config.load()
+ 
+-        let detector = Detector()
++        let detector = Detector(dataDirectory: URL(fileURLWithPath: "/tmp/mls-keyboard-engine.fHdMte/SwitcherCore/Resources"))
+         detector.load(from: config.exclusionsURL)
+         let snippets = SnippetStore()
+         snippets.load(from: config.snippetsURL)
+@@ -141,7 +141,7 @@
+         KeyTranslator.start()
+         Typist.warmUp()
+         environment.start()
+-        let started = tap.start { [weak self] stroke in
++        let started = tap.installProbeHandler { [weak self] stroke in
+             self?.handle(keyEvent: stroke) ?? .pass
+         }
+         guard started else {
+@@ -501,7 +501,7 @@
+         if core.isPaused { toggleLayout(); return }
+         let generation = inputFocus.generation
+         let expected = inputFocus.ticket?.target
+-        let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier
++        let pid = Optional(harnessFrontPID)
+         selectionConverter.capture(expectedPID: pid) { [weak self] captured, permit in
+             guard let self, permit.isAllowed, generation.isAllowed else { return }
+             self.conversionNotice.hide()
+@@ -788,6 +788,9 @@
+         return Typist.makeKeyPress(keyCode: code, flags: [])
+     }
+ 
++    func probeEvent(_ event: CGEvent) -> TapDecision { tap.process(type: event.type, event: event) }
++    var probeFocusReady: Bool { inputFocus.ticket != nil }
++
+     private func isExcludedApp() -> Bool {
+         guard let bundle = environment.bundleID else { return false }
+         return config.config.excludedApps.contains(bundle)
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/InputFocusGuard.swift
++++ /tmp/mls-keyboard-engine.fHdMte/InputFocusGuard.swift
+@@ -48,13 +48,13 @@
+     struct Target {
+         let element: AXUIElement
+         let pid: pid_t
+-        var accessibility: any DictationAccessibility = SystemDictationAccessibility()
++        var accessibility: any DictationAccessibility = harnessAccessibility
+         var processStart: SpotlightProcessStart? = nil
+ 
+         /// Runs on a worker. Reuse the speech adapter's bounded AX bootstrap and
+         /// process routing; querying the current element itself never bootstraps.
+-        static func capture(expectedPID: pid_t? = NSWorkspace.shared.frontmostApplication?.processIdentifier,
+-                            accessibility: any DictationAccessibility = SystemDictationAccessibility(),
++        static func capture(expectedPID: pid_t? = Optional(harnessFrontPID),
++                            accessibility: any DictationAccessibility = harnessAccessibility,
+                             allowed: () -> Bool = { true },
+                             preparingOnly: Bool = false,
+                             failure: (CaptureFailure) -> Void = { _ in }) -> Target? {
+@@ -397,7 +397,7 @@
+         guard !sampling, shouldSample?() != false else { return }
+         sampling = true
+         let requestedPermit = permit
+-        let expectedPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
++        let expectedPID = Optional(harnessFrontPID)
+         queue.async { [weak self] in
+             // Unknown AX cannot downgrade a previously known secure field.
+             // Global SecureInput is independently sampled by Engine/Typist.
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/Typist.swift
++++ /tmp/mls-keyboard-engine.fHdMte/Typist.swift
+@@ -286,7 +286,7 @@
+     /// Маркирует событие как наше и отправляет в HID-очередь с микрозадержкой.
+     private static func post(_ event: CGEvent) {
+         event.setIntegerValueField(.eventSourceUserData, value: EventTap.syntheticMarker)
+-        event.post(tap: .cghidEventTap)
++        harnessPost(event)
+         usleep(interEventDelayMicroseconds)
+     }
+ }
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/SecureInput.swift
++++ /tmp/mls-keyboard-engine.fHdMte/SecureInput.swift
+@@ -8,7 +8,7 @@
+ public enum SecureInput {
+     /// Активен ли сейчас защищённый ввод.
+     public static var isActive: Bool {
+-        IsSecureEventInputEnabled()
++        false
+     }
+ }
+ #endif
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/FrontApp.swift
++++ /tmp/mls-keyboard-engine.fHdMte/FrontApp.swift
+@@ -9,7 +9,7 @@
+     /// Bundle id активного приложения (например "com.apple.Terminal");
+     /// `nil`, если система его не отдала.
+     public static var bundleID: String? {
+-        NSWorkspace.shared.frontmostApplication?.bundleIdentifier
++        "com.example.MLSEngineFixture"
+     }
+ }
+ #endif
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/EventTap.swift
++++ /tmp/mls-keyboard-engine.fHdMte/EventTap.swift
+@@ -49,6 +49,7 @@
+     private var handler: ((KeyStroke) -> TapDecision)?
+ 
+     public init() {}
++    func installProbeHandler(handler: @escaping (KeyStroke) -> TapDecision) -> Bool { self.handler = handler; return true }
+ 
+     /// Создаёт и включает tap. `false` — если система отказала (обычно нет
+     /// разрешения Accessibility/Input Monitoring); повторный вызов при живом
+@@ -118,7 +119,7 @@
+ 
+     /// Разбирает событие и возвращает решение. Всё, что не пользовательское
+     /// нажатие (служебные типы, своя синтетика), пропускается без обработки.
+-    private func process(type: CGEventType, event: CGEvent) -> TapDecision {
++    func process(type: CGEventType, event: CGEvent) -> TapDecision {
+         switch type {
+         case .tapDisabledByTimeout, .tapDisabledByUserInput:
+             _ = handler?(KeyStroke(kind: .tapInterrupted, keyCode: 0, characters: "", flags: [], isAutorepeat: false))
+--- /private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/KeyTranslator.swift
++++ /tmp/mls-keyboard-engine.fHdMte/KeyTranslator.swift
+@@ -75,8 +75,8 @@
+     /// uchr-данные текущего источника ввода (TIS). Копия `Data` — блоб
+     /// принадлежит источнику и не должен переживать его освобождение.
+     private static func currentLayoutData() -> Data? {
+-        guard let source = TISCopyCurrentKeyboardInputSource()?.takeRetainedValue(),
+-              let rawPtr = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData)
++        guard let source = harnessCopyKeyboardInputSource()?.takeRetainedValue(),
++              let rawPtr = harnessKeyboardLayoutData(source)
+         else { return nil }
+         let cfData = Unmanaged<CFData>.fromOpaque(rawPtr).takeUnretainedValue()
+         return cfData as Data

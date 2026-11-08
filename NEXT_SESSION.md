@@ -1,3 +1,10 @@
+# Текущая работа — Next1.5.1 / G33, 2026-11-08
+
+Исправлен маршрут Option для свежего слова при читаемом AX. Код5069c7b, два независимых ревью APPROVE0, Linux110/0, native/диктовка/fullspeech/mountedDMG пройдены. QA честно сохраняет timing-сбой старого protected-PID теста и отдельный readiness-ремонт с успешными проверками.
+Следующий шаг: публикация/установка1.5.1, затем реальная проверка Safari: набрать руками «шорты кмсф» и нажать Option без выделения; ожидается «шорты rvca». Приёмка pending. См. next-option-routing-spec/qa, T38, audit/next-option-routing, state.nextOptionRoutingAudit. Предыдущие результаты Codex1.5.0 не расширять. Только Next main/archive/app, stable не трогать.
+
+---
+
 # Продолжение Next — отдельный форк, 2026-11-06
 
 Актуальный репозиторий: https://github.com/alimp01/mac-layout-switcher-next .

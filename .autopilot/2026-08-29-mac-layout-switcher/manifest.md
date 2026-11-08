@@ -45,4 +45,4 @@
 | G31 | «дополним наш распознование ошибок из keyboop» | done | Словари, триграммы, правила и решения на лету из закреплённого upstream с MIT notices; Next1.5.0: two reviews, Linux110, native/speech/DMG PASS; user confirmed Codex Space + Option on2026-11-06 | keyboop-fork-spec.md → T36 |
 | G32 | «алгоритм замены возьмем тоже из него» | done | Backspace/Unicode по собственному буферу, отсутствие обязательного AX для набранного слова, упорядочивание ввода; Next1.5.0: two reviews, Linux110, native/speech/DMG PASS; user confirmed Codex Space + Option on2026-11-06 | keyboop-fork-spec.md → T37 |
 
-| G33 | «почему он не исправляет в обычном окне браузера?»; «Только что набрал и нажал Option» | in-ticket | Safari fresh кмсф fails through readable-AX legacy route; production regression and route repair | next-option-routing-spec.md → T38 |
+| G33 | «почему он не исправляет в обычном окне браузера?»; «Только что набрал и нажал Option» | in-ticket | Next1.5.1 fresh Option route repaired; native/Linux110/speech/DMG and both reviews PASS; physical Safari pending | next-option-routing-spec.md → T38 |

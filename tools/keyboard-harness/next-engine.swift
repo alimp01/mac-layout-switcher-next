@@ -389,7 +389,8 @@ func labels(_ view: NSView) -> [String] {
 
 if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "protected" {
  let e=fixture(unicode:false)
- currentFixture.unavailableField=false; currentFixture.secureField=true; drain(0.25)
+ currentFixture.unavailableField=false; currentFixture.secureField=true
+ awaitFixture("known protected field sampled") { e.probeProtectedField }
  currentFixture.unavailableField=true; drain(0.25)
  let windows=Set(NSApplication.shared.windows.map(ObjectIdentifier.init))
  typeSource(e)
@@ -398,7 +399,8 @@ if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "protected" {
  require(currentFixture.editor.string=="ghbdtn " && currentFixture.posted.isEmpty,"unknown AX cannot downgrade a known protected destination")
  let recovery=NSApplication.shared.windows.filter { !windows.contains(ObjectIdentifier($0)) }.flatMap { $0.contentView.map(viewText) ?? [] }.joined(separator:"\n")
  require(!recovery.contains("ghbdtn"),"protected input is never retained in recovery")
- currentFixture.unavailableField=false; currentFixture.secureField=false; drain(0.3)
+ currentFixture.unavailableField=false; currentFixture.secureField=false
+ awaitFixture("ordinary target clears protected cache") { !e.probeProtectedField && e.probeFocusReady }
  currentFixture.editor.string=""; currentFixture.editor.setSelectedRange(NSRange(location:0,length:0))
  let click=CGEvent(mouseEventSource:nil,mouseType:.leftMouseDown,mouseCursorPosition:.zero,mouseButton:.left)!
  _=e.probeEvent(click); typeSource(e)
@@ -407,8 +409,10 @@ if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "protected" {
  require(currentFixture.editor.string=="привет ","fresh correction resumes after positive nonprotected target")
  e.stop(); drain()
  let nextApp=fixture(unicode:false)
- currentFixture.unavailableField=false; currentFixture.secureField=true; drain(0.25)
- currentFixture.unavailableField=true; harnessFrontPID=harnessPID+1; drain(0.25)
+ currentFixture.unavailableField=false; currentFixture.secureField=true
+ awaitFixture("old application protected field sampled") { nextApp.probeProtectedField }
+ currentFixture.unavailableField=true; harnessFrontPID=harnessPID+1
+ awaitFixture("new PID retires old protected cache after bounded AX capture") { !nextApp.probeProtectedField }
  typeSource(nextApp)
  require(physical(nextApp,code:49) == .suppress,"positive PID change clears old application's protected field while AX remains absent")
  drain(0.5)

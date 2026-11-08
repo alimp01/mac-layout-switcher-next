@@ -1,3 +1,8 @@
+# Next1.5.1 / G33 — 2026-11-08
+
+Fresh Option route repaired in5069c7b: readable AX no longer forces a freshly observed word through legacy replacement. Preserves source/caret/security/cancellation guards, selected/preexisting AX path and dictionary behavior. Both final reviews APPROVE0; Linux110/0, native regressions, full speech and mounted DMG PASS. Final native manifest5ec38dad; build product manifest5664465d (only two test readiness files differ). See next-option-routing-qa.md and T38.
+Publication/installation and physical Safari acceptance pending. User's actual failure: freshly typed «шорты кмсф» then Option; expected «шорты rvca». Earlier Codex Space/Option acceptance belongs to1.5.0 only. Keep G33 open until real result. Release only Next main/archive/app; stable unchanged.
+
 # Next fork override — 2026-11-06
 
 This checkout is alimp01/mac-layout-switcher-next, based on stable 1.4.12 commit7043925. The user explicitly requested a separate GitHub repository with Keyboop detection AND replacement. Active requirements G30–G32, tickets35–37, keyboop-fork-spec.md, ADR0014. Historical memory below describes the parent and must not redirect release to its main/archive/app.

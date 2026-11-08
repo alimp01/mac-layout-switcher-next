@@ -1,0 +1,121 @@
+2026-11-08 06:51:27.924 test-engine[28569:13710297] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:51:27.924 test-engine[28569:13710278] Error received in message reply handler: Connection invalid
+2026-11-08 06:51:28.030 test-engine[28569:13710278] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:51:53.506 test-engine[28569:13710303] Spell server connection invalidated
+2026-11-08 06:51:53.507 test-engine[28569:13710298] Spell server connection invalidated
+2026-11-08 06:51:53.507 test-engine[28569:13710298] dataFromCheckingGrammarInString received error Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.naturallanguaged was invalidated: failed at lookup with error 159 - Sandbox restriction." UserInfo={NSDebugDescription=The connection to service named com.apple.naturallanguaged was invalidated: failed at lookup with error 159 - Sandbox restriction.}
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: production Engine+EventTap+Typist, nil AX, owned NSTextView ghbdtn+Space
+PASS: fresh Option without AX
+PASS: rapid physical text ordered behind replacement without AX
+PASS: quiet-time live correction without AX
+PASS: Enter/ShiftEnter/Tab, repeated navigation and fast next text
+PASS: printable, Backspace and Space repeats
+PASS: abort before deletion for click/navigation/secure/recorder/tap/PID
+PASS: interrupted deletion retains recovery and never retries/submits Enter
+PASS: Chromium and edited-word live gates
+PASS: Option undo and emoji snippet chunks
+Next native Engine suite passed; final posting seam uses owned NSTextViews, not WindowServer/readback confirmation.
+PASS: live undo protects following Space
+PASS: known AX secure field excludes fresh-buffer path
+PASS: bounded held-modifier abort preserves ShiftEnter
+PASS: AX navigation repeat=false, auto/Option capture/Option preflight/idle, source and native Space preserved
+PASS: AX navigation repeat=true, auto/Option capture/Option preflight/idle, source and native Space preserved
+PASS: Unicode navigation repeat=false, auto/Option capture/Option preflight/idle, source and native Space preserved
+PASS: Unicode navigation repeat=true, auto/Option capture/Option preflight/idle, source and native Space preserved
+PASS: CGEventType(rawValue: -2) retires convert/toggle/dictation/modifier ownership and cancels buffered pending replacement
+PASS: CGEventType(rawValue: -1) retires convert/toggle/dictation/modifier ownership and cancels buffered pending replacement
+PASS: clicks retain actual held shortcut ownership; recording transitions clear stale ownership and modifier taps
+2026-11-08 06:55:03.972 test-engine[29089:13716603] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:03.972 test-engine[29089:13716600] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:04.065 test-engine[29089:13716600] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:05.462 test-engine[29089:13716600] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:05.467 test-engine[29089:13716600] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:06.824 test-engine[29089:13716600] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:06.828 test-engine[29089:13716600] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:08.169 test-engine[29089:13716600] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:08.173 test-engine[29089:13716600] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:09.522 test-engine[29089:13716600] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: readable AX / unsupported writes, fresh Option, cached and first capture, literal text/caret/no notice
+2026-11-08 06:55:09.581 test-engine[29090:13716675] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:09.581 test-engine[29090:13716673] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:09.656 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:10.832 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:10.836 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:11.997 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:12.000 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:13.351 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:13.356 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:14.694 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:14.697 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:16.035 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:16.039 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:17.384 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:17.387 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:18.730 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:18.734 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:20.078 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:20.081 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:21.429 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:21.433 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:22.780 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:22.784 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:24.133 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:24.138 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:25.480 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:25.483 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:26.824 test-engine[29090:13716673] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:26.828 test-engine[29090:13716673] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: readable Option source/value/caret/selection/field/PID/secure/protected/physical cancellation; retained AX authority; undo; no retry
+2026-11-08 06:55:35.357 test-engine[29109:13717064] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:35.357 test-engine[29109:13717067] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:35.501 test-engine[29109:13717064] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: cancelled Option completion preserves subsequently tracked word
+2026-11-08 06:55:37.455 test-engine[29112:13717092] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:37.455 test-engine[29112:13717091] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:37.530 test-engine[29112:13717091] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: interrupted Option retires authority for withheld physical word
+2026-11-08 06:55:39.563 test-engine[29114:13717144] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:39.563 test-engine[29114:13717143] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:39.644 test-engine[29114:13717143] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: explicit manual choice survives quiet-time continuation
+2026-11-08 06:55:41.347 test-engine[29118:13717260] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:41.347 test-engine[29118:13717263] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:41.429 test-engine[29118:13717260] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:43.183 test-engine[29118:13717260] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:43.190 test-engine[29118:13717260] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:44.950 test-engine[29118:13717260] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: quiet-time snippet and longer trigger prefix
+2026-11-08 06:55:45.001 test-engine[29120:13717312] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:45.001 test-engine[29120:13717311] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:45.078 test-engine[29120:13717311] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+FAIL: positive PID change clears old application's protected field while AX remains absent
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+2026-11-08 06:55:48.382 test-engine[29121:13717363] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:48.382 test-engine[29121:13717359] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:48.460 test-engine[29121:13717359] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:49.848 test-engine[29121:13717359] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:49.853 test-engine[29121:13717359] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:51.234 test-engine[29121:13717359] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:51.238 test-engine[29121:13717359] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:52.594 test-engine[29121:13717359] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:55:52.599 test-engine[29121:13717359] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:55:53.950 test-engine[29121:13717359] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: readable AX / unsupported writes, fresh Option, cached and first capture, literal text/caret/no notice
+2026-11-08 06:55:54.001 test-engine[29128:13717452] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:54.001 test-engine[29128:13717450] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:54.077 test-engine[29128:13717450] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: caret edit fragment and next-boundary reset
+2026-11-08 06:55:56.410 test-engine[29130:13717486] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:55:56.410 test-engine[29130:13717485] Error received in message reply handler: Connection invalid
+2026-11-08 06:55:56.487 test-engine[29130:13717485] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: caret edit fragment and next-boundary reset

@@ -33,7 +33,7 @@ for name in files:
         source = exact(source, 'tap.start {', 'tap.installProbeHandler {')
         source = exact(source, 'ConversionNotice()', 'ConversionNotice(presentsWindow: false)')
         source = exact(source, '    private func isExcludedApp() -> Bool {',
-          '    func probeEvent(_ event: CGEvent) -> TapDecision { tap.process(type: event.type, event: event) }\n    var probeFocusReady: Bool { inputFocus.ticket != nil }\n\n    private func isExcludedApp() -> Bool {')
+          '    func probeEvent(_ event: CGEvent) -> TapDecision { tap.process(type: event.type, event: event) }\n    var probeFocusReady: Bool { inputFocus.ticket != nil }\n    var probeProtectedField: Bool { inputFocus.isProtectedField }\n\n    private func isExcludedApp() -> Bool {')
     elif name == 'System/KeyboardEnvironment.swift':
         source = exact(source, 'NSWorkspace.shared.frontmostApplication?.processIdentifier', 'Optional(harnessFrontPID)')
         source = exact(source, 'Self.isChromium(pid: nextPID, bundleID: nextBundle)', 'currentFixture.chromium')

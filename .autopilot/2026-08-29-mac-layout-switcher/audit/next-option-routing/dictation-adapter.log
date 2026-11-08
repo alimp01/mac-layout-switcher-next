@@ -1,0 +1,1 @@
+PASS: production AX capture/insert, native NSTextView replacement, lazy tree, capability fallback, sticky cancellation, Unicode, readback failure, no retry, clipboard

@@ -1,0 +1,14 @@
+==> Готовлю staging /var/folders/s7/blf5jdcs7q7bfjjxbt621w500000gn/T//maclayoutswitcher-next-dmg.nyLvM2
+==> hdiutil create /private/tmp/mls-next-151-source/dist/MacLayoutSwitcherNext.dmg
+created: /private/tmp/mls-next-151-source/dist/MacLayoutSwitcherNext.dmg
+
+Готово: /private/tmp/mls-next-151-source/dist/MacLayoutSwitcherNext.dmg
+
+Установка:
+  1. open "/private/tmp/mls-next-151-source/dist/MacLayoutSwitcherNext.dmg"
+  2. Перетащить MacLayoutSwitcherNext.app на ярлык «Программы» (Applications).
+  3. Первый запуск: в «Программах» правый клик по MacLayoutSwitcherNext →
+     «Открыть» → подтвердить (ad-hoc подпись без нотаризации — Gatekeeper
+     спросит один раз).
+  4. Выдать разрешения: Системные настройки → Конфиденциальность и
+     безопасность → Универсальный доступ + Мониторинг ввода.

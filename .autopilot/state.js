@@ -48,19 +48,19 @@ window.STATE =
       "id": "build",
       "status": "active",
       "startedAt": "2026-08-29T03:52:30+00:00",
-      "note": "G29/T34 complete:1.4.12 published and actual Spotlight Option accepted by user27.10. G27 Codex/G28 Bitrix scoped acceptances retained; other historical scopes unchanged."
+      "note": "Next G33/T38:1.5.1 validated, both reviews APPROVE0; release/install and physical Safari outcome pending."
     },
     {
       "id": "review",
       "status": "pending",
       "startedAt": "2026-10-08T04:45:11.080956+00:00",
-      "note": "G29/T34 complete:1.4.12 published and actual Spotlight Option accepted by user27.10. G27 Codex/G28 Bitrix scoped acceptances retained; other historical scopes unchanged."
+      "note": "Next G33/T38:1.5.1 validated, both reviews APPROVE0; release/install and physical Safari outcome pending."
     },
     {
       "id": "final",
       "status": "pending",
       "startedAt": "2026-08-29T05:25:00+00:00",
-      "note": "G29/T34 complete:1.4.12 published and actual Spotlight Option accepted by user27.10. G27 Codex/G28 Bitrix scoped acceptances retained; other historical scopes unchanged."
+      "note": "Next G33/T38:1.5.1 validated, both reviews APPROVE0; release/install and physical Safari outcome pending."
     }
   ],
   "requirements": {
@@ -977,7 +977,13 @@ window.STATE =
         "G33"
       ],
       "status": "in-progress",
-      "blockedBy": []
+      "blockedBy": [],
+      "codeCommit": "5069c7b0f6b27d6bc2db68c057fdda30fec1514e",
+      "note": "Implementation and two reviews complete; physical Safari acceptance pending",
+      "tests": {
+        "passed": 110,
+        "failed": 0
+      }
     }
   ],
   "singlePass": null,
@@ -1141,32 +1147,26 @@ window.STATE =
     "drift": []
   },
   "manualAcceptance": {
-    "version": "1.5.0",
-    "status": "passed",
-    "scope": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
-    "answer": "Оба раза получилось «привет»",
-    "confirmedAt": "2026-11-06T05:47:29.988899+00:00",
-    "confirmedDateMoscow": "2026-11-06",
-    "note": "User enabled Next Accessibility/Input Monitoring and relaunched. Only these two physical paths are accepted; other apps, Enter, rapid typing and speech are not covered."
+    "version": "1.5.1",
+    "status": "pending",
+    "scope": "Safari fresh шорты кмсф + Option without selection; expected шорты rvca"
   },
   "release": {
-    "version": "1.5.0",
-    "codeCommit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
-    "bundleID": "space.alimp.maclayoutswitcher.next",
-    "binarySHA256": "98e652ed2290c370f262cb2b8b9e84436011138d160db179883a7f29405237e2",
-    "helperSHA256": "ee5e3c28a2066e355ce450a0a4fb83f2eb1766f639a2cf70161bf25f3103cc0c",
-    "dmgSHA256": "170ef576e14f3b0f076f7ffbdfc3f7fc6be365e2e3a1371e0dc460be43ca3a1a",
-    "dmgBytes": 12224867,
+    "version": "1.5.1",
+    "codeCommit": "5069c7b0f6b27d6bc2db68c057fdda30fec1514e",
+    "binarySHA256": "424068d1e12854912ab7c9f9abb86188793f15333bba2384a5ebe1ca70721bdb",
+    "helperSHA256": "6cb0c38d1e498ad3067479bb4fd254f41c4ea1714c7f4ab0eb5cbeee30c74226",
+    "dmgSHA256": "bdcdecfdc1e5b3f6a5637ff46850e36e54fa97a52031ed91b6b972a30887ae9d",
+    "dmgBytes": 12227297,
+    "frozenManifestSHA256": "5664465d696128258d8cc624b4afe94a8857b74348e0f9f648768d50ef33522f",
     "mountedVerified": true,
     "deepStrictVerified": true,
-    "allBundledFilesCompared": true,
-    "resourcesVerified": true,
-    "manualAcceptance": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
-    "artifact": "MacLayoutSwitcherNext-1.5.0.dmg",
+    "allFilesAndResourcesVerified": true,
+    "physicalAcceptance": "pending Safari user test",
+    "bundleID": "space.alimp.maclayoutswitcher.next",
     "repository": "alimp01/mac-layout-switcher-next",
-    "status": "published and installed; scoped physical acceptance passed",
-    "publication": "Next main and separate archive; final verification receipt in workspace outputs/keyboop-fork",
-    "installedPID": 75271,
+    "artifact": "MacLayoutSwitcherNext-1.5.1.dmg",
+    "status": "validated; publication and installation pending",
     "installedPath": "/Applications/MacLayoutSwitcherNext.app"
   },
   "wordCoverageAudit": {
@@ -1464,10 +1464,44 @@ window.STATE =
   "nextOptionRoutingAudit": {
     "ticket": "38",
     "baseline": "546f3f953fdb137048cbee623901c7f2618995b6",
-    "status": "investigating",
-    "version": "1.5.0",
+    "status": "implemented/reviewed; physical acceptance pending",
+    "version": "1.5.1",
     "userConfirmation": "Только что набрал и нажал Option",
     "scope": "Safari / yandex.ru / fresh кмсф before Option",
-    "physicalAcceptance": "failed in user screenshot; previous Codex two-case acceptance remains valid"
+    "physicalAcceptance": "pending Safari physical test of1.5.1",
+    "codeCommit": "5069c7b0f6b27d6bc2db68c057fdda30fec1514e",
+    "reviews": "Spec APPROVE0; Standards APPROVE0",
+    "manifestSHA256": "5ec38dad3053cf146e5cc1541f06b2c13ed9c4bc3d0919d9030155a9fa56eb25",
+    "tests": "Linux110/0; native owned AppKit/WebKit; dictation adapter; fullspeech/mountedDMG",
+    "evidence": "audit/next-option-routing"
+  },
+  "previousNextRelease": {
+    "version": "1.5.0",
+    "codeCommit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
+    "bundleID": "space.alimp.maclayoutswitcher.next",
+    "binarySHA256": "98e652ed2290c370f262cb2b8b9e84436011138d160db179883a7f29405237e2",
+    "helperSHA256": "ee5e3c28a2066e355ce450a0a4fb83f2eb1766f639a2cf70161bf25f3103cc0c",
+    "dmgSHA256": "170ef576e14f3b0f076f7ffbdfc3f7fc6be365e2e3a1371e0dc460be43ca3a1a",
+    "dmgBytes": 12224867,
+    "mountedVerified": true,
+    "deepStrictVerified": true,
+    "allBundledFilesCompared": true,
+    "resourcesVerified": true,
+    "manualAcceptance": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
+    "artifact": "MacLayoutSwitcherNext-1.5.0.dmg",
+    "repository": "alimp01/mac-layout-switcher-next",
+    "status": "published and installed; scoped physical acceptance passed",
+    "publication": "Next main and separate archive; final verification receipt in workspace outputs/keyboop-fork",
+    "installedPID": 75271,
+    "installedPath": "/Applications/MacLayoutSwitcherNext.app"
+  },
+  "previousNextManualAcceptance": {
+    "version": "1.5.0",
+    "status": "passed",
+    "scope": "Codex: physical ghbdtn + Space and separate ghbdtn + Option without selection",
+    "answer": "Оба раза получилось «привет»",
+    "confirmedAt": "2026-11-06T05:47:29.988899+00:00",
+    "confirmedDateMoscow": "2026-11-06",
+    "note": "User enabled Next Accessibility/Input Monitoring and relaunched. Only these two physical paths are accepted; other apps, Enter, rapid typing and speech are not covered."
   }
 };

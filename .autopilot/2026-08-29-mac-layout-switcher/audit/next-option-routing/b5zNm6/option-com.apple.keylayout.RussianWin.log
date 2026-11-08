@@ -1,0 +1,12 @@
+2026-11-08 06:52:59.683 test-engine[28893:13713991] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:52:59.683 test-engine[28893:13713989] Error received in message reply handler: Connection invalid
+2026-11-08 06:52:59.784 test-engine[28893:13713989] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:53:01.214 test-engine[28893:13713989] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:53:01.221 test-engine[28893:13713989] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:53:02.702 test-engine[28893:13713989] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:53:02.718 test-engine[28893:13713989] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:53:04.116 test-engine[28893:13713989] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:53:04.120 test-engine[28893:13713989] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:53:05.472 test-engine[28893:13713989] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: readable AX / unsupported writes, fresh Option, cached and first capture, literal text/caret/no notice

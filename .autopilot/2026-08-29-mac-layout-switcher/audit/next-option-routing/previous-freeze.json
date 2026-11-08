@@ -1,0 +1,9 @@
+{
+  "path": "/tmp/mls-t38-freeze.y865g5rt",
+  "manifest_sha256": "5664465d696128258d8cc624b4afe94a8857b74348e0f9f648768d50ef33522f",
+  "changed_files": [
+    "tools/keyboard-harness/next-engine.swift",
+    "tools/test-keyboard-next.sh"
+  ],
+  "product_changes": 0
+}

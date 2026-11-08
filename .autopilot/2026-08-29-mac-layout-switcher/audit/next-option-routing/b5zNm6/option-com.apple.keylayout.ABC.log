@@ -1,0 +1,12 @@
+2026-11-08 06:52:53.965 test-engine[28892:13713885] Error received in message reply handler: Connection invalid
+2026-11-08 06:52:53.965 test-engine[28892:13713888] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:52:54.056 test-engine[28892:13713885] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:52:55.470 test-engine[28892:13713885] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:52:55.475 test-engine[28892:13713885] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:52:56.848 test-engine[28892:13713885] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:52:56.854 test-engine[28892:13713885] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:52:58.237 test-engine[28892:13713885] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:52:58.241 test-engine[28892:13713885] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:52:59.610 test-engine[28892:13713885] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: readable AX / unsupported writes, fresh Option, cached and first capture, literal text/caret/no notice

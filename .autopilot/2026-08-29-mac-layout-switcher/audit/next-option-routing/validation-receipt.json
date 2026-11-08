@@ -1,0 +1,60 @@
+{
+  "base": "546f3f953fdb137048cbee623901c7f2618995b6",
+  "final_manifest_sha256": "5ec38dad3053cf146e5cc1541f06b2c13ed9c4bc3d0919d9030155a9fa56eb25",
+  "full_run_pass_groups": 29,
+  "full_run_failures": [
+    "FAIL: positive PID change clears old application's protected field while AX remains absent"
+  ],
+  "followup": "Exact frozen protected rerun passed. Authorized test-only repair waits at existing cache seam instead of fixed250ms; repaired protected and retainedAX both exit0. Product sources unchanged; successful full-run groups retained.",
+  "acceptance_limit": "Owned AppKit/final post seams and local WebKit only; no live Safari, hardware/WindowServer, user UI, TCC, microphone or clipboard additions.",
+  "evidence": {
+    "baseline_en": {
+      "path": "/tmp/mls-keyboard-engine.9NO37k/run.log",
+      "sha256": "13c74d8bb07c177c5c1d326c49644623a66ad430c813c530d703388e032f6fb4"
+    },
+    "baseline_ru": {
+      "path": "/tmp/mls-keyboard-engine.9NO37k/run-ru-red.log",
+      "sha256": "70e14e05a449ccd7a50d1406dbd057a2f51992050f34ade1516568f3567bc03b"
+    },
+    "untouched_cancel_red": {
+      "path": "/tmp/mls-keyboard-engine.hO9WDk/run.log",
+      "sha256": "76301f02b7de13a52b8ee8f0880ad9c6bdc5af2db593e4e77ae2ea87c74d677c"
+    },
+    "untouched_cancel_green": {
+      "path": "/tmp/mls-keyboard-engine.LJcGQt/run.log",
+      "sha256": "0a3b06060f48c585c30a8249cb4f83e702ecd604aac5646de46167b9ad88ce34"
+    },
+    "interrupted_cancel_red": {
+      "path": "/tmp/mls-keyboard-engine.7bBrF3/run.log",
+      "sha256": "e57901eced81325a9847cc1f56307aa74ffe23891ac4bba4e495d91cbbae5caf"
+    },
+    "interrupted_cancel_green": {
+      "path": "/tmp/mls-keyboard-engine.Go2ucq/run.log",
+      "sha256": "8691890d60e0b2823e0f249835b9af5752e6f1ec7c28cf1601150506f4a370ba"
+    },
+    "full_final_product_run": {
+      "path": "/tmp/mls-keyboard-engine.6fNJ6c/run.log",
+      "sha256": "636887eace370d7e803bd7e11821d3c0c40d0db433398b7a34e75c3f08113041"
+    },
+    "protected_same_binary_rerun": {
+      "path": "/tmp/mls-keyboard-engine.6fNJ6c/protected-rerun.log",
+      "sha256": "0d2c1cb0ee1503375690725dac54a3935de123e8a8c70d89d5ff1c9d69f12824"
+    },
+    "protected_readiness_repair": {
+      "path": "/tmp/mls-keyboard-engine.eiRIh1/run.log",
+      "sha256": "395c3aad6689284df778b08e94805161fd9ced9289432db043c914b4f19e2dd2"
+    },
+    "retained_ax": {
+      "path": "/tmp/mls-keyboard-engine.fHdMte/run.log",
+      "sha256": "2926698030ea08e58b33da1b9c10c4fe13cc5051314c1309b8b5090afabfec70"
+    },
+    "keyboard_adapter": {
+      "path": "/tmp/t38-adapter.log",
+      "sha256": "4b732ec2afefd9813b66047a6b11ef9b987439548163a3aa07a0f02c390d9d2c"
+    },
+    "webkit": {
+      "path": "/tmp/mls-keyboard-webkit.EAd9IK/run.log",
+      "sha256": "e41bdcc510fda75932890f03523629bd5ced37f41ebdd4bda150124dc1d8dbe9"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "version": "1.5.1",
+  "codeCommit": "5069c7b0f6b27d6bc2db68c057fdda30fec1514e",
+  "binarySHA256": "424068d1e12854912ab7c9f9abb86188793f15333bba2384a5ebe1ca70721bdb",
+  "helperSHA256": "6cb0c38d1e498ad3067479bb4fd254f41c4ea1714c7f4ab0eb5cbeee30c74226",
+  "dmgSHA256": "bdcdecfdc1e5b3f6a5637ff46850e36e54fa97a52031ed91b6b972a30887ae9d",
+  "dmgBytes": 12227297,
+  "frozenManifestSHA256": "5664465d696128258d8cc624b4afe94a8857b74348e0f9f648768d50ef33522f",
+  "mountedVerified": true,
+  "deepStrictVerified": true,
+  "allFilesAndResourcesVerified": true,
+  "physicalAcceptance": "pending Safari user test"
+}

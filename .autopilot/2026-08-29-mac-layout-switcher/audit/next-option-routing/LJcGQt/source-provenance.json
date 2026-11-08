@@ -1,0 +1,260 @@
+[
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/KeyboardEnvironment.swift",
+    "source_sha256": "fe819e5128a65674823ff83ffa76aa4b9977110d07bd4b0633a0daf441e4c19f",
+    "compiled_sha256": "32966a593bad1e4af1be1303f104ba9d395df095d4ad43bc76d5dc658b4e2b7c",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/TrackedInputBatch.swift",
+    "source_sha256": "b7862142498d8d877e28ca150c713705d2d038051508409cfad044456f9941df",
+    "compiled_sha256": "b56ee3dee34e4e93debfa0161fc472b610e0873140e866cb7b7dcc419ed3ab1c",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/Engine.swift",
+    "source_sha256": "7aa3744b44b7c7f593631cab1f8583e350868e4ae17596744dbf2611dcdad0f1",
+    "compiled_sha256": "81cd3f9840f387d9a82374915b71a381d54eb635d060317c9d6557f6f676b06a",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/Config.swift",
+    "source_sha256": "51cdf5b639e7f9d8b00c15878b8484ce79f05d9115e6f533b7d84867cc86850a",
+    "compiled_sha256": "51cdf5b639e7f9d8b00c15878b8484ce79f05d9115e6f533b7d84867cc86850a",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/InputFocusGuard.swift",
+    "source_sha256": "286e1087bf52f0525d466eb090871e0aef85f1d00c91f0d6a98eb852c6d054f0",
+    "compiled_sha256": "748d4ed2d6bf9d9253794c670fe26e47036e3011bbd9720e57eafae06c181dc3",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/Typist.swift",
+    "source_sha256": "5aa742d1e2945fc0e16ca9b68981b3b28c5ccba3ea4f8e1c650896323ef7710d",
+    "compiled_sha256": "d333d34036ea33cb42072918ba78842ff98e1a31541339b3c8af45e9f6f72a7c",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/SelectionConverter.swift",
+    "source_sha256": "854c908b03bcba3db153c14a6309b6ab27a717a36fbe78143ebff61532fa28f7",
+    "compiled_sha256": "854c908b03bcba3db153c14a6309b6ab27a717a36fbe78143ebff61532fa28f7",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/SecureInput.swift",
+    "source_sha256": "257c71bedc4ce22aafbd9ee3c190c4152ca378060abb5a2b4e999af4ef6a3dac",
+    "compiled_sha256": "d8307cda65dfc58a47a8e302e5f16486e0f702ec8e55198f8afd73d5cd3f9ef4",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/FrontApp.swift",
+    "source_sha256": "0df5a55050df15bb44327319c9290c345fd69fe5118b3d15b78645ae24103566",
+    "compiled_sha256": "1af4a2a4f69f98f9ebac55db643f06472145d42e55e912784180b482771b5180",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/EventTap.swift",
+    "source_sha256": "8a7f1d90229d67ea57f29c921919af20ce7c339150a4b87c3d04d45a5c8eba16",
+    "compiled_sha256": "24a9eb6cce2bfdebf1212000ced9be70c1674d935d302c567485bf52879bd06b",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/KeyTranslator.swift",
+    "source_sha256": "a629235f404a0e39eaa90617c6ed8564f00ebd4454d9f88d770be663517fae63",
+    "compiled_sha256": "59298f950e89a28fde678848f67b611ca02a629e0123f163b823eb7a5e7d00aa",
+    "transformed": true
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/KeyStroke.swift",
+    "source_sha256": "0fa89331adac1885773b92f44bf0f766a5a669a213e9179d2e0d21bc1f00e001",
+    "compiled_sha256": "0fa89331adac1885773b92f44bf0f766a5a669a213e9179d2e0d21bc1f00e001",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/Speech/DictationTarget.swift",
+    "source_sha256": "4767d9a4dca45dede616c5ee89034c06301279e674b6e334d5902fced4251f66",
+    "compiled_sha256": "4767d9a4dca45dede616c5ee89034c06301279e674b6e334d5902fced4251f66",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/Speech/DictationCoordinator.swift",
+    "source_sha256": "2a7ca365800eb47949f1868964fe019c9fa2e544844422028aa9aa1179846017",
+    "compiled_sha256": "2a7ca365800eb47949f1868964fe019c9fa2e544844422028aa9aa1179846017",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/Speech/DictationRecorder.swift",
+    "source_sha256": "2380c3d42d17055eb96a4d4caf00d60e242d5618608cb9e9217bd06ccb1d0667",
+    "compiled_sha256": "2380c3d42d17055eb96a4d4caf00d60e242d5618608cb9e9217bd06ccb1d0667",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/SpeechModelStore.swift",
+    "source_sha256": "7b6e31832325143f447bce467f6291e6f532fd07eb016e74966a52d18cb6f841",
+    "compiled_sha256": "7b6e31832325143f447bce467f6291e6f532fd07eb016e74966a52d18cb6f841",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/System/SpeechRecognitionProcess.swift",
+    "source_sha256": "a68a8ab751952670c72f0062589be2f9c2da0ee052c30db08bfaeb6358d126de",
+    "compiled_sha256": "a68a8ab751952670c72f0062589be2f9c2da0ee052c30db08bfaeb6358d126de",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/UI/DictationPanel.swift",
+    "source_sha256": "35c5008a9cf57ea8baeb4af7f9fba4ded557533569dffd846f5e038069824306",
+    "compiled_sha256": "35c5008a9cf57ea8baeb4af7f9fba4ded557533569dffd846f5e038069824306",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/UI/ConversionNotice.swift",
+    "source_sha256": "4cfae3abbf1723d8c1e1de44d6dc9dcb4a4b1f76477750825c7b774fea980341",
+    "compiled_sha256": "4cfae3abbf1723d8c1e1de44d6dc9dcb4a4b1f76477750825c7b774fea980341",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/MacLayoutSwitcher/UI/Sounds.swift",
+    "source_sha256": "67bf882882724354607f230cdb5bddd0ac9e82ee02a6ff1423aff4d6915db7ce",
+    "compiled_sha256": "67bf882882724354607f230cdb5bddd0ac9e82ee02a6ff1423aff4d6915db7ce",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Detector.swift",
+    "source_sha256": "be6ab3c0b191f7173fe9bb10fcfcf595ff4a7d5e95c871cb6f6915aef9066261",
+    "compiled_sha256": "be6ab3c0b191f7173fe9bb10fcfcf595ff4a7d5e95c871cb6f6915aef9066261",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/DictationSession.swift",
+    "source_sha256": "618e87f89fac5c2bd7867e6652f09f94212c46bd7b3fc18feeba2e088ae8af47",
+    "compiled_sha256": "618e87f89fac5c2bd7867e6652f09f94212c46bd7b3fc18feeba2e088ae8af47",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/EngineCore.swift",
+    "source_sha256": "1a1536ab8e5f9eb78a4eecf39575e393b11fa00799b692987e8354bc98bd3245",
+    "compiled_sha256": "1a1536ab8e5f9eb78a4eecf39575e393b11fa00799b692987e8354bc98bd3245",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/ExtraWords.swift",
+    "source_sha256": "a84118f35a743933061672f752c3a2a41c3dbe759ce040da712e53f3f903cd5b",
+    "compiled_sha256": "a84118f35a743933061672f752c3a2a41c3dbe759ce040da712e53f3f903cd5b",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Hotkey.swift",
+    "source_sha256": "70ac4c31684cc84f290df9e6b985842ce11e912425a22a42a32a73d4f59c84ce",
+    "compiled_sha256": "70ac4c31684cc84f290df9e6b985842ce11e912425a22a42a32a73d4f59c84ce",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/InputReplayPolicy.swift",
+    "source_sha256": "ab91695f1873fe91e2f71d1e2b304c759e3fd4127a133c5c7bf6bf86aa9222ee",
+    "compiled_sha256": "ab91695f1873fe91e2f71d1e2b304c759e3fd4127a133c5c7bf6bf86aa9222ee",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/KeyMap.swift",
+    "source_sha256": "e136a278f56426e7e8f41d2de2f98bed7f2417d22e683bb88fbc13ad511c1114",
+    "compiled_sha256": "e136a278f56426e7e8f41d2de2f98bed7f2417d22e683bb88fbc13ad511c1114",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/KeyboopKeymap.swift",
+    "source_sha256": "17959c6c7b7a0617b770139c7a769a8d7ba1d2f53934aa3e3ee9f4f58aed2321",
+    "compiled_sha256": "17959c6c7b7a0617b770139c7a769a8d7ba1d2f53934aa3e3ee9f4f58aed2321",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Lang.swift",
+    "source_sha256": "e02b7c4ad469735b92531f5585c7f5c2ffb7e390a33fe7bde475850a6948fb26",
+    "compiled_sha256": "e02b7c4ad469735b92531f5585c7f5c2ffb7e390a33fe7bde475850a6948fb26",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/LayoutData.swift",
+    "source_sha256": "2aa0405af5a1c4888b4b8fac380ff13c727df43a2f46f8d863a8dfb04f20d0eb",
+    "compiled_sha256": "2aa0405af5a1c4888b4b8fac380ff13c727df43a2f46f8d863a8dfb04f20d0eb",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/LayoutDetector.swift",
+    "source_sha256": "43b856a564d564ca21b887331e68f6a3be7a80a6b1abbb6e6efe7e7118395800",
+    "compiled_sha256": "43b856a564d564ca21b887331e68f6a3be7a80a6b1abbb6e6efe7e7118395800",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/ReplacementSource.swift",
+    "source_sha256": "69edae07bb47abd48dd923420e11616f714eead8d4c48fed55ca303b8eb47f5f",
+    "compiled_sha256": "69edae07bb47abd48dd923420e11616f714eead8d4c48fed55ca303b8eb47f5f",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Resources/KEYBOOP_LICENSE.txt",
+    "source_sha256": "885b18ae62a96210f9903246bd160162937c71915680bed81f3c2b02e544fd6a",
+    "compiled_sha256": "885b18ae62a96210f9903246bd160162937c71915680bed81f3c2b02e544fd6a",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Resources/KEYBOOP_PROVENANCE.json",
+    "source_sha256": "6d227162fa6d38bed49b75d69de7e85852b9a276a0b959df274c04aed312932a",
+    "compiled_sha256": "6d227162fa6d38bed49b75d69de7e85852b9a276a0b959df274c04aed312932a",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Resources/KEYSWITCHER_LICENSE.txt",
+    "source_sha256": "383a1b56e5d0ca2af75cadfc797b842dd37a351574d4f8a2141d8c7c18b5b1e3",
+    "compiled_sha256": "383a1b56e5d0ca2af75cadfc797b842dd37a351574d4f8a2141d8c7c18b5b1e3",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Resources/trigrams_en.json",
+    "source_sha256": "681b522337091c1518cdc8ea6a8654681fabd3a8356d59be49e98c441db469bf",
+    "compiled_sha256": "681b522337091c1518cdc8ea6a8654681fabd3a8356d59be49e98c441db469bf",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Resources/trigrams_ru.json",
+    "source_sha256": "69056ac090486cfe6746b8910fa3dc1f45182bd47f5d08ee0b3688ad7d94adb3",
+    "compiled_sha256": "69056ac090486cfe6746b8910fa3dc1f45182bd47f5d08ee0b3688ad7d94adb3",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Resources/words_en.json",
+    "source_sha256": "1d16ce0065f60c0126ec24bf62179780c4203bb485eb1dcaa81e7e6b7385ee98",
+    "compiled_sha256": "1d16ce0065f60c0126ec24bf62179780c4203bb485eb1dcaa81e7e6b7385ee98",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/Resources/words_ru.json",
+    "source_sha256": "704f45617f2b9aeea99e3abc21b0d2a3e795ab98a95d90292c8b04e7f962c4d2",
+    "compiled_sha256": "704f45617f2b9aeea99e3abc21b0d2a3e795ab98a95d90292c8b04e7f962c4d2",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/SemVer.swift",
+    "source_sha256": "26bd1ae36c2429505a80b14fe317d60c9c16cacd1bb5459f8586fd1330538e9e",
+    "compiled_sha256": "26bd1ae36c2429505a80b14fe317d60c9c16cacd1bb5459f8586fd1330538e9e",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/ShortWords.swift",
+    "source_sha256": "570a7db73f487247bb147cc11efa055ea06d25f7740894d00536394c21675613",
+    "compiled_sha256": "570a7db73f487247bb147cc11efa055ea06d25f7740894d00536394c21675613",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/SnippetStore.swift",
+    "source_sha256": "da55267ec6ec1135c1d89672b555bcf4b3b0627d6f3cd62abfcd8afd882f8eaa",
+    "compiled_sha256": "da55267ec6ec1135c1d89672b555bcf4b3b0627d6f3cd62abfcd8afd882f8eaa",
+    "transformed": false
+  },
+  {
+    "source": "/private/tmp/mls-next-option-20261108/Sources/SwitcherCore/WordBuffer.swift",
+    "source_sha256": "b114b36c5c27a952e4eaeb903a54c578b559bc032b1a59e5826e843689cf8042",
+    "compiled_sha256": "b114b36c5c27a952e4eaeb903a54c578b559bc032b1a59e5826e843689cf8042",
+    "transformed": false
+  }
+]

@@ -1,0 +1,16 @@
+2026-11-08 06:57:46.142 test-engine[29309:13720012] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-08 06:57:46.142 test-engine[29309:13719993] Error received in message reply handler: Connection invalid
+2026-11-08 06:57:46.234 test-engine[29309:13719993] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:57:47.424 test-engine[29309:13719993] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:57:47.428 test-engine[29309:13719993] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-08 06:57:48.582 test-engine[29309:13719993] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-08 06:57:48.586 test-engine[29309:13719993] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: Option accepts fresh field before sampler and discards stale buffered word
+PASS: Option distinguishes actual process trust denial
+PASS: Option cancels changed context during capture
+PASS: Option same-field buffered/fallback/selection/undo/empty behavior on AX and Unicode
+PASS: Option field/PID/caret/key/click changes during capture cancel without writing
+PASS: Option distinct secure/field/range/text reasons and bounded bootstrap
+PASS: Option keeps editable-field bootstrap identity, validates full capture before every write route, and cancels before dispatch
+PASS: unreadable nonempty selection preserves source instead of buffered fallback
