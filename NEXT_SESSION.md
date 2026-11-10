@@ -1,3 +1,8 @@
+# Current Next audit — 2026-11-10
+
+1.5.2 published/installed/hash verified; user confirmed permissions and relaunch08.11. G34 tray label done. Historical pending-install statements below are superseded. Actual G33 Safari remains pending: CUA entered source but cannot press lone modifier; disabled ControlSpace meant ordinary Russian typing, NOT an autocorrect pass. SystemUIServer CUA call hung877s and user aborted; do not repeat.
+New G35/T40: screenshot Codex command palette selected мзт, generic replacement refusal. Investigate generalized selected/preexisting/capability paths, meaningful baselineRED→GREEN and truthful matrix. See replacement-compatibility-spec.md and ticket40. Root orchestrates; executor writes code. Stable app/repo/archive unchanged. Current baseline5c2d1c1.
+
 # Next1.5.2 / G34 — 2026-11-08
 
 User asked to remove Next from tray. Only visible title prefix removed; RU/EN/pause/dictation preserved. Both independent reviews APPROVE0; fullspeech/build and mountedDMG23files PASS. Candidate1.5.2 includes Option fix1.5.1. Release/install pending; physical Safari acceptance G33 remains pending. See tray-label-spec/qa,T39 and state. Stable app/repo/archive remain unchanged.

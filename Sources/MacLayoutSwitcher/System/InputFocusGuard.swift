@@ -20,6 +20,26 @@ final class InputFocusGuard {
         var isUncertain: Bool { self == .uncertain || self == .unconfirmedSelection }
     }
 
+    /// Captured at the failing guard, never inferred from a later AX probe.
+    /// Codes and explanations contain no editor text or application metadata.
+    enum ReplacementFailure: String {
+        case cancelled, focus, selection, source, capability, selectionWrite, dispatch, readback
+        var message: String {
+            let explanation: String
+            switch self {
+            case .cancelled: explanation = "Действие отменено новым вводом. Повторите конвертацию после завершения ввода."
+            case .focus: explanation = "Поле больше не активно или включён защищённый ввод. Выберите нужное редактируемое поле."
+            case .selection: explanation = "Курсор или выделение изменились. Выберите текст заново."
+            case .source: explanation = "Текст изменился или редактор не предоставил его для проверки. Выберите текст заново."
+            case .capability: explanation = "Редактор не предоставил поддерживаемый способ замены. Проверьте, что поле доступно для редактирования."
+            case .selectionWrite: explanation = "Редактор не подтвердил нужное выделение. Выделите текст вручную и повторите конвертацию."
+            case .dispatch: explanation = "Не удалось отправить замену. Проверьте поле перед повторным действием."
+            case .readback: explanation = "Редактор не подтвердил результат замены. Проверьте поле перед повторным действием."
+            }
+            return "\(explanation) Диагностика: replace.\(rawValue)."
+        }
+    }
+
     enum CaptureFailure {
         case accessibilityDenied, protectedField, secureInput, unavailableField, unavailableSelection
         case unavailableText, unreadableSelection, selectionTooLarge, changed, unavailableApplication
@@ -98,7 +118,7 @@ final class InputFocusGuard {
                 // real text field. Once a text field was observed, keep its
                 // identity even when its range is temporarily unavailable.
                 let role = accessibility.attribute(kAXRoleAttribute, of: element) as? String
-                if role == kAXTextFieldRole || role == kAXTextAreaRole { firstElement = element }
+                if SystemDictationAccessibility.isTextInputRole(role) { firstElement = element }
                 let target = Target(element: element, pid: focus.pid, accessibility: accessibility, processStart: focus.processStart)
                 if target.selection() != nil { return allowed() && (focus.processStart == nil || target.isCurrent()) ? target : failed(.changed) }
                 if focus.processStart != nil { return failed(.unavailableSelection) }
@@ -166,33 +186,46 @@ final class InputFocusGuard {
         /// Only exact readback plus a collapsed caret can confirm it. Select the
         /// Unicode route BEFORE mutation for bridges with missing/no-op setters.
         func replace(range: CFRange, expected: String, with replacement: String,
-                     originalSelection: CFRange, requiresWordBoundary: Bool = false, capturedValue: String? = nil, allowed: () -> Bool) -> ReplacementResult {
+                     originalSelection: CFRange, requiresWordBoundary: Bool = false, capturedValue: String? = nil,
+                     failure: (ReplacementFailure) -> Void = { _ in }, allowed: () -> Bool) -> ReplacementResult {
+            func rejected(_ reason: ReplacementFailure, _ result: ReplacementResult = .untouched) -> ReplacementResult {
+                failure(reason)
+                return result
+            }
             func selected(_ expected: CFRange) -> Bool {
                 selection().map { $0.location == expected.location && $0.length == expected.length } == true
             }
-            guard allowed(), isCurrent(), selected(originalSelection), let original = value(),
+            guard allowed() else { return rejected(.cancelled) }
+            guard isCurrent() else { return rejected(.focus) }
+            guard selected(originalSelection) else { return rejected(.selection) }
+            guard let original = value(),
                   capturedValue.map({ $0 == original }) != false,
                   range.location >= 0, range.length >= 0, range.location <= original.utf16.count,
                   range.length <= original.utf16.count - range.location,
-                  (original as NSString).substring(with: NSRange(location: range.location, length: range.length)) == expected else { return .untouched }
+                  (original as NSString).substring(with: NSRange(location: range.location, length: range.length)) == expected else { return rejected(.source) }
             if requiresWordBoundary {
                 let start = max(0, range.location - 1)
                 let validation = (original as NSString).substring(with: NSRange(location: start, length: range.location + range.length - start))
-                guard ReplacementSource(expected: expected).matches(validation, atDocumentStart: range.location == 0) else { return .untouched }
+                guard ReplacementSource(expected: expected).matches(validation, atDocumentStart: range.location == 0) else { return rejected(.source) }
             }
             let direct = accessibility.selectedTextIsSettable(element) && !accessibility.prefersUnicodeInsertion(pid: pid)
-            guard direct || accessibility.supportsUnicodeInsertion(element) else { return .untouched }
-            guard allowed(), isCurrent(), selected(originalSelection), value() == original else { return .untouched }
+            guard direct || accessibility.supportsUnicodeInsertion(element) else { return rejected(.capability) }
+            guard allowed() else { return rejected(.cancelled) }
+            guard isCurrent() else { return rejected(.focus) }
+            guard selected(originalSelection) else { return rejected(.selection) }
+            guard value() == original else { return rejected(.source) }
             var attempted = false
             var selectionRequested = false
             var selectionConfirmed = false
-            func confirmSelection(_ expected: CFRange, requireAllowed: Bool = true) -> Bool {
+            func confirmSelection(_ expected: CFRange, requireAllowed: Bool = true) -> ReplacementFailure? {
                 for attempt in 0..<6 {
                     if attempt > 0 { Thread.sleep(forTimeInterval: 0.025) }
-                    guard (!requireAllowed || allowed()), isCurrent(), value() == original else { return false }
-                    if selected(expected) { return true }
+                    guard !requireAllowed || allowed() else { return .cancelled }
+                    guard isCurrent() else { return .focus }
+                    guard value() == original else { return .source }
+                    if selected(expected) { return nil }
                 }
-                return false
+                return .selectionWrite
             }
             func finish(_ result: ReplacementResult) -> ReplacementResult {
                 // A selection RPC can apply and still report failure. Restore
@@ -201,7 +234,7 @@ final class InputFocusGuard {
                 if isCurrent(), selected(range), value() == original {
                     if range.location != originalSelection.location || range.length != originalSelection.length {
                         _ = accessibility.setSelection(originalSelection, in: element)
-                        if !confirmSelection(originalSelection, requireAllowed: false) { return .unconfirmedSelection }
+                        if confirmSelection(originalSelection, requireAllowed: false) != nil { return .unconfirmedSelection }
                     }
                     selectionConfirmed = true
                 } else if result == .untouched, !selected(originalSelection) {
@@ -218,8 +251,13 @@ final class InputFocusGuard {
                 selectionRequested = true
                 _ = accessibility.setSelection(range, in: element)
             }
-            selectionConfirmed = confirmSelection(range)
-            guard selectionConfirmed, allowed(), isCurrent(), value() == original, allowed() else { return finish(.untouched) }
+            let selectionFailure = confirmSelection(range)
+            selectionConfirmed = selectionFailure == nil
+            if let selectionFailure { return rejected(selectionFailure, finish(.untouched)) }
+            guard allowed() else { return rejected(.cancelled, finish(.untouched)) }
+            guard isCurrent() else { return rejected(.focus, finish(.untouched)) }
+            guard value() == original else { return rejected(.source, finish(.untouched)) }
+            guard allowed() else { return rejected(.cancelled, finish(.untouched)) }
             func replacing(_ value: String, _ selected: CFRange, _ text: String) -> String {
                 (value as NSString).replacingCharacters(in: NSRange(location: selected.location, length: selected.length), with: text)
             }
@@ -242,23 +280,26 @@ final class InputFocusGuard {
                    selected(CFRange(location: range.location, length: replacement.utf16.count)) {
                     _ = accessibility.setSelection(CFRange(location: end, length: 0), in: element)
                 }
-                return finish(confirm(expectedValue, caret: end) ? .confirmed : .uncertain)
+                return confirm(expectedValue, caret: end) ? finish(.confirmed) : rejected(.readback, finish(.uncertain))
             }
             var currentValue = original
             var currentRange = range
             for chunk in DictationTarget.unicodeChunks(replacement) {
-                guard allowed(), isCurrent(), value() == currentValue, selected(currentRange), allowed() else {
-                    return finish(attempted ? .uncertain : .untouched)
-                }
+                let interrupted: ReplacementResult = attempted ? .uncertain : .untouched
+                guard allowed() else { return rejected(.cancelled, finish(interrupted)) }
+                guard isCurrent() else { return rejected(.focus, finish(interrupted)) }
+                guard value() == currentValue else { return rejected(.source, finish(interrupted)) }
+                guard selected(currentRange) else { return rejected(.selection, finish(interrupted)) }
+                guard allowed() else { return rejected(.cancelled, finish(interrupted)) }
                 let expectedValue = replacing(currentValue, currentRange, chunk)
                 attempted = true
-                guard accessibility.postUnicode(chunk, pid: pid) else { return finish(.uncertain) }
+                guard accessibility.postUnicode(chunk, pid: pid) else { return rejected(.dispatch, finish(.uncertain)) }
                 let end = currentRange.location + chunk.utf16.count
-                guard confirm(expectedValue, caret: end) else { return finish(.uncertain) }
+                guard confirm(expectedValue, caret: end) else { return rejected(.readback, finish(.uncertain)) }
                 currentValue = expectedValue
                 currentRange = CFRange(location: end, length: 0)
             }
-            return finish(attempted ? .confirmed : .untouched)
+            return attempted ? finish(.confirmed) : rejected(.capability, finish(.untouched))
         }
     }
 

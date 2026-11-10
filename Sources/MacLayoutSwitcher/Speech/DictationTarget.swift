@@ -416,14 +416,17 @@ struct SystemDictationAccessibility: DictationAccessibility {
     }
     func supportsUnicodeInsertion(_ element: AXUIElement) -> Bool {
         let role = attribute(kAXRoleAttribute, of: element) as? String
-        var settable = DarwinBoolean(false)
         var valueSettable = DarwinBoolean(false)
-        return (role == kAXTextFieldRole || role == kAXTextAreaRole)
+        return Self.isTextInputRole(role)
             && attribute(kAXEnabledAttribute, of: element) as? Bool != false
-            && AXUIElementIsAttributeSettable(element, kAXSelectedTextRangeAttribute as CFString, &settable) == .success
-            && settable.boolValue
+            // Unicode replaces the selection already verified by the caller.
+            // A range setter is needed only when that caller changes selection;
+            // its write/readback remains a separate precondition to text input.
             && AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable) == .success
             && valueSettable.boolValue
+    }
+    static func isTextInputRole(_ role: String?) -> Bool {
+        role == kAXTextFieldRole || role == kAXTextAreaRole || role == kAXComboBoxRole
     }
     func postUnicode(_ text: String, pid: pid_t) -> Bool {
         let source = CGEventSource(stateID: .privateState)
@@ -575,7 +578,7 @@ struct DictationTarget {
             let element = focus.element, pid = focus.pid
             if let firstElement, !CFEqual(firstElement, element) { return .unavailable(.changed) }
             let role = accessibility.attribute(kAXRoleAttribute, of: element) as? String
-            if role == kAXTextFieldRole || role == kAXTextAreaRole { firstElement = element }
+            if SystemDictationAccessibility.isTextInputRole(role) { firstElement = element }
             if accessibility.attribute(kAXSubroleAttribute, of: element) as? String == kAXSecureTextFieldSubrole {
                 return .unavailable(.protectedField)
             }

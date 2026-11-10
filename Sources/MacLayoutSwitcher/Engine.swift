@@ -554,7 +554,11 @@ public final class Engine {
     private func replaceSelection(_ selection: SelectionConverter.Selection, permit: InputFocusGuard.Permit,
                                   ticket: InputFocusGuard.Ticket) {
         _ = core.handle(.reset)
-        selectionConverter.replace(selection, permit: permit, typist: typist, replayRoute: ticket.replayRoute) { [weak self] result, language in
+        selectionConverter.replace(selection, permit: permit, typist: typist, replayRoute: ticket.replayRoute,
+            failure: { [weak self] reason in
+                guard permit.isAllowed else { return }
+                self?.conversionNotice.show(message: "Текст не изменён: \(reason.message)")
+            }) { [weak self] result, language in
             guard let self else { return }
             self.selectionConverter.finish(permit)
             if result.isUncertain { return }
@@ -565,7 +569,7 @@ public final class Engine {
                 KeyTranslator.refresh()
                 self.onLayoutSwitched?(language)
                 self.sounds?.playCorrection()
-            } else { self.conversionNotice.show() }
+            }
         }
     }
 

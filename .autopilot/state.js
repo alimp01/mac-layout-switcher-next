@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "CLAUDE.md",
   "skillDir": "/home/claudebot/.claude/skills/autopilot",
   "startedAt": "2026-08-29T03:22:57+00:00",
-  "updatedAt": "2026-11-08",
+  "updatedAt": "2026-11-10",
   "stages": [
     {
       "id": "preflight",
@@ -64,8 +64,8 @@ window.STATE =
     }
   ],
   "requirements": {
-    "total": 41,
-    "done": 35,
+    "total": 42,
+    "done": 36,
     "inTicket": 5,
     "droppedNote": "G07 отменён пользователем в пользу G08",
     "inSpec": 0,
@@ -991,6 +991,15 @@ window.STATE =
       "requirements": [
         "G34"
       ],
+      "status": "done",
+      "blockedBy": []
+    },
+    {
+      "id": "40",
+      "title": "Общая совместимость ручной замены",
+      "requirements": [
+        "G35"
+      ],
       "status": "in-progress",
       "blockedBy": []
     }
@@ -1172,10 +1181,13 @@ window.STATE =
     "uiFileSHA256": "5c5f5aa0ae3fe3d5196880035343f0f873cb6e244b87a2650e85d321d6557e72",
     "productDeltaFromValidated151": "only visible Next prefix removal",
     "physicalSafariAcceptance": "pending",
-    "status": "validated; publication and installation pending",
+    "status": "published and installed; user confirmed permissions/relaunch08.11",
     "repository": "alimp01/mac-layout-switcher-next",
     "installedPath": "/Applications/MacLayoutSwitcherNext.app",
-    "artifact": "MacLayoutSwitcherNext-1.5.2.dmg"
+    "artifact": "MacLayoutSwitcherNext-1.5.2.dmg",
+    "codeCommit": "5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd",
+    "publication": "main/archiveSHA/PAX/all626Gitblobs verified08.11",
+    "installedPIDObserved08Nov": 30983
   },
   "wordCoverageAudit": {
     "independentRU": 459,
@@ -1481,7 +1493,8 @@ window.STATE =
     "reviews": "Spec APPROVE0; Standards APPROVE0",
     "manifestSHA256": "5ec38dad3053cf146e5cc1541f06b2c13ed9c4bc3d0919d9030155a9fa56eb25",
     "tests": "Linux110/0; native owned AppKit/WebKit; dictation adapter; fullspeech/mountedDMG",
-    "evidence": "audit/next-option-routing"
+    "evidence": "audit/next-option-routing",
+    "liveAttempt08Nov": "Safari via CUA entered шорты кмсф; modifier-only Alt_L tool rejected. ControlSpace disabled; observed привет was ordinary Russian input, not proven correction. No live acceptance."
   },
   "previousNextRelease": {
     "version": "1.5.0",
@@ -1538,6 +1551,13 @@ window.STATE =
     "version": "1.5.2",
     "reviews": "Spec APPROVE0 / Standards APPROVE0",
     "validation": "fullspeech/mountedDMG/23bundlefiles passed",
-    "status": "implemented; install pending"
+    "status": "done;1.5.2 published/installed"
+  },
+  "replacementCompatibilityAudit": {
+    "ticket": "40",
+    "version": "1.5.2",
+    "actual": "Screenshot Codex command palette selected мзт; generic untouched notice",
+    "status": "investigating",
+    "baseline": "5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd"
   }
 };

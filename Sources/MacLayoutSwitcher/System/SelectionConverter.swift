@@ -73,15 +73,19 @@ final class SelectionConverter {
     }
 
     func replace(_ selection: Selection, permit: InputFocusGuard.Permit,
-                 typist: Typist, replayRoute: InputFocusGuard.ReplayRoute, completion: @escaping (InputFocusGuard.ReplacementResult, Lang) -> Void) {
+                 typist: Typist, replayRoute: InputFocusGuard.ReplayRoute,
+                 failure: @escaping (InputFocusGuard.ReplacementFailure) -> Void = { _ in },
+                 completion: @escaping (InputFocusGuard.ReplacementResult, Lang) -> Void) {
         let converted = KeyMap.selectionConversion(selection.text)
         typist.enqueue {
+            var reason: InputFocusGuard.ReplacementFailure?
             let completed = selection.target.replace(range: selection.range,
                 expected: selection.text, with: converted.text, originalSelection: selection.originalSelection, requiresWordBoundary: selection.isWord,
-                capturedValue: selection.sourceValue, allowed: { permit.isAllowed })
+                capturedValue: selection.sourceValue, failure: { reason = $0 }, allowed: { permit.isAllowed })
             if completed.isUncertain { replayRoute.didBecomeUncertain(holdingAllInput: completed == .unconfirmedSelection) }
             DispatchQueue.main.async {
                 if completed.isUncertain { typist.onUnconfirmedReplacement?(selection.text, converted.text) }
+                if completed == .untouched, let reason { failure(reason) }
                 completion(completed, converted.language)
             }
         }

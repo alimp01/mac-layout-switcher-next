@@ -47,4 +47,6 @@
 
 | G33 | «почему он не исправляет в обычном окне браузера?»; «Только что набрал и нажал Option» | in-ticket | Next1.5.1 fresh Option route repaired; native/Linux110/speech/DMG and both reviews PASS; physical Safari pending | next-option-routing-spec.md → T38 |
 
-| G34 | «Убери надпись next … иконки в трее» | in-ticket | Удалить только видимый префикс Next; язык/пауза/диктовка сохранены | tray-label-spec.md → T39 |
+| G34 | «Убери надпись next … иконки в трее» | done | Удалить только видимый префикс Next; язык/пауза/диктовка сохранены | tray-label-spec.md → T39 |
+
+| G35 | «Опять ошибка… починить это везде…» | in-ticket | Next1.5.2 command palette selected мзт; audit and repair common replacement capability/selection paths with truthful system matrix | replacement-compatibility-spec.md → T40 |
