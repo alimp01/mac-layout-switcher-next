@@ -1,0 +1,17 @@
+{
+  "version": "1.5.3",
+  "installedPath": "/Applications/MacLayoutSwitcherNext.app",
+  "backup": "/Applications/.MacLayoutSwitcherNext-T40-raxhghuz/previous.app",
+  "stoppedPID": [
+    76860
+  ],
+  "binarySHA256": "eebf61e3d083335b0be8b823d95337991994cbe54beba58411394b65524e47ef",
+  "launched": true,
+  "pid": 78854,
+  "convertHotkey": {
+    "modifiers": [
+      "option"
+    ]
+  },
+  "autoSwitch": true
+}

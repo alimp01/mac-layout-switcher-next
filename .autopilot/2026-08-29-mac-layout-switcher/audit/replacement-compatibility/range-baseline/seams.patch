@@ -1,0 +1,204 @@
+--- Sources/SecureInput.swift
++++ Compiled/SecureInput.swift
+@@ -8,7 +8,7 @@
+ public enum SecureInput {
+     /// Активен ли сейчас защищённый ввод.
+     public static var isActive: Bool {
+-        IsSecureEventInputEnabled()
++        fixtureSecureInput
+     }
+ }
+ #endif
+--- Sources/DictationTarget.swift
++++ Compiled/DictationTarget.swift
+@@ -215,31 +215,31 @@
+     private let postEvent: (CGEvent, pid_t) -> Void
+     /// The injectable boundary is the actual process post, after event creation.
+     /// Native harnesses inspect serialized CGEvents without touching other apps.
+-    init(postEvent: @escaping (CGEvent, pid_t) -> Void = { $0.postToPid($1) }) {
++    init(postEvent: @escaping (CGEvent, pid_t) -> Void = { fixturePostEvent($0, $1) }) {
+         self.postEvent = postEvent
+     }
+-    var isTrusted: Bool { AXIsProcessTrusted() }
++    var isTrusted: Bool { fixtureAXIsProcessTrusted() }
+     var isSecure: Bool { SecureInput.isActive }
+     func attribute(_ name: String, of element: AXUIElement) -> CFTypeRef? {
+         var value: CFTypeRef?
+-        guard AXUIElementCopyAttributeValue(element, name as CFString, &value) == .success else { return nil }
++        guard fixtureAXUIElementCopyAttributeValue(element, name as CFString, &value) == .success else { return nil }
+         return value
+     }
+     private func bounded(_ element: AXUIElement) -> AXUIElement {
+-        AXUIElementSetMessagingTimeout(element, 0.1)
++        fixtureAXUIElementSetMessagingTimeout(element, 0.1)
+         return element
+     }
+     /// Bundle ID alone is not a process identity: require Apple's canonical
+     /// system bundle and executable, and a live launch instance.
+     private func spotlightProcessStart(pid: pid_t) -> SpotlightProcessStart? {
+-        guard let app = NSRunningApplication(processIdentifier: pid), !app.isTerminated,
++        guard let app = fixtureRunningApplication(processIdentifier: pid), !app.isTerminated,
+               app.bundleIdentifier == "com.apple.Spotlight",
+               app.bundleURL?.resolvingSymlinksInPath().standardizedFileURL.path == "/System/Library/CoreServices/Spotlight.app",
+               app.executableURL?.resolvingSymlinksInPath().standardizedFileURL.path == "/System/Library/CoreServices/Spotlight.app/Contents/MacOS/Spotlight"
+         else { return nil }
+         var info = proc_bsdinfo()
+         let size = Int32(MemoryLayout<proc_bsdinfo>.size)
+-        guard proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &info, size) == size,
++        guard fixtureproc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &info, size) == size,
+               info.pbi_pid == UInt32(pid), info.pbi_start_tvsec > 0, info.pbi_start_tvusec < 1_000_000 else { return nil }
+         return SpotlightProcessStart(seconds: info.pbi_start_tvsec, microseconds: info.pbi_start_tvusec)
+     }
+@@ -248,7 +248,7 @@
+             failure(.init(frontmost: .notRead, system: .processChanged, application: .notRead))
+             return nil
+         }
+-        guard let running = NSRunningApplication(processIdentifier: pid) else { return changedProcess() }
++        guard let running = fixtureRunningApplication(processIdentifier: pid) else { return changedProcess() }
+         let launchDate = running.launchDate
+         // Spotlight is still an overlay when NSWorkspace happens to name it
+         // directly or AXFrontmost is true/absent. Never drop its identity guard.
+@@ -259,7 +259,7 @@
+                                  requiresSystemFocus: isSpotlight, failure: failure)
+         // Reading process metadata can race a restart even when the initial AX
+         // field is unavailable. Do not bootstrap the replacement incarnation.
+-        if let launchDate, NSRunningApplication(processIdentifier: pid)?.launchDate != launchDate { return changedProcess() }
++        if let launchDate, fixtureRunningApplication(processIdentifier: pid)?.launchDate != launchDate { return changedProcess() }
+         return focus
+     }
+     func focusedElement(pid: pid_t) -> AXUIElement? {
+@@ -280,7 +280,7 @@
+         typealias Status = DictationFocusFailure.Status
+         func read(_ name: String, from element: AXUIElement) -> (CFTypeRef?, Status) {
+             var value: CFTypeRef?
+-            let result = AXUIElementCopyAttributeValue(element, name as CFString, &value)
++            let result = fixtureAXUIElementCopyAttributeValue(element, name as CFString, &value)
+             guard result == .success else { return (nil, .error(result.rawValue)) }
+             return (value, value == nil ? .noValue : .success)
+         }
+@@ -305,7 +305,7 @@
+             guard CFGetTypeID(value) == AXUIElementGetTypeID() else { status = .invalidType; return nil }
+             let element = bounded(unsafeBitCast(value, to: AXUIElement.self))
+             var actualPID: pid_t = 0
+-            let result = AXUIElementGetPid(element, &actualPID)
++            let result = fixtureAXUIElementGetPid(element, &actualPID)
+             guard result == .success else { status = .ownerError(result.rawValue); return nil }
+             if actualPID == pid { return DictationFocus(element: element, pid: pid, processStart: spotlight) }
+             // Only initial capture may choose this distinct owner. Validation
+@@ -334,7 +334,7 @@
+     }
+     func prepareAccessibility(pid: pid_t, allowed: () -> Bool) -> DictationAXBootstrap {
+         guard allowed(), isTrusted, !isSecure else { return .init(diagnostic: "cancelled") }
+-        let running = NSRunningApplication(processIdentifier: pid)
++        let running = fixtureRunningApplication(processIdentifier: pid)
+         let chromium = Self.isChromium(running?.bundleURL)
+         let instance = running?.launchDate.map { ProcessInstance(pid: pid, launchDate: $0) }
+         Self.bootstrapLock.lock()
+@@ -342,11 +342,11 @@
+         // Retain a live instance's gate. At capacity, refuse another enhanced
+         // activation rather than evicting it and restarting a pending debounce.
+         Self.enhancedBootstraps = Self.enhancedBootstraps.filter { key, _ in
+-            guard let application = NSRunningApplication(processIdentifier: key.pid) else { return false }
++            guard let application = fixtureRunningApplication(processIdentifier: key.pid) else { return false }
+             return application.launchDate.map { $0 == key.launchDate } ?? true
+         }
+         func currentProcessMatches() -> Bool {
+-            guard let instance, let current = NSRunningApplication(processIdentifier: pid),
++            guard let instance, let current = fixtureRunningApplication(processIdentifier: pid),
+                   current.launchDate == instance.launchDate else { return false }
+             return !chromium || Self.isChromium(current.bundleURL)
+         }
+@@ -356,7 +356,7 @@
+         if chromium, let instance, let previous = Self.enhancedBootstraps[instance] { return previous }
+         guard allowed() else { return .init(diagnostic: "cancelled") }
+         let app = bounded(AXUIElementCreateApplication(pid))
+-        let manual = AXUIElementSetAttributeValue(app, "AXManualAccessibility" as CFString, kCFBooleanTrue)
++        let manual = fixtureAXUIElementSetAttributeValue(app, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+         let manualDiagnostic = "manual:\(manual.rawValue)"
+         // Electron documents the manual hook. Chromium 155 no longer implements
+         // it; its BrowserCrApplication handles enhanced UI with a 2s debounce.
+@@ -372,7 +372,7 @@
+         }
+         func readEnhanced() -> (Bool?, String) {
+             var value: CFTypeRef?
+-            let code = AXUIElementCopyAttributeValue(app, "AXEnhancedUserInterface" as CFString, &value)
++            let code = fixtureAXUIElementCopyAttributeValue(app, "AXEnhancedUserInterface" as CFString, &value)
+             guard code == .success else { return (nil, String(code.rawValue)) }
+             guard let value else { return (nil, "no-value") }
+             guard CFGetTypeID(value) == CFBooleanGetTypeID() else { return (nil, "invalid-type") }
+@@ -386,7 +386,7 @@
+         var readback = existing
+         if existing.0 != true {
+             guard allowed() else { return .init(diagnostic: manualDiagnostic + "; enhanced:cancelled") }
+-            let result = AXUIElementSetAttributeValue(app, "AXEnhancedUserInterface" as CFString, kCFBooleanTrue)
++            let result = fixtureAXUIElementSetAttributeValue(app, "AXEnhancedUserInterface" as CFString, kCFBooleanTrue)
+             outcome = String(result.rawValue)
+             readback = readEnhanced()
+         }
+@@ -400,13 +400,13 @@
+     }
+     func selectedTextIsSettable(_ element: AXUIElement) -> Bool {
+         var settable = DarwinBoolean(false)
+-        return AXUIElementIsAttributeSettable(element, kAXSelectedTextAttribute as CFString, &settable) == .success && settable.boolValue
++        return fixtureAXUIElementIsAttributeSettable(element, kAXSelectedTextAttribute as CFString, &settable) == .success && settable.boolValue
+     }
+     func prefersUnicodeInsertion(pid: pid_t) -> Bool {
+         // Chromium bridges can advertise a selected-text setter whose browser
+         // action is unimplemented. Select verified Unicode before any mutation;
+         // never discover this by attempting text and then retrying it.
+-        guard let bundle = NSRunningApplication(processIdentifier: pid)?.bundleURL else { return false }
++        guard let bundle = fixtureRunningApplication(processIdentifier: pid)?.bundleURL else { return false }
+         // Safari's WebKit text controls likewise advertise AXSelectedText, but
+         // the WebCore setter is a no-op. Choose the existing verified native
+         // input route before selection/text mutation, never as a write retry.
+@@ -420,9 +420,9 @@
+         var valueSettable = DarwinBoolean(false)
+         return (role == kAXTextFieldRole || role == kAXTextAreaRole)
+             && attribute(kAXEnabledAttribute, of: element) as? Bool != false
+-            && AXUIElementIsAttributeSettable(element, kAXSelectedTextRangeAttribute as CFString, &settable) == .success
++            && fixtureAXUIElementIsAttributeSettable(element, kAXSelectedTextRangeAttribute as CFString, &settable) == .success
+             && settable.boolValue
+-            && AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable) == .success
++            && fixtureAXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable) == .success
+             && valueSettable.boolValue
+     }
+     func postUnicode(_ text: String, pid: pid_t) -> Bool {
+@@ -442,10 +442,10 @@
+     func setSelection(_ range: CFRange, in element: AXUIElement) -> Bool {
+         var range = range
+         guard let value = AXValueCreate(.cfRange, &range) else { return false }
+-        return AXUIElementSetAttributeValue(element, kAXSelectedTextRangeAttribute as CFString, value) == .success
++        return fixtureAXUIElementSetAttributeValue(element, kAXSelectedTextRangeAttribute as CFString, value) == .success
+     }
+     func setSelectedText(_ text: String, in element: AXUIElement) -> AXError {
+-        AXUIElementSetAttributeValue(element, kAXSelectedTextAttribute as CFString, text as CFString)
++        fixtureAXUIElementSetAttributeValue(element, kAXSelectedTextAttribute as CFString, text as CFString)
+     }
+     func observe(_ element: AXUIElement, pid: pid_t, changed: @escaping (DictationAXChange) -> Void) -> AnyObject? {
+         DictationAXObservation(element: element, pid: pid, received: { _ in true }, changed: changed)
+@@ -480,7 +480,7 @@
+           changed: @escaping (DictationAXChange) -> Void) {
+         callback = Callback(received: received, changed: changed)
+         var created: AXObserver?
+-        guard AXObserverCreate(pid, { _, _, notification, context in
++        guard fixtureAXObserverCreate(pid, { _, _, notification, context in
+             guard let context else { return }
+             let kind: DictationAXChange
+             switch notification as String {
+@@ -492,14 +492,14 @@
+         }, &created) == .success, let created else { return nil }
+         observer = created
+         let app = AXUIElementCreateApplication(pid)
+-        AXUIElementSetMessagingTimeout(app, 0.1)
++        fixtureAXUIElementSetMessagingTimeout(app, 0.1)
+         let registrations: [(AXUIElement, String)] = [
+             (app, kAXFocusedUIElementChangedNotification),
+             (element, kAXSelectedTextChangedNotification),
+             (element, kAXValueChangedNotification)
+         ]
+         for (source, notification) in registrations {
+-            guard AXObserverAddNotification(created, source, notification as CFString,
++            guard fixtureAXObserverAddNotification(created, source, notification as CFString,
+                 Unmanaged.passUnretained(callback).toOpaque()) == .success else { return nil }
+         }
+         CFRunLoopAddSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(created), .commonModes)

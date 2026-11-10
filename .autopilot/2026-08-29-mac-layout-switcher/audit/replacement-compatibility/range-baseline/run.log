@@ -1,0 +1,2 @@
+FAIL: selected мзт converts to vpn without requiring an unused selection setter
+Already selected/no range setter: result=Optional(main.InputFocusGuard.ReplacementResult.untouched); text=мзт; caret={0, 3}; selectionWrites=0; textWrites=0

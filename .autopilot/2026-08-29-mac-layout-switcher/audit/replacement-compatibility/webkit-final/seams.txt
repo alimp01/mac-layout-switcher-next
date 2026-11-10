@@ -1,0 +1,1 @@
+Process bundle URL lookup and raw AX attribute/settable RPCs for production eligibility are bridged to the owned native WebCore wrapper. All target, selection, eligibility predicate, routing and event construction code unchanged.

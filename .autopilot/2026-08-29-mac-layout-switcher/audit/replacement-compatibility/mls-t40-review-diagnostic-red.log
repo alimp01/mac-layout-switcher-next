@@ -1,0 +1,9 @@
+2026-11-10 07:18:10.719 test-adapter[77907:15297867] Error received in message reply handler: Connection invalid
+2026-11-10 07:18:10.719 test-adapter[77907:15297940] Connection Invalid error for service com.apple.hiservices-xpcservice.
+FAIL: selection confirmation reports actual source guard instead of selectionWrite
+PASS: no-op setter is uncertain, no retry
+PASS: lazy AX capture
+PASS: verified Unicode without setter
+PASS: native replacement and prefix boundary
+PASS: sticky permission and focus guards
+PASS: distinct actual rejection stages preserve source and caret without retry

@@ -1,0 +1,286 @@
+System focus snapshot: /tmp/mls-system-focus.D541Co
+/tmp/mls-system-focus.D541Co/main.swift:315:32: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+313 |     let combo = NSComboBox()
+314 |     fixture = FocusFixture()
+315 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    |                                `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+316 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+317 |     fixture.enabled = combo.isEnabled
+
+/tmp/mls-system-focus.D541Co/main.swift:316:41: warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+314 |     fixture = FocusFixture()
+315 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+316 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+    |                                         `- warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+317 |     fixture.enabled = combo.isEnabled
+318 |     fixture.directSettable = false
+
+/tmp/mls-system-focus.D541Co/main.swift:336:43: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+334 |         case "readonly-combo":
+335 |             let readonly = NSComboBox(); readonly.isEditable = false
+336 |             fixture.role = readonly.cell!.accessibilityAttributeValue(.role) as? String
+    |                                           `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+337 |             fixture.valueSettable = readonly.cell!.accessibilityIsAttributeSettable(.value)
+338 |         case "readonly-text": fixture.editor.isEditable = false
+
+/tmp/mls-system-focus.D541Co/main.swift:337:52: warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+335 |             let readonly = NSComboBox(); readonly.isEditable = false
+336 |             fixture.role = readonly.cell!.accessibilityAttributeValue(.role) as? String
+337 |             fixture.valueSettable = readonly.cell!.accessibilityIsAttributeSettable(.value)
+    |                                                    `- warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+338 |         case "readonly-text": fixture.editor.isEditable = false
+339 |         case "disabled": fixture.enabled = false
+
+/tmp/mls-system-focus.D541Co/main.swift:362:32: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+360 |           "preexisting word without working range setter stays unchanged and does not type at the old caret")
+361 |     fixture = FocusFixture()
+362 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    |                                `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+363 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+364 |     fixture.enabled = combo.isEnabled; fixture.directSettable = false
+
+/tmp/mls-system-focus.D541Co/main.swift:363:41: warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+361 |     fixture = FocusFixture()
+362 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+363 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+    |                                         `- warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+364 |     fixture.enabled = combo.isEnabled; fixture.directSettable = false
+365 |     fixture.editor.string = "🙂 кмсф\nмзт tail"
+
+/tmp/mls-system-focus.D541Co/main.swift:374:36: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+372 |     for speech in [false, true] {
+373 |         fixture = FocusFixture()
+374 |         fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    |                                    `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+375 |         fixture.rangeNeedsTree = true
+376 |         fixture.afterManual = {
+2026-11-10 07:12:49.363 test-focus[77401:15288463] Error received in message reply handler: Connection invalid
+2026-11-10 07:12:49.363 test-focus[77401:15288469] Connection Invalid error for service com.apple.hiservices-xpcservice.
+PASS: Spotlight Option captures actual owner PID and converts ghbdtn to привет once with exact caret
+PASS: Spotlight without initial selection requires fresh capture without preparing background or stale overlay
+PASS: dictation missing initial Spotlight range refuses delayed capture without preparation
+PASS: Spotlight process incarnation changing during initial range read refuses target publication
+PASS: initially missing native field cannot redirect delayed capture into newly opened Spotlight
+PASS: ordinary raw system focus authorizes exact own AppKit replacement
+PASS: valid system-focused field survives unavailable app-frontmost RPC
+PASS: positive foreign system focus never falls back to stale application focus
+PASS: explicit non-frontmost application stays fail-closed
+PASS: confirmed frontmost application can supply unavailable system focus
+PASS: bounded bootstrap reacquires real raw focus path
+PASS: missing initial Chromium field prepares without licensing a delayed edit
+PASS: Chromium 155 rejected manual bootstrap resolves delayed raw noValue and fresh request converts ghbdtn once
+PASS: Yandex missing initial field refuses text mutation while preparing accessibility
+PASS: repeated Yandex samples share the process gate without restarting activation
+PASS: literal Yandex framework resolves manual unsupported plus noValue and fresh capture selects Unicode before mutation
+PASS: Electron Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Electron Framework.framework uses verified Unicode on a fresh request
+PASS: Codex Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Codex Framework.framework uses verified Unicode on a fresh request
+PASS: Chromium Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Chromium Framework.framework uses verified Unicode on a fresh request
+PASS: Google Chrome Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Google Chrome Framework.framework uses verified Unicode on a fresh request
+PASS: Brave Browser Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Brave Browser Framework.framework uses verified Unicode on a fresh request
+PASS: Microsoft Edge Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Microsoft Edge Framework.framework uses verified Unicode on a fresh request
+PASS: Yandex Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Yandex Framework.framework uses verified Unicode on a fresh request
+PASS: Bitrix24 Framework.framework prepares missing focus once without delayed mutation
+PASS: renamed app containing Bitrix24 Framework.framework uses verified Unicode on a fresh request
+PASS: unrecognized Yandex Framework.framework.backup retains native direct insertion
+PASS: unrecognized Yandex Framework.framework.backup never receives enhanced UI
+PASS: unrecognized Not Yandex Framework.framework retains native direct insertion
+PASS: unrecognized Not Yandex Framework.framework never receives enhanced UI
+PASS: unrecognized Chromium Browser.framework retains native direct insertion
+PASS: unrecognized Chromium Browser.framework never receives enhanced UI
+PASS: unrecognized Unknown Browser Framework.framework retains native direct insertion
+PASS: unrecognized Unknown Browser Framework.framework never receives enhanced UI
+PASS: unrecognized Bitrix24 Framework.framework.backup retains native direct insertion
+PASS: unrecognized Bitrix24 Framework.framework.backup never receives enhanced UI
+PASS: unavailable focus refuses target
+PASS: literal Bitrix24 missing focus plus rejected manual accessibility only prepares without editing original source
+PASS: fresh Bitrix24 Option converts literal зщкефд to portal through verified Unicode once with exact full value and caret
+PASS: native app rejecting manual accessibility never receives enhanced UI
+PASS: unavailable focus refuses target
+PASS: preparing diagnostic preserves noValue and verifies alternate readback without text
+PASS: unavailable focus refuses target
+PASS: unavailable focus refuses target
+PASS: unavailable focus refuses target
+PASS: separate capture adapters do not restart a live process activation debounce
+PASS: unavailable focus refuses target
+PASS: unavailable focus refuses target
+PASS: temporarily missing launch metadata cannot evict a live activation gate
+PASS: unavailable focus refuses target
+PASS: reused PID with a new launch identity receives its own activation
+PASS: unavailable focus refuses target
+PASS: alternate setter error or false flag cannot veto independently available exact field readback
+PASS: unavailable focus refuses target
+PASS: unknown alternate readback never invents a focused field
+PASS: ambiguous manual timeout does not authorize an alternate mutation
+PASS: Option with no original identity prepares off-main and cannot edit a later same-app field
+PASS: known initial field changing during delayed bootstrap is rejected
+PASS: Codex Framework.framework dictation cancellation interrupts pending enhanced wait off-main without writes
+PASS: Yandex Framework.framework dictation cancellation interrupts pending enhanced wait off-main without writes
+PASS: Bitrix24 Framework.framework dictation cancellation interrupts pending enhanced wait off-main without writes
+PASS: unavailable delayed tree ends after bounded three focus reads and one activation
+PASS: positive foreign focus cannot trigger activation of the stale application
+PASS: Codex Framework.framework process replacement during metadata refuses enhanced UI and cannot license new process field
+PASS: Codex Framework.framework process replacement during manual refuses enhanced UI and cannot license new process field
+PASS: Yandex Framework.framework process replacement during metadata refuses enhanced UI and cannot license new process field
+PASS: Yandex Framework.framework process replacement during manual refuses enhanced UI and cannot license new process field
+PASS: Bitrix24 Framework.framework process replacement during metadata refuses enhanced UI and cannot license new process field
+PASS: Bitrix24 Framework.framework process replacement during manual refuses enhanced UI and cannot license new process field
+PASS: live activation gates are bounded without evicting and restarting older processes
+PASS: unavailable focus refuses target
+PASS: focus timeout retains exact stage and AX errors without source text
+PASS: diagnostic contains no editor text
+PASS: unavailable focus refuses target
+PASS: missing foreground PID has a distinct explanation
+PASS: unavailable focus refuses target
+PASS: raw unsupported/denied/no-value stages remain distinguishable: -25205
+PASS: unavailable focus refuses target
+PASS: raw unsupported/denied/no-value stages remain distinguishable: -25211
+PASS: unavailable focus refuses target
+PASS: raw unsupported/denied/no-value stages remain distinguishable: -25208
+PASS: unavailable focus refuses target
+PASS: raw unsupported/denied/no-value stages remain distinguishable: -25212
+PASS: unavailable focus refuses target
+PASS: malformed positive system focus cannot authorize stale app fallback
+PASS: unavailable focus refuses target
+PASS: unknown owner remains fail-closed and reports lookup error
+PASS: unavailable focus refuses target
+PASS: success without returned values does not invent a target
+PASS: unavailable focus refuses target
+PASS: foreign focus exposes metadata only
+PASS: unavailable focus refuses target
+PASS: explicit inactive application has a distinct diagnostic
+PASS: unavailable focus refuses target
+PASS: trust failure remains separate
+PASS: unavailable focus refuses target
+PASS: secure target remains unavailable
+PASS: unavailable focus refuses target
+PASS: secure input remains unavailable
+PASS: native read-only control cannot authorize a write
+PASS: Yandex Framework.framework read-only control cannot authorize a write
+PASS: Bitrix24 Framework.framework read-only control cannot authorize a write
+PASS: system focus change after capture blocks old target
+PASS: frontend change during selection blocks text mutation
+PASS: cancellation after selection preserves source
+PASS: native production Option word captures raw focus and converts literal ghbdtn once with exact caret
+PASS: native production Option selected captures raw focus and converts literal ghbdtn once with exact caret
+PASS: empty Option capture retains layout-only route
+PASS: Yandex Framework.framework production Option word captures raw focus and converts literal ghbdtn once with exact caret
+PASS: Yandex Framework.framework production Option selected captures raw focus and converts literal ghbdtn once with exact caret
+PASS: empty Option capture retains layout-only route
+PASS: Codex Framework.framework production Option word captures raw focus and converts literal ghbdtn once with exact caret
+PASS: Codex Framework.framework production Option selected captures raw focus and converts literal ghbdtn once with exact caret
+PASS: empty Option capture retains layout-only route
+PASS: Bitrix24 Framework.framework production Option word captures raw focus and converts literal ghbdtn once with exact caret
+PASS: Bitrix24 Framework.framework production Option selected captures raw focus and converts literal ghbdtn once with exact caret
+PASS: empty Option capture retains layout-only route
+PASS: native automatic Space preserves full value, exact caret and once-only separator
+PASS: native automatic Enter preserves full value, exact caret and once-only separator
+PASS: Enter key and flags preserved
+PASS: native automatic ShiftEnter preserves full value, exact caret and once-only separator
+PASS: ShiftEnter key and flags preserved
+PASS: native automatic Tab preserves full value, exact caret and once-only separator
+PASS: Tab key and flags preserved
+PASS: Yandex Framework.framework automatic Space preserves full value, exact caret and once-only separator
+PASS: Yandex Framework.framework automatic Enter preserves full value, exact caret and once-only separator
+PASS: Enter key and flags preserved
+PASS: Yandex Framework.framework automatic ShiftEnter preserves full value, exact caret and once-only separator
+PASS: ShiftEnter key and flags preserved
+PASS: Yandex Framework.framework automatic Tab preserves full value, exact caret and once-only separator
+PASS: Tab key and flags preserved
+PASS: Codex Framework.framework automatic Space preserves full value, exact caret and once-only separator
+PASS: Codex Framework.framework automatic Enter preserves full value, exact caret and once-only separator
+PASS: Enter key and flags preserved
+PASS: Codex Framework.framework automatic ShiftEnter preserves full value, exact caret and once-only separator
+PASS: ShiftEnter key and flags preserved
+PASS: Codex Framework.framework automatic Tab preserves full value, exact caret and once-only separator
+PASS: Tab key and flags preserved
+PASS: Bitrix24 Framework.framework automatic Space preserves full value, exact caret and once-only separator
+PASS: Bitrix24 Framework.framework automatic Enter preserves full value, exact caret and once-only separator
+PASS: Enter key and flags preserved
+PASS: Bitrix24 Framework.framework automatic ShiftEnter preserves full value, exact caret and once-only separator
+PASS: ShiftEnter key and flags preserved
+PASS: Bitrix24 Framework.framework automatic Tab preserves full value, exact caret and once-only separator
+PASS: Tab key and flags preserved
+PASS: dictation exposes the same raw focus diagnostic before observation or insertion
+PASS: Spotlight wrong bundle ID refuses initial capture without stale background field or preparation
+PASS: Spotlight lookalike bundle path refuses initial capture without stale background field or preparation
+PASS: Spotlight lookalike executable path refuses initial capture without stale background field or preparation
+PASS: Spotlight terminated process refuses initial capture without stale background field or preparation
+PASS: Spotlight missing process refuses initial capture without stale background field or preparation
+PASS: Spotlight missing kernel start refuses initial capture without stale background field or preparation
+PASS: Spotlight kernel lookup failure refuses initial capture without stale background field or preparation
+PASS: Spotlight truncated kernel metadata refuses initial capture without stale background field or preparation
+PASS: Spotlight wrong kernel PID refuses initial capture without stale background field or preparation
+PASS: Spotlight invalid kernel microseconds refuses initial capture without stale background field or preparation
+PASS: Spotlight malformed system focus refuses initial capture without stale background field or preparation
+PASS: Spotlight unknown system owner refuses initial capture without stale background field or preparation
+PASS: Spotlight secure field refuses initial capture without stale background field or preparation
+PASS: strict resolver still rejects valid Spotlight as foreign to the old menu application PID
+PASS: inactive Spotlight never uses stale application focus when system focus is missing
+PASS: captured Spotlight closed overlay cannot redirect old replacement
+PASS: captured Spotlight stale active Spotlight app-focus cannot redirect old replacement
+PASS: captured Spotlight same-owner new element cannot redirect old replacement
+PASS: captured Spotlight different owner cannot redirect old replacement
+PASS: captured Spotlight new kernel start seconds cannot redirect old replacement
+PASS: captured Spotlight new kernel start microseconds cannot redirect old replacement
+PASS: captured Spotlight lost process metadata cannot redirect old replacement
+PASS: captured Spotlight process terminated cannot redirect old replacement
+PASS: captured Spotlight identity changed cannot redirect old replacement
+PASS: captured Spotlight can become AXFrontmost while exact system field stays current
+PASS: frontmost Spotlight still checks captured process incarnation
+PASS: initial same-PID Spotlight exact system focus is current with true or missing AXFrontmost
+PASS: initial same-PID Spotlight rejects changed kernel process incarnation
+PASS: initial same-PID Spotlight exact system focus is current with true or missing AXFrontmost
+PASS: initial same-PID Spotlight rejects changed kernel process incarnation
+PASS: initial frontmost Spotlight rejects stale app-only focus without preparing it
+PASS: initial frontmost Spotlight without valid process identity stays unavailable
+PASS: dictation initial same-PID Spotlight rejects changed kernel process incarnation
+PASS: initial same-PID missing running process cannot become an ordinary unstamped target
+PASS: initial same-PID missing running process cannot become an ordinary unstamped target
+PASS: initial same-PID missing process cannot authorize stale application focus
+PASS: Spotlight Option selected keeps exact text/caret and actual owner routing
+Spotlight selected: pid=77421, text=привет, caret={6, 0}, unicodePIDs=[]
+PASS: Spotlight Option word Unicode keeps exact text/caret and actual owner routing
+Spotlight word Unicode: pid=77421, text=привет, caret={6, 0}, unicodePIDs=[77421, 77421]
+PASS: Spotlight Option read-only keeps exact text/caret and actual owner routing
+Spotlight read-only: pid=77421, text=ghbdtn, caret={6, 0}, unicodePIDs=[]
+PASS: Spotlight Option cancelled keeps exact text/caret and actual owner routing
+Spotlight cancelled: pid=77421, text=ghbdtn, caret={6, 0}, unicodePIDs=[]
+PASS: Spotlight automatic Space keeps full value/caret and only original separator key pair
+Spotlight autoSpace: pid=77421, text=привет , caret={7, 0}, keyPairs=0, receiverPIDs=[]
+PASS: Spotlight automatic Enter keeps full value/caret and only original separator key pair
+Spotlight autoEnter: pid=77421, text=привет, caret={6, 0}, keyPairs=1, receiverPIDs=[77421, 77421]
+PASS: Spotlight automatic ShiftEnter keeps full value/caret and only original separator key pair
+Spotlight autoShiftEnter: pid=77421, text=привет, caret={6, 0}, keyPairs=1, receiverPIDs=[77421, 77421]
+PASS: Spotlight dictation direct shares actual-owner capture/observation and exact insertion checks
+Spotlight dictationdirect: pid=77421, text=привет, caret={6, 0}, observerPIDs=[77421], unicodePIDs=[]
+PASS: Spotlight dictation Unicode shares actual-owner capture/observation and exact insertion checks
+Spotlight dictationUnicode: pid=77421, text=привет, caret={6, 0}, observerPIDs=[77421], unicodePIDs=[77421, 77421]
+PASS: Spotlight dictation changed process shares actual-owner capture/observation and exact insertion checks
+Spotlight dictationchanged process: pid=77421, text=, caret={0, 0}, observerPIDs=[77421], unicodePIDs=[]
+PASS: Spotlight dictation cancelled shares actual-owner capture/observation and exact insertion checks
+Spotlight dictationcancelled: pid=77421, text=, caret={0, 0}, observerPIDs=[77421], unicodePIDs=[]
+System focus harness passed; raw AX faults and own AppKit only, not live WindowServer acceptance.
+2026-11-10 07:13:05.839 test-focus[77485:15289335] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-10 07:13:05.839 test-focus[77485:15289334] Error received in message reply handler: Connection invalid
+Already selected/no range setter: result=Optional(main.InputFocusGuard.ReplacementResult.confirmed); text=vpn; caret={3, 0}; selectionWrites=0; textWrites=1
+PASS: selected мзт converts to vpn without requiring an unused selection setter
+Native combo metadata / owned NSTextView receiver: role=AXComboBox; valueSettable=true; result=Optional(main.InputFocusGuard.ReplacementResult.confirmed); text=🙂 rvca tail; caret={7, 0}
+PASS: editable native combo capabilities authorize exact selection with emoji and suffix preserved
+PASS: readonly-combo preserves selected source without blind Unicode or range writes
+PASS: readonly-text preserves selected source without blind Unicode or range writes
+PASS: disabled preserves selected source without blind Unicode or range writes
+PASS: button preserves selected source without blind Unicode or range writes
+PASS: secure preserves selected source without blind Unicode or range writes
+PASS: secure-input preserves selected source without blind Unicode or range writes
+PASS: unknown-value-capability preserves selected source without blind Unicode or range writes
+PASS: preexisting word without working range setter stays unchanged and does not type at the old caret
+PASS: combo selection converts multiline phrase while preserving emoji and suffix
+PASS: keyboard pins initial combo identity when range becomes available after focus changed
+PASS: dictation pins initial combo identity when range becomes available after focus changed

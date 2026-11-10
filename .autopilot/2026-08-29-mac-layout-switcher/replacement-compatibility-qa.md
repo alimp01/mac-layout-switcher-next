@@ -1,18 +1,53 @@
-# G35/T40 — QA,2026-11-10
+# G35/T40 — проверка совместимости замены, 2026-11-10
 
-## Baseline
-Installed Next1.5.2 binary50a18d7396b11bee9423555c7be94f390821f18c1f9eb522f6bcaf31327bb41d; publicmain5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd confirmed10.11. User screenshot: Codex command palette selected мзт, generic unchanged notice. Exact triggering sequence/actual refusing guard remains unknown.
-Prior1.5.2 published08.11 and installed; user confirmed permissions/relaunch. G34done. G33 Safari not physically accepted. Earlier08.11 CUA entered literal шорты кмсф but modifier-only Alt_L unsupported; both system input-source shortcuts disabled, so observed привет was ordinary Russian input rather than a conversion. SystemUIServer call hung877s and was aborted by user.
+## Результат
 
-## Investigation
-Target.replace already skips a redundant selection setter when desired selection equals original; hypothesis discarded. SystemDictationAccessibility Unicode eligibility instead requires range and value setters and rejects AXComboBox regardless of editability. Owned AppKit audit: editable NSComboBox AXValue settable true, readonly false; readonly NSTextView still range-settable, so range mutability cannot prove editability.
-Initial executor fixture /tmp/mls-system-focus.cNcedZ returned untouched with sourceмзт and zero writes, but was NOT an isolated range-capability regression: detached NSTextView reported AXEnabled=false. Discard this run as causal proof. Executor is correcting native enabled metadata and rerunning exact baseline/final; do not count initial log as meaningful RED. Target already skips redundant selection setter. Independent static/native capability audit remains valid; actual Codex guard remains unknown.
+Код 8a8907a, Next 1.5.3: исправлены общие отказы замены уже выделенного текста и редактируемых поисковых ComboBox. Два независимых финальных ревью: APPROVE, 0 замечаний. 110 Linux XCTest прошли. Полная arm64-сборка с GigaAM, проверка подписей и всех 23 файлов смонтированного DMG прошли. 1.5.3 установлена и запущена, Option и autoSwitch сохранены. Публикация — следующим шагом. Реальный случай палитры Codex и Safari пока НЕ принят; G35/T40 остаётся открытым для этой проверки.
 
-## Live attempt10.11
-User asked agent to test. Temporarily configured existing convert shortcut Ctrl+Shift+F12 because CUA cannot emit lone Option; kept a local backup and restored original Option after attempt. Only own test text in a new Safari Yandex tab. Native CUA AX read confirmed selected queryмзт; after chord no new field state returned. Next UI lookup timed out; subsequent screenshot/completion calls aborted before dispatch. This is INCONCLUSIVE, no live correction claimed. Original modifier-only Option restored; installed Next process73880 verified afterward. No denied-app AX/CDP/shell UI access used. No private browser contents/screenshots are committed.
+## Доказанная причина и исправление
 
-## Pending
-Meaningful baseline→final regression matrix; exact source freeze, independent Spec/Standards reviews; Linux/native/speech/DMG/release. Actual Codex palette and Safari result must be labeled separately from owned fixtures; no universal guarantee.
+Исходная 1.5.2 / 5c2d1c1 требовала изменяемый AXSelectedTextRange даже для уже точного выделения, когда менять диапазон не нужно. Также исключала AXComboBox независимо от его редактируемости. Теперь Unicode-маршрут не требует ненужного setter диапазона и принимает редактируемый ComboBox. Обязательны изменяемый AXValue и прежние проверки фокуса, процесса, исходного текста, выделения, отмены и защищённых полей. Начальный ComboBox закрепляется как конкретное поле: повторный захват не может перейти на другое. Нет повторной записи после возможного частичного изменения. Причина отказа поступает из реально отказавшей проверки.
 
-## Access review10.11 after user «продолжай»
-Scoped Safari getApp was explicitly rejected by automatic access review because selecting the app reads the current window and it might be the authenticated VPS panel. No bypass attempted. Asked user explicit approval or to make Yandex the active tab first. Temporary plain F12 binding was restored immediately to Option; Next PID76860 afterward. Approval pending. Generic native tests continue independently. First executor provider403 failure is infrastructure, not a test failure; fresh retry executor continues preserved WIP per autopilot.
+Сам Target уже пропускал ненужный setter точного выделения; это не новое изменение. Скриншот пользователя не доказывает конкретный внутренний этап отказа.
+
+## Baseline → final
+
+- Снято требование setter диапазона: одна и та же исправленная нативная fixture (SHA256 67e24edc641bb38795368cd0fff6305565cbc6277dd4ed9d5c322855de459e72) на baseline сохраняет «мзт», selection {0,3}, 0 записей; final даёт «vpn», caret {3,0}, 1 Unicode-вставка и 0 setter диапазона. См. range-baseline/range-final.
+- Реальный WebCore AXComboBox в собственном процессе: pristine baseline 5c2d1c1 сохраняет «🙂 кмсф tail», selection {3,4}, 0 записей; final даёт «🙂 rvca tail», caret {7,0}, ровно 1 Unicode-вставку и 0 прямых текстовых setter. Fixtures идентичны (SHA256 8fe052b2cc15092168911ee8720aa64587fea6da8ed183bd6cb10e2331761cab), источники обеих сторон независимо сверены ревьюерами. Проверено и слово без выделения.
+- Замечание ревью P2: изменение исходника на третьем чтении при подтверждении выделения неверно обозначалось selectionWrite. Final возвращает фактическую source/focus/cancel причину, сохраняя источник и запрет записи. Исходный probe независимо повторён обоими ревьюерами.
+
+## Матрица и пределы проверки
+
+| Проверка | Результат | Источники |
+| --- | --- | --- |
+| Полный System focus | 212 PASS | До финальной правки только диагностического helper |
+| Полный Engine | 20 групп PASS, включая 160 navigation cases | До той же правки helper |
+| Дополнительные Engine-варианты | 10 успешных вариантов | До той же правки helper |
+| Final adapter | 22 PASS | Финальный код, включая source/focus/cancel на подтверждении |
+| Final capability/pinning | 13 PASS | Финальный код |
+| Final WebKit | 16 групп PASS | Финальный код: input, textarea, contenteditable, ComboBox, хвост/emoji/caret |
+| Final Engine diagnostics/guards/snippet и delayed selection | PASS | Финальный код |
+| Dictation adapter | PASS | До финальной правки helper; маршрут вставки диктовки не менялся |
+| Linux SwitcherCore | 110 тестов, 0 ошибок | Код 8a8907a |
+| Native full speech + DMG | PASS | 53 build inputs совпадают с финальными источниками; 23 bundle files |
+| Реальные Codex/Safari и аппаратная Option | НЕ подтверждено | Не заменять результатами собственных fixtures |
+
+Полные логи, manifests, seams, проверенный patch и receipts: audit/replacement-compatibility/. Финальный manifest 109 файлов: 91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337. Последняя правка после полного Engine/System прогона касалась причины отказа при подтверждении выделения; она покрыта финальными targeted checks. Не утверждать, что все полные прогоны использовали финальный hash.
+
+## Неудачные и недоказательные попытки
+
+Первая range fixture cNcedZ/DrkOuN имела AXEnabled=false у отсоединённого NSTextView: не считать её изолированным RED. Исправленные rkFqwX/3kmP8F выше заменяют это доказательство. Промежуточный ComboBox baseline 7pce5t уже включал первую правку capability: не считать его pristine baseline; final WebKit сравнение использует настоящий 5c2d1c1.
+
+Один общий sandbox-прогон прерван исполнителем (exit 143); зависание среды не доказано. Повторные перечисленные прогоны завершились. Первый snippet-run выявил гонку setup fixture: запись snippets.json до создания каталога. Исполнитель добавил явный mkdir в тесте без изменения assertions. Первый executor завершился provider HTTP403; свежий исполнитель продолжил WIP. Это сбой инфраструктуры, не тест продукта.
+
+## Реальные окна и доступ
+
+08.11 ввод «привет» был обычным набором на русской раскладке, не доказательством автозамены: ControlSpace/ControlOptionSpace в системе выключены. CUA не умеет одиночный Alt_L. SystemUIServer getApp зависал 877 секунд и был прерван пользователем — не повторять.
+
+10.11 временно применяли CtrlShiftF12 к существующей настройке и собственный текст в новой вкладке Яндекса. После нажатия нет достаточного наблюдения результата; попытка НЕОПРЕДЕЛЁННА. Option восстановлена. Возможный сброс queued chord при быстром отпускании модификаторов пока лишь гипотеза, не доказанная причина текущего дефекта и не изменение T40.
+
+После «продолжай» подготовлена plain F12 для проверки маршрута. Автоматическая проверка доступа явно запретила Safari getApp: подключение читает активную вкладку, предположительно приватную панель VPS. Запрошено разрешение пользователя либо переключение на Яндекс; ответа пока нет. UI-доступ не обходился через shell/AX/CDP. Option восстановлена. Нет доступа к запрещённому Codex UI. Эти ограничения не мешают тестам собственных нативных fixtures.
+
+## Установка
+
+1.5.2 сохранена в /Applications/.MacLayoutSwitcherNext-T40-raxhghuz/previous.app. Запущена Next 1.5.3, наблюдён PID 78854; binary SHA256 eebf61e3d083335b0be8b823d95337991994cbe54beba58411394b65524e47ef. Option modifier-only и autoSwitch=true сохранены. Запуск процесса не доказывает TCC trust или работу горячей клавиши. Stable app/repo/archive не менялись.

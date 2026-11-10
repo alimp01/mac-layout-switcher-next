@@ -32,6 +32,7 @@ final class FixtureAX: DictationAccessibility {
     var deletionOnly = false
     var callback: ((DictationAXChange) -> Void)?
     var afterPost: (() -> Void)?
+    var afterSelection: (() -> Void)?
     var realUnicodeEvents = 0
     init() { editor.string = "До старый после"; editor.setSelectedRange(NSRange(location: 3, length: 6)) }
     func focusedElement(pid: pid_t) -> AXUIElement? { focused && !lazyTree ? element : nil }
@@ -93,7 +94,9 @@ final class FixtureAX: DictationAccessibility {
     }
     func setSelection(_ range: CFRange, in element: AXUIElement) -> Bool {
         if refuseRestoration && range.length == 0 { return false }
-        editor.setSelectedRange(NSRange(location: range.location, length: range.length)); return !selectionReturnsFailure
+        editor.setSelectedRange(NSRange(location: range.location, length: range.length))
+        afterSelection?()
+        return !selectionReturnsFailure
     }
     func observe(_ element: AXUIElement, pid: pid_t, changed: @escaping (DictationAXChange) -> Void) -> AnyObject? {
         callback = changed
@@ -142,6 +145,45 @@ require(replace(cancelledTarget, allowed: { false }) == .untouched && cancelled.
 cancelled.focused = false
 require(replace(cancelledTarget) == .untouched, "changed focus cannot write")
 print("PASS: sticky permission and focus guards")
+for mode in ["cancelled", "focus", "selection", "source", "capability"] {
+    let (ax, target) = fixture()
+    switch mode {
+    case "focus": ax.focused = false
+    case "selection": ax.editor.setSelectedRange(NSRange(location: 12, length: 0))
+    case "source": ax.editor.string = "before edited after"; ax.editor.setSelectedRange(NSRange(location: 13, length: 0))
+    case "capability": ax.direct = false; ax.unicode = false
+    default: break
+    }
+    let before = ax.editor.string, caret = ax.editor.selectedRange()
+    var reason: InputFocusGuard.ReplacementFailure?
+    let outcome = target.replace(range: CFRange(location: 7, length: 6), expected: "ghbdtn", with: "привет",
+        originalSelection: CFRange(location: 13, length: 0), capturedValue: "before ghbdtn after",
+        failure: { reason = $0 }, allowed: { mode != "cancelled" })
+    require(outcome == .untouched && ax.editor.string == before && ax.editor.selectedRange() == caret
+            && ax.writes == 0 && ax.posts == 0, "\(mode) rejection leaves exact field state without writes")
+    require(reason?.rawValue == mode && reason?.message.contains("replace.\(mode)") == true
+            && reason?.message.contains("ghbdtn") == false && reason?.message.contains("привет") == false,
+            "\(mode) reports actual content-free guard, not a later probe")
+}
+print("PASS: distinct actual rejection stages preserve source and caret without retry")
+for mode in ["source", "focus", "cancelled"] {
+    let (ax, target) = fixture()
+    let permit = InputFocusGuard.Permit()
+    if mode == "source" {
+        // The preflight reads agree; the first confirmation read reports an
+        // external source change. This must not blame a range setter timeout.
+        ax.values = ["before ghbdtn after", "before ghbdtn after", "before edited after"]
+    } else {
+        ax.afterSelection = { if mode == "focus" { ax.focused = false } else { permit.cancel() } }
+    }
+    var reason: InputFocusGuard.ReplacementFailure?
+    let outcome = target.replace(range: CFRange(location: 7, length: 6), expected: "ghbdtn", with: "привет",
+        originalSelection: CFRange(location: 13, length: 0), failure: { reason = $0 }, allowed: { permit.isAllowed })
+    require(outcome != .confirmed && ax.editor.string == "before ghbdtn after" && ax.writes == 0 && ax.posts == 0,
+            "\(mode) during selection confirmation preserves source without text writes")
+    require(reason?.rawValue == mode, "selection confirmation reports actual \(mode) guard instead of selectionWrite")
+}
+print("PASS: confirmation retains actual source/focus/cancellation rejection stage")
 let (partial, partialTarget) = fixture()
 partial.direct = false; partial.partialWrite = true
 require(replace(partialTarget) == .uncertain && partial.posts == 1, "partial Unicode must stop without retry")

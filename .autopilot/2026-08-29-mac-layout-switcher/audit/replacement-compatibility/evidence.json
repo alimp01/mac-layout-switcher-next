@@ -1,0 +1,116 @@
+{
+  "freeze": "/tmp/mls-t40-final-review-zi2dg9wj",
+  "manifest_sha256": "91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337",
+  "logs": {
+    "system_initial": {
+      "path": "/tmp/mls-t40-final-system.log",
+      "sha256": "c3ca56c05b5b4574c9ed55d2bd3a2a1d0364c2a81767e46c743c7b89779d5936",
+      "passes": 212,
+      "failures": [],
+      "firstline": "System focus snapshot: /tmp/mls-system-focus.D541Co",
+      "durablePath": "mls-t40-final-system.log"
+    },
+    "adapter_final": {
+      "path": "/tmp/mls-t40-review-diagnostic-green.log",
+      "sha256": "41ba6fb38339fd6e2a8697e7e38bcc0350a8d62b388a93ccfcb24ef2108fd5be",
+      "passes": 22,
+      "failures": [],
+      "firstline": "2026-11-10 07:19:32.387 test-adapter[78009:15299769] Connection Invalid error for service com.apple.hiservices-xpcservice.",
+      "durablePath": "mls-t40-review-diagnostic-green.log"
+    },
+    "confirmation_red": {
+      "path": "/tmp/mls-t40-review-diagnostic-red.log",
+      "sha256": "f7678c635abc193974331785120ecc4af0fe9de81070340f16ec7a655deff6a4",
+      "passes": 6,
+      "failures": [
+        "FAIL: selection confirmation reports actual source guard instead of selectionWrite"
+      ],
+      "firstline": "2026-11-10 07:18:10.719 test-adapter[77907:15297867] Error received in message reply handler: Connection invalid",
+      "durablePath": "mls-t40-review-diagnostic-red.log"
+    },
+    "base_initial": {
+      "path": "/tmp/mls-t40-final-engine-base.log",
+      "sha256": "e24785822160911d598494281e6f82827e1958d76aea85eb72797edf6e6a3971",
+      "passes": 20,
+      "failures": [],
+      "firstline": "Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545",
+      "durablePath": "mls-t40-final-engine-base.log"
+    },
+    "variants_initial": {
+      "path": "/tmp/mls-t40-final-engine-variants.log",
+      "sha256": "75653444bb612cb1af519be3bd29f9526be89dc4556a180b5edcfc59437cb1e9",
+      "passes": 10,
+      "failures": [],
+      "firstline": "CASE replacement-diagnostic com.apple.keylayout.ABC changedApp=False",
+      "durablePath": "mls-t40-final-engine-variants.log"
+    },
+    "engine_diagnostic_final": {
+      "path": "/tmp/mls-t40-final-engine-diagnostic.log",
+      "sha256": "4d7db5752e838d34357b8ed443b3423d8133b4659b593dfce36430906f063872",
+      "passes": 1,
+      "failures": [],
+      "firstline": "2026-11-10 07:21:42.589 test-engine[78476:15303905] Connection Invalid error for service com.apple.hiservices-xpcservice.",
+      "durablePath": "mls-t40-final-engine-diagnostic.log"
+    },
+    "engine_guards_final": {
+      "path": "/tmp/mls-t40-final-engine-guards.log",
+      "sha256": "a51172f5664d0bdbb31305714f538f58668388ec065e5f44e1eaaa773b4ccb79",
+      "passes": 1,
+      "failures": [],
+      "firstline": "2026-11-10 07:21:42.589 test-engine[78475:15303906] Connection Invalid error for service com.apple.hiservices-xpcservice.",
+      "durablePath": "mls-t40-final-engine-guards.log"
+    },
+    "snippet_final": {
+      "path": "/tmp/mls-t40-final-snippet.log",
+      "sha256": "4368bf4d411776bf57038fb206d75577348a298d0442944b2b4ad7afdcb7d551",
+      "passes": 1,
+      "failures": [],
+      "firstline": "Engine regression scratch: /tmp/mls-keyboard-engine.NzvGq1",
+      "durablePath": "mls-t40-final-snippet.log"
+    },
+    "delay_final": {
+      "path": "/tmp/mls-t40-final-delay-v2.log",
+      "sha256": "70ae25719e2e3ce166cd0418d2333b957e8797d92fc5dd273f5dbbc16e4a6d73",
+      "passes": 1,
+      "failures": [],
+      "firstline": "Selection-delay snapshot: /tmp/mls-keyboard-selection-delay.GjOpHt",
+      "durablePath": "mls-t40-final-delay-v2.log"
+    },
+    "compatibility_final": {
+      "path": "/tmp/mls-t40-final-compatibility-v2.log",
+      "sha256": "3351415d261e1bea4fbf04a5ace5f451eafaacc4154002c33470e245ad2b0cb0",
+      "passes": 13,
+      "failures": [],
+      "firstline": "System focus snapshot: /tmp/mls-system-focus.FfAkI0",
+      "durablePath": "mls-t40-final-compatibility-v2.log"
+    },
+    "dictation_initial": {
+      "path": "/tmp/mls-t40-final-dictation.log",
+      "sha256": "3ae836cbd0e4195039998e6d59b4669f5336f99a63ebc769619f47a53b137133",
+      "passes": 1,
+      "failures": [],
+      "firstline": "PASS: production AX capture/insert, native NSTextView replacement, lazy tree, capability fallback, sticky cancellation, Unicode, readback failure, no retry, clipboard",
+      "durablePath": "mls-t40-final-dictation.log"
+    },
+    "webkit_final": {
+      "path": "/tmp/mls-t40-webkit-palette-green.log",
+      "sha256": "0d7dd3ec092a227a113e4776fad534b7cda13ed610300cdc59cd87f3ebbdce04",
+      "passes": 16,
+      "failures": [],
+      "firstline": "WebKit snapshot: /tmp/mls-keyboard-webkit.6sUuI8",
+      "durablePath": "mls-t40-webkit-palette-green.log"
+    },
+    "webkit_baseline": {
+      "path": "/tmp/mls-t40-webkit-palette-red.log",
+      "sha256": "547a3c0c6d62205ef9022f19188c104f4b865984562c92d7fed24f48504fb5bf",
+      "passes": 14,
+      "failures": [
+        "FAIL: real WebKit palette selection preserves emoji, suffix and caret"
+      ],
+      "firstline": "WebKit snapshot: /tmp/mls-keyboard-webkit.3YWSaS",
+      "durablePath": "mls-t40-webkit-palette-red.log"
+    }
+  },
+  "webkit_same_fixture_sha256": "8fe052b2cc15092168911ee8720aa64587fea6da8ed183bd6cb10e2331761cab",
+  "final_engine_sources_match": true
+}

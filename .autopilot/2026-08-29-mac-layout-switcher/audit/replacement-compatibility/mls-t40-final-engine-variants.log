@@ -1,0 +1,34 @@
+CASE replacement-diagnostic com.apple.keylayout.ABC changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: real Engine manual refusal preserves source and displays actual content-free replacement stage
+CASE option com.apple.keylayout.ABC changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: readable AX / unsupported writes, fresh Option, cached and first capture, literal text/caret/no notice
+CASE option-guards com.apple.keylayout.ABC changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: readable Option source/value/caret/selection/field/PID/secure/protected/physical cancellation; retained AX authority; undo; no retry
+CASE option-cancel com.apple.keylayout.ABC changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: cancelled Option completion preserves subsequently tracked word
+CASE option-interrupted-input com.apple.keylayout.ABC changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: interrupted Option retires authority for withheld physical word
+CASE manual com.apple.keylayout.ABC changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: explicit manual choice survives quiet-time continuation
+CASE snippet com.apple.keylayout.ABC changedApp=False
+main/main.swift:149: Fatal error: 'try!' expression unexpectedly raised an error: Error Domain=NSCocoaErrorDomain Code=4 "The folder “snippets.json” doesn’t exist." UserInfo={NSUserStringVariant=(
+    Folder
+), NSFilePath=/var/folders/s7/blf5jdcs7q7bfjjxbt621w500000gn/T/D6D6879E-6C4D-4A3E-9193-147547A1DA0A/snippets.json, NSURL=file:///var/folders/s7/blf5jdcs7q7bfjjxbt621w500000gn/T/D6D6879E-6C4D-4A3E-9193-147547A1DA0A/snippets.json, NSUnderlyingError=0x126705050 {Error Domain=NSPOSIXErrorDomain Code=2 "No such file or directory"}}
+CASE protected com.apple.keylayout.ABC changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: protected-to-unknown stays private; ordinary target or new PID resumes
+CASE option com.apple.keylayout.RussianWin changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: readable AX / unsupported writes, fresh Option, cached and first capture, literal text/caret/no notice
+CASE caret com.apple.keylayout.RussianWin changedApp=False
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: caret edit fragment and next-boundary reset
+CASE caret com.apple.keylayout.RussianWin changedApp=True
+Frozen TIS fixture: source=com.apple.keylayout.RussianWin; uchrBytes=13936; uchrSHA256=94dfa9de2f2e3ea41b62b098258dca13595e40a3c6e73019da55da9a933063cb
+PASS: caret edit fragment and next-boundary reset

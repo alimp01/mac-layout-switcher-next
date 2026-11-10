@@ -1,0 +1,9 @@
+Selection-delay snapshot: /tmp/mls-keyboard-selection-delay.GjOpHt
+2026-11-10 07:20:43.918 test-delay[78166:15301788] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-10 07:20:43.918 test-delay[78166:15301575] Error received in message reply handler: Connection invalid
+Space: actual="срфе"; result=unconfirmedSelection; writes=0; replayed=0; recovery="срфе"/"chat "/" x"
+Enter: actual="срфе"; result=unconfirmedSelection; writes=0; replayed=0; recovery="срфе"/"chat"/"⏎x"
+ShiftEnter: actual="срфе"; result=unconfirmedSelection; writes=0; replayed=0; recovery="срфе"/"chat"/"⏎x"
+Tab: actual="срфе"; result=unconfirmedSelection; writes=0; replayed=0; recovery="срфе"/"chat"/"⇥x"
+Preselected: actual="chatx"; result=Optional(main.InputFocusGuard.ReplacementResult.confirmed); pendingSelectionRequests=0
+PASS delayed selection/restoration ACK, native separators/flags, fast input, cancellation and complete recovery; no WindowServer claim

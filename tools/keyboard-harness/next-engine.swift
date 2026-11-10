@@ -145,6 +145,7 @@ func fixture(unicode:Bool, snippets: String? = nil, chromium: Bool = false, conf
  currentFixture.chromium=chromium
  currentFixture.editor.string=""; currentFixture.editor.setSelectedRange(NSRange(location:0,length:0))
  let directory=URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+ try! FileManager.default.createDirectory(at:directory,withIntermediateDirectories:true)
  let config=Config(directory:directory); config.update { $0.excludedApps=[]; $0.sounds=false; configure(&$0) }
  if let snippets { try! snippets.write(to:config.snippetsURL,atomically:true,encoding:.utf8) }
  let engine=Engine(config:config); require(engine.start(),"inert registration starts")
@@ -210,6 +211,26 @@ func option(_ engine: Engine) {
   event.type = .flagsChanged; event.flags=flags
   _=engine.probeEvent(event)
  }
+}
+
+if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "replacement-diagnostic" {
+ let e=fixture(unicode:true, configure: { $0.autoSwitch=false })
+ currentFixture.unavailableField=false
+ awaitFixture("selected replacement target cached") { e.probeFocusReady }
+ currentFixture.unsupportedWrites=true
+ currentFixture.editor.string="мзт"
+ currentFixture.editor.setSelectedRange(NSRange(location:0,length:3))
+ option(e); drain(0.6)
+ func labels(_ view:NSView) -> [String] {
+  (view as? NSTextField).map { [$0.stringValue] } ?? view.subviews.flatMap(labels)
+ }
+ let notices=app.windows.compactMap { $0.contentView }.flatMap(labels)
+ require(currentFixture.editor.string=="мзт" && currentFixture.editor.selectedRange()==NSRange(location:0,length:3)
+         && currentFixture.axWrites==0 && currentFixture.posted.isEmpty,"unsupported selected conversion preserves literal source without fallback")
+ require(notices.contains { $0.contains("replace.capability") && !$0.contains("мзт") },
+         "real Engine refusal displays content-free capability stage from the failed transaction")
+ print("PASS: real Engine manual refusal preserves source and displays actual content-free replacement stage")
+ e.stop(); exit(0)
 }
 
 

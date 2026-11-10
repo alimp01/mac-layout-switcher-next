@@ -1,0 +1,14 @@
+{
+  "version": "1.5.3",
+  "codeCommit": "8a8907a864773f36869e6364ecf4f207df653b45",
+  "binarySHA256": "eebf61e3d083335b0be8b823d95337991994cbe54beba58411394b65524e47ef",
+  "helperSHA256": "c539b4c438370c08631ebb3dca3f83379286685e255ac5084b2f3b4a240fdffd",
+  "dmgSHA256": "92238fd5392e8adce2b1d28a71fbf07fd0f7a23edfca12dffbe66f79ffc22ab6",
+  "dmgBytes": 12227045,
+  "bundleID": "space.alimp.maclayoutswitcher.next",
+  "mountedVerified": true,
+  "deepStrictVerified": true,
+  "allBundledFilesVerified": 23,
+  "reviewedManifestSHA256": "91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337",
+  "liveAcceptance": "not proven; Safari access approval pending; no Codex UI bypass"
+}

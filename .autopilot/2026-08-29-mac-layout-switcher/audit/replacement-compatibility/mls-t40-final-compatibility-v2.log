@@ -1,0 +1,73 @@
+System focus snapshot: /tmp/mls-system-focus.FfAkI0
+/tmp/mls-system-focus.FfAkI0/main.swift:315:32: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+313 |     let combo = NSComboBox()
+314 |     fixture = FocusFixture()
+315 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    |                                `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+316 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+317 |     fixture.enabled = combo.isEnabled
+
+/tmp/mls-system-focus.FfAkI0/main.swift:316:41: warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+314 |     fixture = FocusFixture()
+315 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+316 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+    |                                         `- warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+317 |     fixture.enabled = combo.isEnabled
+318 |     fixture.directSettable = false
+
+/tmp/mls-system-focus.FfAkI0/main.swift:336:43: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+334 |         case "readonly-combo":
+335 |             let readonly = NSComboBox(); readonly.isEditable = false
+336 |             fixture.role = readonly.cell!.accessibilityAttributeValue(.role) as? String
+    |                                           `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+337 |             fixture.valueSettable = readonly.cell!.accessibilityIsAttributeSettable(.value)
+338 |         case "readonly-text": fixture.editor.isEditable = false
+
+/tmp/mls-system-focus.FfAkI0/main.swift:337:52: warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+335 |             let readonly = NSComboBox(); readonly.isEditable = false
+336 |             fixture.role = readonly.cell!.accessibilityAttributeValue(.role) as? String
+337 |             fixture.valueSettable = readonly.cell!.accessibilityIsAttributeSettable(.value)
+    |                                                    `- warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+338 |         case "readonly-text": fixture.editor.isEditable = false
+339 |         case "disabled": fixture.enabled = false
+
+/tmp/mls-system-focus.FfAkI0/main.swift:362:32: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+360 |           "preexisting word without working range setter stays unchanged and does not type at the old caret")
+361 |     fixture = FocusFixture()
+362 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    |                                `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+363 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+364 |     fixture.enabled = combo.isEnabled; fixture.directSettable = false
+
+/tmp/mls-system-focus.FfAkI0/main.swift:363:41: warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+361 |     fixture = FocusFixture()
+362 |     fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+363 |     fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+    |                                         `- warning: 'accessibilityIsAttributeSettable' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+364 |     fixture.enabled = combo.isEnabled; fixture.directSettable = false
+365 |     fixture.editor.string = "🙂 кмсф\nмзт tail"
+
+/tmp/mls-system-focus.FfAkI0/main.swift:374:36: warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+372 |     for speech in [false, true] {
+373 |         fixture = FocusFixture()
+374 |         fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    |                                    `- warning: 'accessibilityAttributeValue' was deprecated in macOS 10.10: Use the NSAccessibility protocol methods instead (see NSAccessibilityProtocols.h)
+375 |         fixture.rangeNeedsTree = true
+376 |         fixture.afterManual = {
+2026-11-10 07:20:44.371 test-focus[78171:15301843] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-10 07:20:44.371 test-focus[78171:15301617] Error received in message reply handler: Connection invalid
+Already selected/no range setter: result=Optional(main.InputFocusGuard.ReplacementResult.confirmed); text=vpn; caret={3, 0}; selectionWrites=0; textWrites=1
+PASS: selected мзт converts to vpn without requiring an unused selection setter
+Native combo metadata / owned NSTextView receiver: role=AXComboBox; valueSettable=true; result=Optional(main.InputFocusGuard.ReplacementResult.confirmed); text=🙂 rvca tail; caret={7, 0}
+PASS: editable native combo capabilities authorize exact selection with emoji and suffix preserved
+PASS: readonly-combo preserves selected source without blind Unicode or range writes
+PASS: readonly-text preserves selected source without blind Unicode or range writes
+PASS: disabled preserves selected source without blind Unicode or range writes
+PASS: button preserves selected source without blind Unicode or range writes
+PASS: secure preserves selected source without blind Unicode or range writes
+PASS: secure-input preserves selected source without blind Unicode or range writes
+PASS: unknown-value-capability preserves selected source without blind Unicode or range writes
+PASS: preexisting word without working range setter stays unchanged and does not type at the old caret
+PASS: combo selection converts multiline phrase while preserving emoji and suffix
+PASS: keyboard pins initial combo identity when range becomes available after focus changed
+PASS: dictation pins initial combo identity when range becomes available after focus changed

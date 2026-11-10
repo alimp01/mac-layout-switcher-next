@@ -1,7 +1,10 @@
-# Current Next audit — 2026-11-10
+# Next 1.5.3 / G35 — 2026-11-10
 
-1.5.2 published/installed/hash verified; user confirmed permissions and relaunch08.11. G34 tray label done. Historical pending-install statements below are superseded. Actual G33 Safari remains pending: CUA entered source but cannot press lone modifier; disabled ControlSpace meant ordinary Russian typing, NOT an autocorrect pass. SystemUIServer CUA call hung877s and user aborted; do not repeat.
-New G35/T40: screenshot Codex command palette selected мзт, generic replacement refusal. Investigate generalized selected/preexisting/capability paths, meaningful baselineRED→GREEN and truthful matrix. See replacement-compatibility-spec.md and ticket40. Root orchestrates; executor writes code. Stable app/repo/archive unchanged. Current baseline5c2d1c1.
+Общие отказы выбранного/старого текста и editable ComboBox исправлены, code 8a8907a. Два финальных независимых ревью APPROVE0; manifest 109 файлов 91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337. Pristine WebCore baseline→final: «🙂 кмсф tail»→«🙂 rvca tail», ровно одна запись и правильный caret. Linux110/0, native targeted checks, полный speech build и mounted DMG23files PASS. См. replacement-compatibility-qa.md: полный старый прогон и финальные targeted проверки имеют разный явно записанный provenance.
+
+1.5.3 установлена и запущена (PID78854); Option/autoSwitch сохранены. Публикация следующим шагом. Реальная палитра Codex и G33 Safari НЕ приняты; G35/T40 пока открыт. Safari CUA явно запрещён automatic access review из-за активной приватной VPS-вкладки; запрос разрешения/переключения вкладки ожидает пользователя. Не обходить через shell/AX/CDP. CUA не умеет одиночный Alt_L; SystemUIServer getApp ранее завис877с — не повторять. Запуск процесса не доказывает разрешения или аппаратную доставку.
+
+Исторические pending-install записи ниже заменяются текущим статусом. Stable app/repo/archive не менять. Публиковать только Next main и mac-layout-switcher-next.tar.gz. Root ведёт metadata/release; продукт и тесты пишет исполнитель.
 
 # Next1.5.2 / G34 — 2026-11-08
 

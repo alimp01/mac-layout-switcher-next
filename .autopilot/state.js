@@ -48,19 +48,19 @@ window.STATE =
       "id": "build",
       "status": "active",
       "startedAt": "2026-08-29T03:52:30+00:00",
-      "note": "Next G33/T38:1.5.1 validated, both reviews APPROVE0; release/install and physical Safari outcome pending."
+      "note": "Next G35/T40 1.5.3 installed; code/tests and both reviews complete; publication and real Safari/Codex acceptance pending"
     },
     {
       "id": "review",
       "status": "pending",
       "startedAt": "2026-10-08T04:45:11.080956+00:00",
-      "note": "Next G33/T38:1.5.1 validated, both reviews APPROVE0; release/install and physical Safari outcome pending."
+      "note": "Next G35/T40 1.5.3 installed; code/tests and both reviews complete; publication and real Safari/Codex acceptance pending"
     },
     {
       "id": "final",
       "status": "pending",
       "startedAt": "2026-08-29T05:25:00+00:00",
-      "note": "Next G33/T38:1.5.1 validated, both reviews APPROVE0; release/install and physical Safari outcome pending."
+      "note": "Next G35/T40 1.5.3 installed; code/tests and both reviews complete; publication and real Safari/Codex acceptance pending"
     }
   ],
   "requirements": {
@@ -1001,7 +1001,10 @@ window.STATE =
         "G35"
       ],
       "status": "in-progress",
-      "blockedBy": []
+      "blockedBy": [],
+      "codeCommit": "8a8907a864773f36869e6364ecf4f207df653b45",
+      "review": "Spec APPROVE0; Standards APPROVE0",
+      "note": "Implementation, tests, full speech build, signed mounted DMG and installation complete; publication and live acceptance pending"
     }
   ],
   "singlePass": null,
@@ -1009,8 +1012,8 @@ window.STATE =
     "passed": 110,
     "failed": 0,
     "runtime": "Linux XCTest",
-    "commit": "a0b060076612c5fe0c4cb98056a9f10e775a8d2f",
-    "note": "Linux110 and native/build/DMG PASS; user confirmed Codex physical Space and Option on2026-11-06; other physical paths untested"
+    "commit": "8a8907a864773f36869e6364ecf4f207df653b45",
+    "note": "Actual Linux110/0; final native targeted checks and reviewed prior full-run provenance in G35 QA; live Safari/Codex pending"
   },
   "debt": {
     "placeholders": [],
@@ -1165,29 +1168,30 @@ window.STATE =
     "drift": []
   },
   "manualAcceptance": {
-    "version": "1.5.2",
+    "version": "1.5.3",
     "status": "pending",
-    "scope": "Safari fresh шорты кмсф + Option without selection; expected шорты rvca"
+    "scope": "Codex command palette selected мзт→vpn; Safari fresh шорты кмсф + Option→шорты rvca",
+    "blocker": "Safari getApp automatic access-review rejection; user approval or safe active tab pending; no denied-app bypass"
   },
   "release": {
-    "version": "1.5.2",
-    "binarySHA256": "50a18d7396b11bee9423555c7be94f390821f18c1f9eb522f6bcaf31327bb41d",
-    "dmgSHA256": "70fe187a20a69c00fc34bd573bf4dc57577261ae030c08d753bafdfae1a351ff",
-    "dmgBytes": 12227191,
+    "version": "1.5.3",
+    "codeCommit": "8a8907a864773f36869e6364ecf4f207df653b45",
+    "binarySHA256": "eebf61e3d083335b0be8b823d95337991994cbe54beba58411394b65524e47ef",
+    "helperSHA256": "c539b4c438370c08631ebb3dca3f83379286685e255ac5084b2f3b4a240fdffd",
+    "dmgSHA256": "92238fd5392e8adce2b1d28a71fbf07fd0f7a23edfca12dffbe66f79ffc22ab6",
+    "dmgBytes": 12227045,
     "bundleID": "space.alimp.maclayoutswitcher.next",
     "mountedVerified": true,
     "deepStrictVerified": true,
     "allBundledFilesVerified": 23,
-    "uiFileSHA256": "5c5f5aa0ae3fe3d5196880035343f0f873cb6e244b87a2650e85d321d6557e72",
-    "productDeltaFromValidated151": "only visible Next prefix removal",
-    "physicalSafariAcceptance": "pending",
-    "status": "published and installed; user confirmed permissions/relaunch08.11",
-    "repository": "alimp01/mac-layout-switcher-next",
+    "reviewedManifestSHA256": "91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337",
+    "liveAcceptance": "not proven; Safari access approval pending; no Codex UI bypass",
+    "status": "installed and launched; publication pending",
     "installedPath": "/Applications/MacLayoutSwitcherNext.app",
-    "artifact": "MacLayoutSwitcherNext-1.5.2.dmg",
-    "codeCommit": "5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd",
-    "publication": "main/archiveSHA/PAX/all626Gitblobs verified08.11",
-    "installedPIDObserved08Nov": 30983
+    "installedPID": 78854,
+    "repository": "alimp01/mac-layout-switcher-next",
+    "artifact": "MacLayoutSwitcherNext-1.5.3.dmg",
+    "backup": "/Applications/.MacLayoutSwitcherNext-T40-raxhghuz/previous.app"
   },
   "wordCoverageAudit": {
     "independentRU": 459,
@@ -1555,9 +1559,37 @@ window.STATE =
   },
   "replacementCompatibilityAudit": {
     "ticket": "40",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "actual": "Screenshot Codex command palette selected мзт; generic untouched notice",
-    "status": "investigating",
-    "baseline": "5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd"
+    "status": "validated and installed; publication/live acceptance pending",
+    "baseline": "5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd",
+    "codeCommit": "8a8907a864773f36869e6364ecf4f207df653b45",
+    "manifestSHA256": "91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337",
+    "reviews": "Both APPROVE0",
+    "evidence": "2026-08-29-mac-layout-switcher/audit/replacement-compatibility",
+    "actualGuard": "unknown from screenshot; shared capability defects independently reproduced",
+    "nativeResult": "pristine baseline untouched → final confirmed, one Unicode write, exact source/prefix/suffix/caret",
+    "live": "not proven; Safari automatic access-review rejection, permission pending",
+    "concern": "Fast CtrlShiftF12 modifier release may cancel queued command; hypothesis only, unconfirmed, no T40 product change"
+  },
+  "previousNext152Release": {
+    "version": "1.5.2",
+    "binarySHA256": "50a18d7396b11bee9423555c7be94f390821f18c1f9eb522f6bcaf31327bb41d",
+    "dmgSHA256": "70fe187a20a69c00fc34bd573bf4dc57577261ae030c08d753bafdfae1a351ff",
+    "dmgBytes": 12227191,
+    "bundleID": "space.alimp.maclayoutswitcher.next",
+    "mountedVerified": true,
+    "deepStrictVerified": true,
+    "allBundledFilesVerified": 23,
+    "uiFileSHA256": "5c5f5aa0ae3fe3d5196880035343f0f873cb6e244b87a2650e85d321d6557e72",
+    "productDeltaFromValidated151": "only visible Next prefix removal",
+    "physicalSafariAcceptance": "pending",
+    "status": "published and installed; user confirmed permissions/relaunch08.11",
+    "repository": "alimp01/mac-layout-switcher-next",
+    "installedPath": "/Applications/MacLayoutSwitcherNext.app",
+    "artifact": "MacLayoutSwitcherNext-1.5.2.dmg",
+    "codeCommit": "5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd",
+    "publication": "main/archiveSHA/PAX/all626Gitblobs verified08.11",
+    "installedPIDObserved08Nov": 30983
   }
 };

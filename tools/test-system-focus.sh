@@ -45,9 +45,12 @@ paths=sorted((root/'Sources').rglob('*.swift'))+sorted((root/'Compiled').glob('*
 (root/'SOURCE-SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+str(p.relative_to(root))+'\n' for p in paths))
 PY
 printf 'System focus snapshot: %s\n' "$focus_work"
-swiftc -module-cache-path "$focus_work/modules" -emit-library -emit-module -module-name SwitcherCore "$focus_work"/Sources/SwitcherCore/*.swift -o "$focus_work/libSwitcherCore.dylib" -emit-module-path "$focus_work/SwitcherCore.swiftmodule"
-swiftc -module-cache-path "$focus_work/modules" -I "$focus_work" -L "$focus_work" -lSwitcherCore -Xlinker -rpath -Xlinker "$focus_work" "$focus_work"/Compiled/*.swift "$focus_work/main.swift" -o "$focus_work/test-focus"
+swiftc -module-cache-path "${SWIFT_MODULECACHE_PATH:-$focus_work/modules}" -emit-library -emit-module -module-name SwitcherCore "$focus_work"/Sources/SwitcherCore/*.swift -o "$focus_work/libSwitcherCore.dylib" -emit-module-path "$focus_work/SwitcherCore.swiftmodule"
+swiftc -module-cache-path "${SWIFT_MODULECACHE_PATH:-$focus_work/modules}" -I "$focus_work" -L "$focus_work" -lSwitcherCore -Xlinker -rpath -Xlinker "$focus_work" "$focus_work"/Compiled/*.swift "$focus_work/main.swift" -o "$focus_work/test-focus"
 focus_status=0
 "$focus_work/test-focus" > "$focus_work/run.log" 2>&1 || focus_status=$?
+if [[ "$focus_status" == "0" && -z "${MLS_REPLACEMENT_COMPATIBILITY:-}" ]]; then
+    MLS_REPLACEMENT_COMPATIBILITY=1 "$focus_work/test-focus" >> "$focus_work/run.log" 2>&1 || focus_status=$?
+fi
 cat "$focus_work/run.log"
 exit "$focus_status"

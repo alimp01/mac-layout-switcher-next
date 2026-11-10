@@ -1,0 +1,42 @@
+==> swift build -c release
+[0/1] Planning build
+Building for production...
+[0/7] Copying KEYBOOP_LICENSE.txt
+[1/13] Write sources
+[1/13] Copying trigrams_en.json
+[3/13] Copying words_en.json
+[3/13] Copying KEYBOOP_PROVENANCE.json
+[3/13] Write sources
+[3/13] Copying words_ru.json
+[3/13] Write sources
+[8/13] Copying trigrams_ru.json
+[9/13] Copying KEYSWITCHER_LICENSE.txt
+[10/13] Write swift-version--1AB21518FC5DEDBE.txt
+[12/15] Compiling SpeechRecognizer main.swift
+[12/16] Write Objects.LinkFileList
+[13/16] Linking SpeechRecognizer
+[15/16] Compiling SwitcherCore Detector.swift
+[16/17] Compiling MacLayoutSwitcher Config.swift
+[16/18] Write Objects.LinkFileList
+[17/18] Linking MacLayoutSwitcher
+Build complete! (10.49s)
+==> Собираю бандл /tmp/mls-next-153-dist/MacLayoutSwitcherNext.app
+/tmp/mls-next-153-dist/MacLayoutSwitcherNext.app/Contents/Helpers/SpeechRecognizer: replacing existing signature
+==> codesign (ad-hoc)
+/tmp/mls-next-153-dist/MacLayoutSwitcherNext.app: replacing existing signature
+
+Готово: /tmp/mls-next-153-dist/MacLayoutSwitcherNext.app
+
+Первый запуск:
+  1. Открыть приложение: open "/tmp/mls-next-153-dist/MacLayoutSwitcherNext.app"
+     (ad-hoc подпись — Gatekeeper может ругнуться: правый клик по .app → «Открыть».)
+  2. Выдать разрешения по подсказке приложения:
+       Системные настройки → Конфиденциальность и безопасность →
+         • Универсальный доступ (Accessibility)
+         • Мониторинг ввода (Input Monitoring)
+     Включить «Mac Layout Switcher Next» в обоих списках.
+  3. Перезапустить приложение (пункт меню-бара «Я выдал разрешения»).
+
+Иконка появится в меню-баре (клавиатура). Dock-иконки нет — это ожидаемо.
+
+Для .dmg-дистрибутива (установка перетаскиванием в «Программы»): ./build-dmg.sh

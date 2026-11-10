@@ -5,7 +5,11 @@ work=$(mktemp -d /tmp/mls-keyboard-webkit.XXXXXX)
 mkdir -p "$work/Sources" "$work/Compiled" "$work/SafariFixture.app/Contents"
 cp -R Sources/SwitcherCore "$work/Sources/"
 for name in InputFocusGuard Typist TrackedInputBatch SelectionConverter; do
-    cp "Sources/MacLayoutSwitcher/System/$name.swift" "$work/Sources/"
+    if [[ -n "${MLS_WEBKIT_BASE_REF:-}" ]]; then
+        git show "$MLS_WEBKIT_BASE_REF:Sources/MacLayoutSwitcher/System/$name.swift" > "$work/Sources/$name.swift"
+    else
+        cp "Sources/MacLayoutSwitcher/System/$name.swift" "$work/Sources/"
+    fi
 done
 if [[ -n "${MLS_WEBKIT_BASE_REF:-}" ]]; then
     git show "$MLS_WEBKIT_BASE_REF:Sources/MacLayoutSwitcher/Speech/DictationTarget.swift" > "$work/Sources/DictationTarget.swift"
@@ -16,7 +20,7 @@ cp Sources/MacLayoutSwitcher/System/SecureInput.swift "$work/Sources/"
 cp tools/keyboard-harness/webkit.swift "$work/main.swift"
 python3 - "$work" <<'PY'
 from pathlib import Path
-import hashlib,plistlib,sys
+import difflib,hashlib,plistlib,re,sys
 root=Path(sys.argv[1])
 (root/'SafariFixture.app/Contents/Info.plist').write_bytes(plistlib.dumps({'CFBundleIdentifier':'com.apple.Safari','CFBundlePackageType':'APPL'}))
 source=root/'Sources/DictationTarget.swift'
@@ -24,8 +28,12 @@ s=source.read_text()
 old='NSRunningApplication(processIdentifier: pid)?.bundleURL'
 assert s.count(old)==1
 s=s.replace(old,'fixtureProcessBundleURL(pid: pid)')
+for name in ['AXUIElementCopyAttributeValue','AXUIElementIsAttributeSettable']:
+    assert name in s
+    s=re.sub(r'\b'+name+r'\b','fixture'+name,s)
 (root/'Compiled/DictationTarget.swift').write_text(s)
-(root/'seams.txt').write_text('Only process bundle URL lookup replaced with fixtureProcessBundleURL(pid: pid); all target, selection, routing and event construction code unchanged.\n')
+(root/'seams.patch').write_text(''.join(difflib.unified_diff(source.read_text().splitlines(True),s.splitlines(True),fromfile='Sources/DictationTarget.swift',tofile='Compiled/DictationTarget.swift')))
+(root/'seams.txt').write_text('Process bundle URL lookup and raw AX attribute/settable RPCs for production eligibility are bridged to the owned native WebCore wrapper. All target, selection, eligibility predicate, routing and event construction code unchanged.\n')
 paths=sorted((root/'Sources').rglob('*.swift'))+[root/'main.swift',root/'Compiled/DictationTarget.swift',root/'SafariFixture.app/Contents/Info.plist']
 (root/'SOURCE-SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+str(p.relative_to(root))+'\n' for p in paths))
 PY

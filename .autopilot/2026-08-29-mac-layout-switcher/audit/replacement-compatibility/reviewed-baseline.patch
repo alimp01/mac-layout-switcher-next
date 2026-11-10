@@ -1,0 +1,740 @@
+diff --git a/Sources/MacLayoutSwitcher/Engine.swift b/Sources/MacLayoutSwitcher/Engine.swift
+index 97f36c3..8875a58 100644
+--- a/Sources/MacLayoutSwitcher/Engine.swift
++++ b/Sources/MacLayoutSwitcher/Engine.swift
+@@ -554,7 +554,11 @@ public final class Engine {
+     private func replaceSelection(_ selection: SelectionConverter.Selection, permit: InputFocusGuard.Permit,
+                                   ticket: InputFocusGuard.Ticket) {
+         _ = core.handle(.reset)
+-        selectionConverter.replace(selection, permit: permit, typist: typist, replayRoute: ticket.replayRoute) { [weak self] result, language in
++        selectionConverter.replace(selection, permit: permit, typist: typist, replayRoute: ticket.replayRoute,
++            failure: { [weak self] reason in
++                guard permit.isAllowed else { return }
++                self?.conversionNotice.show(message: "Текст не изменён: \(reason.message)")
++            }) { [weak self] result, language in
+             guard let self else { return }
+             self.selectionConverter.finish(permit)
+             if result.isUncertain { return }
+@@ -565,7 +569,7 @@ public final class Engine {
+                 KeyTranslator.refresh()
+                 self.onLayoutSwitched?(language)
+                 self.sounds?.playCorrection()
+-            } else { self.conversionNotice.show() }
++            }
+         }
+     }
+ 
+diff --git a/Sources/MacLayoutSwitcher/Speech/DictationTarget.swift b/Sources/MacLayoutSwitcher/Speech/DictationTarget.swift
+index d55cd2b..a6b8239 100644
+--- a/Sources/MacLayoutSwitcher/Speech/DictationTarget.swift
++++ b/Sources/MacLayoutSwitcher/Speech/DictationTarget.swift
+@@ -416,15 +416,18 @@ struct SystemDictationAccessibility: DictationAccessibility {
+     }
+     func supportsUnicodeInsertion(_ element: AXUIElement) -> Bool {
+         let role = attribute(kAXRoleAttribute, of: element) as? String
+-        var settable = DarwinBoolean(false)
+         var valueSettable = DarwinBoolean(false)
+-        return (role == kAXTextFieldRole || role == kAXTextAreaRole)
++        return Self.isTextInputRole(role)
+             && attribute(kAXEnabledAttribute, of: element) as? Bool != false
+-            && AXUIElementIsAttributeSettable(element, kAXSelectedTextRangeAttribute as CFString, &settable) == .success
+-            && settable.boolValue
++            // Unicode replaces the selection already verified by the caller.
++            // A range setter is needed only when that caller changes selection;
++            // its write/readback remains a separate precondition to text input.
+             && AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable) == .success
+             && valueSettable.boolValue
+     }
++    static func isTextInputRole(_ role: String?) -> Bool {
++        role == kAXTextFieldRole || role == kAXTextAreaRole || role == kAXComboBoxRole
++    }
+     func postUnicode(_ text: String, pid: pid_t) -> Bool {
+         let source = CGEventSource(stateID: .privateState)
+         guard let down = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: true),
+@@ -575,7 +578,7 @@ struct DictationTarget {
+             let element = focus.element, pid = focus.pid
+             if let firstElement, !CFEqual(firstElement, element) { return .unavailable(.changed) }
+             let role = accessibility.attribute(kAXRoleAttribute, of: element) as? String
+-            if role == kAXTextFieldRole || role == kAXTextAreaRole { firstElement = element }
++            if SystemDictationAccessibility.isTextInputRole(role) { firstElement = element }
+             if accessibility.attribute(kAXSubroleAttribute, of: element) as? String == kAXSecureTextFieldSubrole {
+                 return .unavailable(.protectedField)
+             }
+diff --git a/Sources/MacLayoutSwitcher/System/InputFocusGuard.swift b/Sources/MacLayoutSwitcher/System/InputFocusGuard.swift
+index 3493e0f..37a8883 100644
+--- a/Sources/MacLayoutSwitcher/System/InputFocusGuard.swift
++++ b/Sources/MacLayoutSwitcher/System/InputFocusGuard.swift
+@@ -20,6 +20,26 @@ final class InputFocusGuard {
+         var isUncertain: Bool { self == .uncertain || self == .unconfirmedSelection }
+     }
+ 
++    /// Captured at the failing guard, never inferred from a later AX probe.
++    /// Codes and explanations contain no editor text or application metadata.
++    enum ReplacementFailure: String {
++        case cancelled, focus, selection, source, capability, selectionWrite, dispatch, readback
++        var message: String {
++            let explanation: String
++            switch self {
++            case .cancelled: explanation = "Действие отменено новым вводом. Повторите конвертацию после завершения ввода."
++            case .focus: explanation = "Поле больше не активно или включён защищённый ввод. Выберите нужное редактируемое поле."
++            case .selection: explanation = "Курсор или выделение изменились. Выберите текст заново."
++            case .source: explanation = "Текст изменился или редактор не предоставил его для проверки. Выберите текст заново."
++            case .capability: explanation = "Редактор не предоставил поддерживаемый способ замены. Проверьте, что поле доступно для редактирования."
++            case .selectionWrite: explanation = "Редактор не подтвердил нужное выделение. Выделите текст вручную и повторите конвертацию."
++            case .dispatch: explanation = "Не удалось отправить замену. Проверьте поле перед повторным действием."
++            case .readback: explanation = "Редактор не подтвердил результат замены. Проверьте поле перед повторным действием."
++            }
++            return "\(explanation) Диагностика: replace.\(rawValue)."
++        }
++    }
++
+     enum CaptureFailure {
+         case accessibilityDenied, protectedField, secureInput, unavailableField, unavailableSelection
+         case unavailableText, unreadableSelection, selectionTooLarge, changed, unavailableApplication
+@@ -98,7 +118,7 @@ final class InputFocusGuard {
+                 // real text field. Once a text field was observed, keep its
+                 // identity even when its range is temporarily unavailable.
+                 let role = accessibility.attribute(kAXRoleAttribute, of: element) as? String
+-                if role == kAXTextFieldRole || role == kAXTextAreaRole { firstElement = element }
++                if SystemDictationAccessibility.isTextInputRole(role) { firstElement = element }
+                 let target = Target(element: element, pid: focus.pid, accessibility: accessibility, processStart: focus.processStart)
+                 if target.selection() != nil { return allowed() && (focus.processStart == nil || target.isCurrent()) ? target : failed(.changed) }
+                 if focus.processStart != nil { return failed(.unavailableSelection) }
+@@ -166,33 +186,46 @@ final class InputFocusGuard {
+         /// Only exact readback plus a collapsed caret can confirm it. Select the
+         /// Unicode route BEFORE mutation for bridges with missing/no-op setters.
+         func replace(range: CFRange, expected: String, with replacement: String,
+-                     originalSelection: CFRange, requiresWordBoundary: Bool = false, capturedValue: String? = nil, allowed: () -> Bool) -> ReplacementResult {
++                     originalSelection: CFRange, requiresWordBoundary: Bool = false, capturedValue: String? = nil,
++                     failure: (ReplacementFailure) -> Void = { _ in }, allowed: () -> Bool) -> ReplacementResult {
++            func rejected(_ reason: ReplacementFailure, _ result: ReplacementResult = .untouched) -> ReplacementResult {
++                failure(reason)
++                return result
++            }
+             func selected(_ expected: CFRange) -> Bool {
+                 selection().map { $0.location == expected.location && $0.length == expected.length } == true
+             }
+-            guard allowed(), isCurrent(), selected(originalSelection), let original = value(),
++            guard allowed() else { return rejected(.cancelled) }
++            guard isCurrent() else { return rejected(.focus) }
++            guard selected(originalSelection) else { return rejected(.selection) }
++            guard let original = value(),
+                   capturedValue.map({ $0 == original }) != false,
+                   range.location >= 0, range.length >= 0, range.location <= original.utf16.count,
+                   range.length <= original.utf16.count - range.location,
+-                  (original as NSString).substring(with: NSRange(location: range.location, length: range.length)) == expected else { return .untouched }
++                  (original as NSString).substring(with: NSRange(location: range.location, length: range.length)) == expected else { return rejected(.source) }
+             if requiresWordBoundary {
+                 let start = max(0, range.location - 1)
+                 let validation = (original as NSString).substring(with: NSRange(location: start, length: range.location + range.length - start))
+-                guard ReplacementSource(expected: expected).matches(validation, atDocumentStart: range.location == 0) else { return .untouched }
++                guard ReplacementSource(expected: expected).matches(validation, atDocumentStart: range.location == 0) else { return rejected(.source) }
+             }
+             let direct = accessibility.selectedTextIsSettable(element) && !accessibility.prefersUnicodeInsertion(pid: pid)
+-            guard direct || accessibility.supportsUnicodeInsertion(element) else { return .untouched }
+-            guard allowed(), isCurrent(), selected(originalSelection), value() == original else { return .untouched }
++            guard direct || accessibility.supportsUnicodeInsertion(element) else { return rejected(.capability) }
++            guard allowed() else { return rejected(.cancelled) }
++            guard isCurrent() else { return rejected(.focus) }
++            guard selected(originalSelection) else { return rejected(.selection) }
++            guard value() == original else { return rejected(.source) }
+             var attempted = false
+             var selectionRequested = false
+             var selectionConfirmed = false
+-            func confirmSelection(_ expected: CFRange, requireAllowed: Bool = true) -> Bool {
++            func confirmSelection(_ expected: CFRange, requireAllowed: Bool = true) -> ReplacementFailure? {
+                 for attempt in 0..<6 {
+                     if attempt > 0 { Thread.sleep(forTimeInterval: 0.025) }
+-                    guard (!requireAllowed || allowed()), isCurrent(), value() == original else { return false }
+-                    if selected(expected) { return true }
++                    guard !requireAllowed || allowed() else { return .cancelled }
++                    guard isCurrent() else { return .focus }
++                    guard value() == original else { return .source }
++                    if selected(expected) { return nil }
+                 }
+-                return false
++                return .selectionWrite
+             }
+             func finish(_ result: ReplacementResult) -> ReplacementResult {
+                 // A selection RPC can apply and still report failure. Restore
+@@ -201,7 +234,7 @@ final class InputFocusGuard {
+                 if isCurrent(), selected(range), value() == original {
+                     if range.location != originalSelection.location || range.length != originalSelection.length {
+                         _ = accessibility.setSelection(originalSelection, in: element)
+-                        if !confirmSelection(originalSelection, requireAllowed: false) { return .unconfirmedSelection }
++                        if confirmSelection(originalSelection, requireAllowed: false) != nil { return .unconfirmedSelection }
+                     }
+                     selectionConfirmed = true
+                 } else if result == .untouched, !selected(originalSelection) {
+@@ -218,8 +251,13 @@ final class InputFocusGuard {
+                 selectionRequested = true
+                 _ = accessibility.setSelection(range, in: element)
+             }
+-            selectionConfirmed = confirmSelection(range)
+-            guard selectionConfirmed, allowed(), isCurrent(), value() == original, allowed() else { return finish(.untouched) }
++            let selectionFailure = confirmSelection(range)
++            selectionConfirmed = selectionFailure == nil
++            if let selectionFailure { return rejected(selectionFailure, finish(.untouched)) }
++            guard allowed() else { return rejected(.cancelled, finish(.untouched)) }
++            guard isCurrent() else { return rejected(.focus, finish(.untouched)) }
++            guard value() == original else { return rejected(.source, finish(.untouched)) }
++            guard allowed() else { return rejected(.cancelled, finish(.untouched)) }
+             func replacing(_ value: String, _ selected: CFRange, _ text: String) -> String {
+                 (value as NSString).replacingCharacters(in: NSRange(location: selected.location, length: selected.length), with: text)
+             }
+@@ -242,23 +280,26 @@ final class InputFocusGuard {
+                    selected(CFRange(location: range.location, length: replacement.utf16.count)) {
+                     _ = accessibility.setSelection(CFRange(location: end, length: 0), in: element)
+                 }
+-                return finish(confirm(expectedValue, caret: end) ? .confirmed : .uncertain)
++                return confirm(expectedValue, caret: end) ? finish(.confirmed) : rejected(.readback, finish(.uncertain))
+             }
+             var currentValue = original
+             var currentRange = range
+             for chunk in DictationTarget.unicodeChunks(replacement) {
+-                guard allowed(), isCurrent(), value() == currentValue, selected(currentRange), allowed() else {
+-                    return finish(attempted ? .uncertain : .untouched)
+-                }
++                let interrupted: ReplacementResult = attempted ? .uncertain : .untouched
++                guard allowed() else { return rejected(.cancelled, finish(interrupted)) }
++                guard isCurrent() else { return rejected(.focus, finish(interrupted)) }
++                guard value() == currentValue else { return rejected(.source, finish(interrupted)) }
++                guard selected(currentRange) else { return rejected(.selection, finish(interrupted)) }
++                guard allowed() else { return rejected(.cancelled, finish(interrupted)) }
+                 let expectedValue = replacing(currentValue, currentRange, chunk)
+                 attempted = true
+-                guard accessibility.postUnicode(chunk, pid: pid) else { return finish(.uncertain) }
++                guard accessibility.postUnicode(chunk, pid: pid) else { return rejected(.dispatch, finish(.uncertain)) }
+                 let end = currentRange.location + chunk.utf16.count
+-                guard confirm(expectedValue, caret: end) else { return finish(.uncertain) }
++                guard confirm(expectedValue, caret: end) else { return rejected(.readback, finish(.uncertain)) }
+                 currentValue = expectedValue
+                 currentRange = CFRange(location: end, length: 0)
+             }
+-            return finish(attempted ? .confirmed : .untouched)
++            return attempted ? finish(.confirmed) : rejected(.capability, finish(.untouched))
+         }
+     }
+ 
+diff --git a/Sources/MacLayoutSwitcher/System/SelectionConverter.swift b/Sources/MacLayoutSwitcher/System/SelectionConverter.swift
+index bef64a4..1c10fc0 100644
+--- a/Sources/MacLayoutSwitcher/System/SelectionConverter.swift
++++ b/Sources/MacLayoutSwitcher/System/SelectionConverter.swift
+@@ -73,15 +73,19 @@ final class SelectionConverter {
+     }
+ 
+     func replace(_ selection: Selection, permit: InputFocusGuard.Permit,
+-                 typist: Typist, replayRoute: InputFocusGuard.ReplayRoute, completion: @escaping (InputFocusGuard.ReplacementResult, Lang) -> Void) {
++                 typist: Typist, replayRoute: InputFocusGuard.ReplayRoute,
++                 failure: @escaping (InputFocusGuard.ReplacementFailure) -> Void = { _ in },
++                 completion: @escaping (InputFocusGuard.ReplacementResult, Lang) -> Void) {
+         let converted = KeyMap.selectionConversion(selection.text)
+         typist.enqueue {
++            var reason: InputFocusGuard.ReplacementFailure?
+             let completed = selection.target.replace(range: selection.range,
+                 expected: selection.text, with: converted.text, originalSelection: selection.originalSelection, requiresWordBoundary: selection.isWord,
+-                capturedValue: selection.sourceValue, allowed: { permit.isAllowed })
++                capturedValue: selection.sourceValue, failure: { reason = $0 }, allowed: { permit.isAllowed })
+             if completed.isUncertain { replayRoute.didBecomeUncertain(holdingAllInput: completed == .unconfirmedSelection) }
+             DispatchQueue.main.async {
+                 if completed.isUncertain { typist.onUnconfirmedReplacement?(selection.text, converted.text) }
++                if completed == .untouched, let reason { failure(reason) }
+                 completion(completed, converted.language)
+             }
+         }
+diff --git a/tools/keyboard-harness/adapter.swift b/tools/keyboard-harness/adapter.swift
+index 5b53a44..5b281eb 100644
+--- a/tools/keyboard-harness/adapter.swift
++++ b/tools/keyboard-harness/adapter.swift
+@@ -32,6 +32,7 @@ final class FixtureAX: DictationAccessibility {
+     var deletionOnly = false
+     var callback: ((DictationAXChange) -> Void)?
+     var afterPost: (() -> Void)?
++    var afterSelection: (() -> Void)?
+     var realUnicodeEvents = 0
+     init() { editor.string = "До старый после"; editor.setSelectedRange(NSRange(location: 3, length: 6)) }
+     func focusedElement(pid: pid_t) -> AXUIElement? { focused && !lazyTree ? element : nil }
+@@ -93,7 +94,9 @@ final class FixtureAX: DictationAccessibility {
+     }
+     func setSelection(_ range: CFRange, in element: AXUIElement) -> Bool {
+         if refuseRestoration && range.length == 0 { return false }
+-        editor.setSelectedRange(NSRange(location: range.location, length: range.length)); return !selectionReturnsFailure
++        editor.setSelectedRange(NSRange(location: range.location, length: range.length))
++        afterSelection?()
++        return !selectionReturnsFailure
+     }
+     func observe(_ element: AXUIElement, pid: pid_t, changed: @escaping (DictationAXChange) -> Void) -> AnyObject? {
+         callback = changed
+@@ -142,6 +145,45 @@ require(replace(cancelledTarget, allowed: { false }) == .untouched && cancelled.
+ cancelled.focused = false
+ require(replace(cancelledTarget) == .untouched, "changed focus cannot write")
+ print("PASS: sticky permission and focus guards")
++for mode in ["cancelled", "focus", "selection", "source", "capability"] {
++    let (ax, target) = fixture()
++    switch mode {
++    case "focus": ax.focused = false
++    case "selection": ax.editor.setSelectedRange(NSRange(location: 12, length: 0))
++    case "source": ax.editor.string = "before edited after"; ax.editor.setSelectedRange(NSRange(location: 13, length: 0))
++    case "capability": ax.direct = false; ax.unicode = false
++    default: break
++    }
++    let before = ax.editor.string, caret = ax.editor.selectedRange()
++    var reason: InputFocusGuard.ReplacementFailure?
++    let outcome = target.replace(range: CFRange(location: 7, length: 6), expected: "ghbdtn", with: "привет",
++        originalSelection: CFRange(location: 13, length: 0), capturedValue: "before ghbdtn after",
++        failure: { reason = $0 }, allowed: { mode != "cancelled" })
++    require(outcome == .untouched && ax.editor.string == before && ax.editor.selectedRange() == caret
++            && ax.writes == 0 && ax.posts == 0, "\(mode) rejection leaves exact field state without writes")
++    require(reason?.rawValue == mode && reason?.message.contains("replace.\(mode)") == true
++            && reason?.message.contains("ghbdtn") == false && reason?.message.contains("привет") == false,
++            "\(mode) reports actual content-free guard, not a later probe")
++}
++print("PASS: distinct actual rejection stages preserve source and caret without retry")
++for mode in ["source", "focus", "cancelled"] {
++    let (ax, target) = fixture()
++    let permit = InputFocusGuard.Permit()
++    if mode == "source" {
++        // The preflight reads agree; the first confirmation read reports an
++        // external source change. This must not blame a range setter timeout.
++        ax.values = ["before ghbdtn after", "before ghbdtn after", "before edited after"]
++    } else {
++        ax.afterSelection = { if mode == "focus" { ax.focused = false } else { permit.cancel() } }
++    }
++    var reason: InputFocusGuard.ReplacementFailure?
++    let outcome = target.replace(range: CFRange(location: 7, length: 6), expected: "ghbdtn", with: "привет",
++        originalSelection: CFRange(location: 13, length: 0), failure: { reason = $0 }, allowed: { permit.isAllowed })
++    require(outcome != .confirmed && ax.editor.string == "before ghbdtn after" && ax.writes == 0 && ax.posts == 0,
++            "\(mode) during selection confirmation preserves source without text writes")
++    require(reason?.rawValue == mode, "selection confirmation reports actual \(mode) guard instead of selectionWrite")
++}
++print("PASS: confirmation retains actual source/focus/cancellation rejection stage")
+ let (partial, partialTarget) = fixture()
+ partial.direct = false; partial.partialWrite = true
+ require(replace(partialTarget) == .uncertain && partial.posts == 1, "partial Unicode must stop without retry")
+diff --git a/tools/keyboard-harness/next-engine.swift b/tools/keyboard-harness/next-engine.swift
+index e64ac5b..e59daa0 100644
+--- a/tools/keyboard-harness/next-engine.swift
++++ b/tools/keyboard-harness/next-engine.swift
+@@ -145,6 +145,7 @@ func fixture(unicode:Bool, snippets: String? = nil, chromium: Bool = false, conf
+  currentFixture.chromium=chromium
+  currentFixture.editor.string=""; currentFixture.editor.setSelectedRange(NSRange(location:0,length:0))
+  let directory=URL(fileURLWithPath:NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
++ try! FileManager.default.createDirectory(at:directory,withIntermediateDirectories:true)
+  let config=Config(directory:directory); config.update { $0.excludedApps=[]; $0.sounds=false; configure(&$0) }
+  if let snippets { try! snippets.write(to:config.snippetsURL,atomically:true,encoding:.utf8) }
+  let engine=Engine(config:config); require(engine.start(),"inert registration starts")
+@@ -212,6 +213,26 @@ func option(_ engine: Engine) {
+  }
+ }
+ 
++if ProcessInfo.processInfo.environment["MLS_NEXT_REPAIR"] == "replacement-diagnostic" {
++ let e=fixture(unicode:true, configure: { $0.autoSwitch=false })
++ currentFixture.unavailableField=false
++ awaitFixture("selected replacement target cached") { e.probeFocusReady }
++ currentFixture.unsupportedWrites=true
++ currentFixture.editor.string="мзт"
++ currentFixture.editor.setSelectedRange(NSRange(location:0,length:3))
++ option(e); drain(0.6)
++ func labels(_ view:NSView) -> [String] {
++  (view as? NSTextField).map { [$0.stringValue] } ?? view.subviews.flatMap(labels)
++ }
++ let notices=app.windows.compactMap { $0.contentView }.flatMap(labels)
++ require(currentFixture.editor.string=="мзт" && currentFixture.editor.selectedRange()==NSRange(location:0,length:3)
++         && currentFixture.axWrites==0 && currentFixture.posted.isEmpty,"unsupported selected conversion preserves literal source without fallback")
++ require(notices.contains { $0.contains("replace.capability") && !$0.contains("мзт") },
++         "real Engine refusal displays content-free capability stage from the failed transaction")
++ print("PASS: real Engine manual refusal preserves source and displays actual content-free replacement stage")
++ e.stop(); exit(0)
++}
++
+ 
+ // Fresh Option must keep its observed stream when AX is readable but cannot
+ // mutate. Literal expected text is independent of the converter implementation.
+diff --git a/tools/keyboard-harness/system-focus.swift b/tools/keyboard-harness/system-focus.swift
+index 36bcc95..eba12cb 100644
+--- a/tools/keyboard-harness/system-focus.swift
++++ b/tools/keyboard-harness/system-focus.swift
+@@ -32,6 +32,12 @@ final class FocusFixture {
+     var observerPIDs: [pid_t] = []
+     var spotlightBootstrapCount = 0
+     var directSettable = true
++    var rangeSettable = true
++    var valueSettable = true
++    var valueSettableError = AXError.success
++    var role: String?
++    var enabled: Bool?
++    var selectionWrites = 0
+     let background = AXUIElementCreateApplication(1_000_004)
+     var backgroundReads = 0
+     var afterRangeRead: (() -> Void)?
+@@ -199,9 +205,9 @@ func fixtureAXUIElementCopyAttributeValue(_ element: AXUIElement, _ name: CFStri
+             let selected = fixture.editor.selectedRange()
+             var range = CFRange(location: selected.location, length: selected.length)
+             value.pointee = AXValueCreate(.cfRange, &range)
+-        case kAXRoleAttribute: value.pointee = fixture.editor.accessibilityRole()?.rawValue as CFString?
++        case kAXRoleAttribute: value.pointee = (fixture.role ?? fixture.editor.accessibilityRole()?.rawValue) as CFString?
+         case kAXSubroleAttribute: value.pointee = fixture.secureField ? kAXSecureTextFieldSubrole as CFString : fixture.editor.accessibilitySubrole()?.rawValue as CFString?
+-        case kAXEnabledAttribute: value.pointee = (fixture.framework == nil && fixture.ownerPID != fixture.spotlightPID ? fixture.editor.isAccessibilityEnabled() : fixture.editor.isEditable) ? kCFBooleanTrue : kCFBooleanFalse
++        case kAXEnabledAttribute: value.pointee = (fixture.enabled ?? (fixture.framework == nil && fixture.ownerPID != fixture.spotlightPID ? fixture.editor.isAccessibilityEnabled() : fixture.editor.isEditable)) ? kCFBooleanTrue : kCFBooleanFalse
+         default: return .attributeUnsupported
+         }
+         return value.pointee == nil ? .noValue : .success
+@@ -209,8 +215,12 @@ func fixtureAXUIElementCopyAttributeValue(_ element: AXUIElement, _ name: CFStri
+ }
+ func fixtureAXUIElementIsAttributeSettable(_ element: AXUIElement, _ name: CFString,
+                                          _ settable: UnsafeMutablePointer<DarwinBoolean>) -> AXError {
+-    precondition(CFEqual(element, fixture.field))
+-    settable.pointee = DarwinBoolean(main { fixture.editor.isEditable } && (fixture.directSettable || name as String != kAXSelectedTextAttribute) && (name as String == kAXSelectedTextAttribute || name as String == kAXSelectedTextRangeAttribute || name as String == kAXValueAttribute))
++    precondition(CFEqual(element, fixture.field) || CFEqual(element, fixture.other))
++    if name as String == kAXValueAttribute, fixture.valueSettableError != .success { return fixture.valueSettableError }
++    let writable = [kAXSelectedTextAttribute: fixture.directSettable,
++                    kAXSelectedTextRangeAttribute: fixture.rangeSettable,
++                    kAXValueAttribute: fixture.valueSettable]
++    settable.pointee = DarwinBoolean(main { fixture.editor.isEditable } && writable[name as String] == true)
+     return .success
+ }
+ func fixtureAXUIElementSetAttributeValue(_ element: AXUIElement, _ name: CFString, _ value: CFTypeRef) -> AXError {
+@@ -238,6 +248,8 @@ func fixtureAXUIElementSetAttributeValue(_ element: AXUIElement, _ name: CFStrin
+     return main {
+         switch name as String {
+         case kAXSelectedTextRangeAttribute:
++            fixture.selectionWrites += 1
++            guard fixture.rangeSettable else { return .attributeUnsupported }
+             var range = CFRange()
+             guard CFGetTypeID(value) == AXValueGetTypeID(), AXValueGetValue(unsafeBitCast(value, to: AXValue.self), .cfRange, &range) else { return .illegalArgument }
+             fixture.editor.setAccessibilitySelectedTextRange(NSRange(location: range.location, length: range.length))
+@@ -261,6 +273,123 @@ func capturedReplacement() -> Bool {
+     return result == .confirmed && fixture.editor.string == "before привет after"
+         && fixture.editor.selectedRange() == NSRange(location: 13, length: 0) && fixture.writes == 1
+ }
++// The real selection capture, KeyMap conversion, transaction, capability
++// classifier and Unicode construction run against raw AX RPC responses. The
++// only receiving editor is this process's NSTextView; no user's UI is read.
++func convertFixtureSelection() -> InputFocusGuard.ReplacementResult? {
++    let converter = SelectionConverter()
++    var capture: SelectionConverter.Capture?
++    var request: InputFocusGuard.Permit?
++    converter.capture(expectedPID: getpid()) { capture = $0; request = $1 }
++    let deadline = Date().addingTimeInterval(4)
++    while capture == nil && Date() < deadline { pump() }
++    let selection: SelectionConverter.Selection?
++    switch capture {
++    case .selected(let value): selection = value
++    case .empty(_, _, let word, _): selection = word
++    default: selection = nil
++    }
++    guard let selection, let request else { return nil }
++    let typist = Typist(postEvent: { _ in fatalError("manual selection must not submit") })
++    var result: InputFocusGuard.ReplacementResult?
++    converter.replace(selection, permit: request, typist: typist,
++        replayRoute: .init(target: selection.target)) { result = $0; _ = $1 }
++    while (result == nil || typist.isBusy) && Date() < deadline { pump() }
++    return result
++}
++if ProcessInfo.processInfo.environment["MLS_REPLACEMENT_COMPATIBILITY"] != nil {
++    fixture = FocusFixture()
++    fixture.directSettable = false
++    fixture.rangeSettable = false
++    fixture.enabled = NSTextField().isEnabled
++    fixture.editor.string = "мзт"
++    fixture.editor.setSelectedRange(NSRange(location: 0, length: 3))
++    let result = convertFixtureSelection()
++    print("Already selected/no range setter: result=\(String(describing: result)); text=\(fixture.editor.string); caret=\(fixture.editor.selectedRange()); selectionWrites=\(fixture.selectionWrites); textWrites=\(fixture.writes)")
++    check(result == .confirmed && fixture.editor.string == "vpn"
++          && fixture.editor.selectedRange() == NSRange(location: 3, length: 0)
++          && fixture.writes == 1 && fixture.selectionWrites == 0,
++          "selected мзт converts to vpn without requiring an unused selection setter")
++    let combo = NSComboBox()
++    fixture = FocusFixture()
++    fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
++    fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
++    fixture.enabled = combo.isEnabled
++    fixture.directSettable = false
++    fixture.editor.string = "🙂 кмсф tail"
++    fixture.editor.setSelectedRange(NSRange(location: 3, length: 4))
++    let comboResult = convertFixtureSelection()
++    print("Native combo metadata / owned NSTextView receiver: role=\(fixture.role ?? "nil"); valueSettable=\(fixture.valueSettable); result=\(String(describing: comboResult)); text=\(fixture.editor.string); caret=\(fixture.editor.selectedRange())")
++    check(comboResult == .confirmed && fixture.editor.string == "🙂 rvca tail"
++          && fixture.editor.selectedRange() == NSRange(location: 7, length: 0)
++          && fixture.writes == 1 && fixture.selectionWrites == 0,
++          "editable native combo capabilities authorize exact selection with emoji and suffix preserved")
++    for mode in ["readonly-combo", "readonly-text", "disabled", "button", "secure", "secure-input", "unknown-value-capability"] {
++        fixture = FocusFixture()
++        fixture.directSettable = false
++        fixture.enabled = true
++        fixture.editor.string = "мзт"
++        fixture.editor.setSelectedRange(NSRange(location: 0, length: 3))
++        switch mode {
++        case "readonly-combo":
++            let readonly = NSComboBox(); readonly.isEditable = false
++            fixture.role = readonly.cell!.accessibilityAttributeValue(.role) as? String
++            fixture.valueSettable = readonly.cell!.accessibilityIsAttributeSettable(.value)
++        case "readonly-text": fixture.editor.isEditable = false
++        case "disabled": fixture.enabled = false
++        case "button": fixture.role = kAXButtonRole
++        case "secure": fixture.secureField = true
++        case "secure-input": fixtureSecureInput = true
++        default: fixture.valueSettableError = .attributeUnsupported
++        }
++        let refused = convertFixtureSelection()
++        check(refused != .confirmed && fixture.editor.string == "мзт"
++              && fixture.editor.selectedRange() == NSRange(location: 0, length: 3)
++              && fixture.writes == 0 && fixture.selectionWrites == 0,
++              "\(mode) preserves selected source without blind Unicode or range writes")
++        fixtureSecureInput = false
++    }
++    // A preexisting word needs a real selection change. Removing the redundant
++    // capability check must not let it type over the old collapsed caret.
++    fixture = FocusFixture()
++    fixture.directSettable = false; fixture.rangeSettable = false; fixture.enabled = true
++    fixture.editor.string = "мзт"; fixture.editor.setSelectedRange(NSRange(location: 3, length: 0))
++    let preexisting = convertFixtureSelection()
++    check(preexisting == .unconfirmedSelection && fixture.editor.string == "мзт"
++          && fixture.editor.selectedRange() == NSRange(location: 3, length: 0) && fixture.writes == 0,
++          "preexisting word without working range setter stays unchanged and does not type at the old caret")
++    fixture = FocusFixture()
++    fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
++    fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
++    fixture.enabled = combo.isEnabled; fixture.directSettable = false
++    fixture.editor.string = "🙂 кмсф\nмзт tail"
++    fixture.editor.setSelectedRange(NSRange(location: 3, length: 8))
++    let phrase = convertFixtureSelection()
++    check(phrase == .confirmed && fixture.editor.string == "🙂 rvca\nvpn tail"
++          && fixture.editor.selectedRange() == NSRange(location: 11, length: 0)
++          && fixture.writes == 1 && fixture.selectionWrites == 0,
++          "combo selection converts multiline phrase while preserving emoji and suffix")
++    for speech in [false, true] {
++        fixture = FocusFixture()
++        fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
++        fixture.rangeNeedsTree = true
++        fixture.afterManual = {
++            fixture.rangeNeedsTree = false
++            fixture.systemFocus = fixture.other; fixture.appFocus = fixture.other
++        }
++        var refused = false
++        if speech {
++            if case .unavailable(.changed) = DictationTarget.capture(expectedPID: getpid(), permit: .init()) { refused = true }
++        } else {
++            var reason: InputFocusGuard.CaptureFailure?
++            let target = InputFocusGuard.Target.capture(expectedPID: getpid(), failure: { reason = $0 })
++            if case .changed = reason { refused = target == nil }
++        }
++        check(refused && fixture.writes == 0,
++              "\(speech ? "dictation" : "keyboard") pins initial combo identity when range becomes available after focus changed")
++    }
++    exit(failures == 0 ? 0 : 1)
++}
+ // Literal Spotlight overlay: menu application is frontmost, but the system
+ // field belongs to the canonical, live Apple Spotlight process.
+ func spotlightFixture() -> FocusFixture {
+diff --git a/tools/keyboard-harness/webkit.swift b/tools/keyboard-harness/webkit.swift
+index ea14ffe..ec2d730 100644
+--- a/tools/keyboard-harness/webkit.swift
++++ b/tools/keyboard-harness/webkit.swift
+@@ -13,6 +13,22 @@ func fixtureProcessBundleURL(pid: pid_t) -> URL? {
+ func main<T>(_ body: () -> T) -> T { Thread.isMainThread ? body() : DispatchQueue.main.sync(execute: body) }
+ func pump(_ seconds: Double = 0.03) { RunLoop.current.run(until: Date().addingTimeInterval(seconds)) }
+ 
++// Production Unicode eligibility reads these two raw AX RPCs against the real
++// in-process WebCore wrapper. No role/capability predicate is copied here.
++var eligibilityTarget: WebKitAX?
++func fixtureAXUIElementCopyAttributeValue(_ element: AXUIElement, _ name: CFString,
++                                         _ value: UnsafeMutablePointer<CFTypeRef?>) -> AXError {
++    guard let target = eligibilityTarget, CFEqual(element, target.element) else { fatalError("eligibility RPC outside owned WebKit target") }
++    value.pointee = target.attribute(name as String, of: element)
++    return value.pointee == nil ? .noValue : .success
++}
++func fixtureAXUIElementIsAttributeSettable(_ element: AXUIElement, _ name: CFString,
++                                         _ settable: UnsafeMutablePointer<DarwinBoolean>) -> AXError {
++    guard let target = eligibilityTarget, CFEqual(element, target.element) else { fatalError("capability RPC outside owned WebKit target") }
++    settable.pointee = DarwinBoolean(target.node.accessibilityIsAttributeSettable(NSAccessibility.Attribute(rawValue: name as String)))
++    return .success
++}
++
+ // WebKit1 exposes the system WebCore accessibility wrapper in this process.
+ // WKWebView's remote AX tree requires cross-process AX permission; this fixture
+ // deliberately uses neither that permission nor another application's AX tree.
+@@ -30,37 +46,62 @@ final class WebKitAX: DictationAccessibility {
+     var afterPost: (() -> Void)?
+     var directWrites = 0
+     var unicodePosts = 0
++    let kind: String
+ 
+-    init() {
++    init(kind: String = "input") {
++        self.kind = kind
+         window = NSWindow(contentRect: web.frame, styleMask: [], backing: .buffered, defer: false)
+         window.contentView = web
++        let markup: String
++        switch kind {
++        case "textarea": markup = "<textarea id='name'></textarea>"
++        case "contenteditable": markup = "<div id='name' contenteditable='true' role='textbox' aria-multiline='true'></div>"
++        case "palette": markup = "<input id='name' type='search' role='combobox' aria-expanded='false' aria-controls='options'><div id='options' role='listbox'></div>"
++        default: markup = "<input id='name' autocomplete='name'>"
++        }
+         web.mainFrame.loadHTMLString("""
+-            <input id="name" autocomplete="name"><script>
++            \(markup)<script>
+             window.inputs=[]; const field=document.getElementById('name');
+             field.addEventListener('input', e => inputs.push({value:field.value, type:e.inputType}));
++            function fieldValue() { return field.isContentEditable ? field.textContent : field.value; }
++            function fieldSelection() {
++              if (!field.isContentEditable) return [field.selectionStart,field.selectionEnd];
++              const s=getSelection(), r=s.getRangeAt(0), prefix=document.createRange();
++              prefix.selectNodeContents(field); prefix.setEnd(r.startContainer,r.startOffset);
++              const start=prefix.toString().length; return [start,start+r.toString().length];
++            }
++            function seedField(value,start,end) {
++              if (field.isContentEditable) {
++                field.textContent=value; field.focus(); const r=document.createRange();
++                r.setStart(field.firstChild,start); r.setEnd(field.firstChild,end);
++                const s=getSelection(); s.removeAllRanges(); s.addRange(r);
++              } else { field.value=value; field.focus(); field.setSelectionRange(start,end); }
++              inputs=[];
++            }
+             </script>
+             """, baseURL: nil)
+         let deadline = Date().addingTimeInterval(4)
+         while web.stringByEvaluatingJavaScript(from: "typeof field") != "object", Date() < deadline { pump() }
+         func visit(_ object: NSObject, depth: Int = 0) {
+             guard depth < 12 else { return }
+-            if object.accessibilityAttributeValue(.role) as? String == kAXTextFieldRole { node = object; return }
++            if let role = object.accessibilityAttributeValue(.role) as? String,
++               [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole].contains(role) { node = object; return }
+             for child in object.accessibilityAttributeValue(.children) as? [NSObject] ?? [] { visit(child, depth: depth + 1) }
+         }
+         visit(web)
+-        require(node != nil, "own WebKit AX text field exists")
++        require(node != nil, "own WebKit \(kind) AX text field exists")
+     }
+     func seed(_ value: String, selection: NSRange) {
+         let data = try! JSONSerialization.data(withJSONObject: [value])
+         let encoded = String(data: data, encoding: .utf8)!
+-        _ = web.stringByEvaluatingJavaScript(from: "field.value=\(encoded)[0];field.focus();field.setSelectionRange(\(selection.location),\(selection.location + selection.length));inputs=[]")
++        _ = web.stringByEvaluatingJavaScript(from: "seedField(\(encoded)[0],\(selection.location),\(selection.location + selection.length))")
+         pump()
+         require(domValue == value && domSelection == selection, "literal source and caret before conversion")
+     }
+-    var domValue: String { web.stringByEvaluatingJavaScript(from: "field.value")! }
++    var domValue: String { web.stringByEvaluatingJavaScript(from: "fieldValue()")! }
+     var domSelection: NSRange {
+-        let start = Int(web.stringByEvaluatingJavaScript(from: "String(field.selectionStart)")!)!
+-        let end = Int(web.stringByEvaluatingJavaScript(from: "String(field.selectionEnd)")!)!
++        let start = Int(web.stringByEvaluatingJavaScript(from: "String(fieldSelection()[0])")!)!
++        let end = Int(web.stringByEvaluatingJavaScript(from: "String(fieldSelection()[1])")!)!
+         return NSRange(location: start, length: end - start)
+     }
+     var domInputCount: Int { Int(web.stringByEvaluatingJavaScript(from: "String(inputs.length)")!)! }
+@@ -79,9 +120,10 @@ final class WebKitAX: DictationAccessibility {
+     func selectedTextIsSettable(_ element: AXUIElement) -> Bool { main { node.accessibilityIsAttributeSettable(.selectedText) } }
+     func supportsUnicodeInsertion(_ element: AXUIElement) -> Bool {
+         main {
+-            node.accessibilityAttributeValue(.role) as? String == kAXTextFieldRole
+-                && node.accessibilityIsAttributeSettable(.selectedTextRange)
+-                && node.accessibilityIsAttributeSettable(.value)
++            precondition(eligibilityTarget == nil)
++            eligibilityTarget = self
++            defer { eligibilityTarget = nil }
++            return SystemDictationAccessibility().supportsUnicodeInsertion(element)
+         }
+     }
+     func prefersUnicodeInsertion(pid: pid_t) -> Bool { !forceDirect && SystemDictationAccessibility().prefersUnicodeInsertion(pid: pid) }
+@@ -270,4 +312,26 @@ require(speechResult == .inserted && speech.domValue == "До новый пол
+     "shared dictation route inserts full text and preserves surroundings")
+ require(speech.directWrites == 0 && speech.unicodePosts == 2 && speech.domInputCount == 2, "shared dictation chunks are once-only native edits")
+ print("PASS: shared Safari dictation route preserves source surroundings and full chunked text")
++for kind in ["input", "textarea", "contenteditable", "palette"] {
++    for selected in [true, false] {
++        let ax = WebKitAX(kind: kind)
++        let initial = NSRange(location: selected ? 3 : 7, length: selected ? 4 : 0)
++        ax.seed("🙂 кмсф tail", selection: initial)
++        let role = ax.node.accessibilityAttributeValue(.role) as? String ?? "missing"
++        let supported = ax.supportsUnicodeInsertion(ax.element)
++        let selection = SelectionConverter.Selection(target: ax.target, range: CFRange(location: 3, length: 4), text: "кмсф",
++            originalSelection: CFRange(location: initial.location, length: initial.length), isWord: !selected,
++            sourceValue: "🙂 кмсф tail")
++        var result: InputFocusGuard.ReplacementResult?
++        let typist = Typist(postEvent: { _ in fatalError("manual conversion never submits") })
++        SelectionConverter().replace(selection, permit: .init(), typist: typist, replayRoute: ax.ticket.replayRoute) { result = $0; _ = $1 }
++        drain(typist, { result != nil })
++        print("WebKit \(kind) role=\(role), supported=\(supported), selected=\(selected), result=\(String(describing: result)), text=\(ax.domValue), caret=\(ax.domSelection), unicodePosts=\(ax.unicodePosts), directWrites=\(ax.directWrites)")
++        require(result == .confirmed && ax.domValue == "🙂 rvca tail" && ax.domSelection == NSRange(location: 7, length: 0),
++                "real WebKit \(kind) \(selected ? "selection" : "word") preserves emoji, suffix and caret")
++        require(ax.domInputCount == 1 && ax.unicodePosts == 1 && ax.directWrites == 0,
++                "real WebKit \(kind) uses one verified native insertion without setter retry")
++        print("PASS: real WebKit \(kind) role=\(role) \(selected ? "selected" : "preexisting") кмсф→rvca; production eligibility; exact DOM/caret")
++    }
++}
+ print("WebKit harness passed: actual system WebCore AX wrapper and local text input; not Safari/WindowServer delivery.")
+diff --git a/tools/test-keyboard-next.sh b/tools/test-keyboard-next.sh
+index 960b640..52a5091 100644
+--- a/tools/test-keyboard-next.sh
++++ b/tools/test-keyboard-next.sh
+@@ -80,7 +80,7 @@ swiftc -I "$engine_probe_dir" -L "$engine_probe_dir" -lSwitcherCore -Xlinker -rp
+ engine_test_status=0
+ "$engine_probe_dir/test-engine" > "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
+ if [[ "$engine_test_status" == "0" && -z "${MLS_NEXT_REPAIR:-}" ]]; then
+-    for repair in option option-guards option-cancel option-interrupted-input manual snippet protected; do
++    for repair in replacement-diagnostic option option-guards option-cancel option-interrupted-input manual snippet protected; do
+         MLS_NEXT_REPAIR="$repair" "$engine_probe_dir/test-engine" >> "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
+     done
+     MLS_NEXT_REPAIR=option MLS_FIXTURE_INPUT_SOURCE_ID=com.apple.keylayout.RussianWin "$engine_probe_dir/test-engine" >> "$engine_probe_dir/run.log" 2>&1 || engine_test_status=$?
+diff --git a/tools/test-keyboard-webkit.sh b/tools/test-keyboard-webkit.sh
+index b4800e0..7f7c38f 100644
+--- a/tools/test-keyboard-webkit.sh
++++ b/tools/test-keyboard-webkit.sh
+@@ -5,7 +5,11 @@ work=$(mktemp -d /tmp/mls-keyboard-webkit.XXXXXX)
+ mkdir -p "$work/Sources" "$work/Compiled" "$work/SafariFixture.app/Contents"
+ cp -R Sources/SwitcherCore "$work/Sources/"
+ for name in InputFocusGuard Typist TrackedInputBatch SelectionConverter; do
+-    cp "Sources/MacLayoutSwitcher/System/$name.swift" "$work/Sources/"
++    if [[ -n "${MLS_WEBKIT_BASE_REF:-}" ]]; then
++        git show "$MLS_WEBKIT_BASE_REF:Sources/MacLayoutSwitcher/System/$name.swift" > "$work/Sources/$name.swift"
++    else
++        cp "Sources/MacLayoutSwitcher/System/$name.swift" "$work/Sources/"
++    fi
+ done
+ if [[ -n "${MLS_WEBKIT_BASE_REF:-}" ]]; then
+     git show "$MLS_WEBKIT_BASE_REF:Sources/MacLayoutSwitcher/Speech/DictationTarget.swift" > "$work/Sources/DictationTarget.swift"
+@@ -16,7 +20,7 @@ cp Sources/MacLayoutSwitcher/System/SecureInput.swift "$work/Sources/"
+ cp tools/keyboard-harness/webkit.swift "$work/main.swift"
+ python3 - "$work" <<'PY'
+ from pathlib import Path
+-import hashlib,plistlib,sys
++import difflib,hashlib,plistlib,re,sys
+ root=Path(sys.argv[1])
+ (root/'SafariFixture.app/Contents/Info.plist').write_bytes(plistlib.dumps({'CFBundleIdentifier':'com.apple.Safari','CFBundlePackageType':'APPL'}))
+ source=root/'Sources/DictationTarget.swift'
+@@ -24,8 +28,12 @@ s=source.read_text()
+ old='NSRunningApplication(processIdentifier: pid)?.bundleURL'
+ assert s.count(old)==1
+ s=s.replace(old,'fixtureProcessBundleURL(pid: pid)')
++for name in ['AXUIElementCopyAttributeValue','AXUIElementIsAttributeSettable']:
++    assert name in s
++    s=re.sub(r'\b'+name+r'\b','fixture'+name,s)
+ (root/'Compiled/DictationTarget.swift').write_text(s)
+-(root/'seams.txt').write_text('Only process bundle URL lookup replaced with fixtureProcessBundleURL(pid: pid); all target, selection, routing and event construction code unchanged.\n')
++(root/'seams.patch').write_text(''.join(difflib.unified_diff(source.read_text().splitlines(True),s.splitlines(True),fromfile='Sources/DictationTarget.swift',tofile='Compiled/DictationTarget.swift')))
++(root/'seams.txt').write_text('Process bundle URL lookup and raw AX attribute/settable RPCs for production eligibility are bridged to the owned native WebCore wrapper. All target, selection, eligibility predicate, routing and event construction code unchanged.\n')
+ paths=sorted((root/'Sources').rglob('*.swift'))+[root/'main.swift',root/'Compiled/DictationTarget.swift',root/'SafariFixture.app/Contents/Info.plist']
+ (root/'SOURCE-SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+str(p.relative_to(root))+'\n' for p in paths))
+ PY
+diff --git a/tools/test-system-focus.sh b/tools/test-system-focus.sh
+index b54b610..72c6e76 100755
+--- a/tools/test-system-focus.sh
++++ b/tools/test-system-focus.sh
+@@ -45,9 +45,12 @@ paths=sorted((root/'Sources').rglob('*.swift'))+sorted((root/'Compiled').glob('*
+ (root/'SOURCE-SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+str(p.relative_to(root))+'\n' for p in paths))
+ PY
+ printf 'System focus snapshot: %s\n' "$focus_work"
+-swiftc -module-cache-path "$focus_work/modules" -emit-library -emit-module -module-name SwitcherCore "$focus_work"/Sources/SwitcherCore/*.swift -o "$focus_work/libSwitcherCore.dylib" -emit-module-path "$focus_work/SwitcherCore.swiftmodule"
+-swiftc -module-cache-path "$focus_work/modules" -I "$focus_work" -L "$focus_work" -lSwitcherCore -Xlinker -rpath -Xlinker "$focus_work" "$focus_work"/Compiled/*.swift "$focus_work/main.swift" -o "$focus_work/test-focus"
++swiftc -module-cache-path "${SWIFT_MODULECACHE_PATH:-$focus_work/modules}" -emit-library -emit-module -module-name SwitcherCore "$focus_work"/Sources/SwitcherCore/*.swift -o "$focus_work/libSwitcherCore.dylib" -emit-module-path "$focus_work/SwitcherCore.swiftmodule"
++swiftc -module-cache-path "${SWIFT_MODULECACHE_PATH:-$focus_work/modules}" -I "$focus_work" -L "$focus_work" -lSwitcherCore -Xlinker -rpath -Xlinker "$focus_work" "$focus_work"/Compiled/*.swift "$focus_work/main.swift" -o "$focus_work/test-focus"
+ focus_status=0
+ "$focus_work/test-focus" > "$focus_work/run.log" 2>&1 || focus_status=$?
++if [[ "$focus_status" == "0" && -z "${MLS_REPLACEMENT_COMPATIBILITY:-}" ]]; then
++    MLS_REPLACEMENT_COMPATIBILITY=1 "$focus_work/test-focus" >> "$focus_work/run.log" 2>&1 || focus_status=$?
++fi
+ cat "$focus_work/run.log"
+ exit "$focus_status"

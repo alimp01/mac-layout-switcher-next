@@ -32,6 +32,12 @@ final class FocusFixture {
     var observerPIDs: [pid_t] = []
     var spotlightBootstrapCount = 0
     var directSettable = true
+    var rangeSettable = true
+    var valueSettable = true
+    var valueSettableError = AXError.success
+    var role: String?
+    var enabled: Bool?
+    var selectionWrites = 0
     let background = AXUIElementCreateApplication(1_000_004)
     var backgroundReads = 0
     var afterRangeRead: (() -> Void)?
@@ -199,9 +205,9 @@ func fixtureAXUIElementCopyAttributeValue(_ element: AXUIElement, _ name: CFStri
             let selected = fixture.editor.selectedRange()
             var range = CFRange(location: selected.location, length: selected.length)
             value.pointee = AXValueCreate(.cfRange, &range)
-        case kAXRoleAttribute: value.pointee = fixture.editor.accessibilityRole()?.rawValue as CFString?
+        case kAXRoleAttribute: value.pointee = (fixture.role ?? fixture.editor.accessibilityRole()?.rawValue) as CFString?
         case kAXSubroleAttribute: value.pointee = fixture.secureField ? kAXSecureTextFieldSubrole as CFString : fixture.editor.accessibilitySubrole()?.rawValue as CFString?
-        case kAXEnabledAttribute: value.pointee = (fixture.framework == nil && fixture.ownerPID != fixture.spotlightPID ? fixture.editor.isAccessibilityEnabled() : fixture.editor.isEditable) ? kCFBooleanTrue : kCFBooleanFalse
+        case kAXEnabledAttribute: value.pointee = (fixture.enabled ?? (fixture.framework == nil && fixture.ownerPID != fixture.spotlightPID ? fixture.editor.isAccessibilityEnabled() : fixture.editor.isEditable)) ? kCFBooleanTrue : kCFBooleanFalse
         default: return .attributeUnsupported
         }
         return value.pointee == nil ? .noValue : .success
@@ -209,8 +215,12 @@ func fixtureAXUIElementCopyAttributeValue(_ element: AXUIElement, _ name: CFStri
 }
 func fixtureAXUIElementIsAttributeSettable(_ element: AXUIElement, _ name: CFString,
                                          _ settable: UnsafeMutablePointer<DarwinBoolean>) -> AXError {
-    precondition(CFEqual(element, fixture.field))
-    settable.pointee = DarwinBoolean(main { fixture.editor.isEditable } && (fixture.directSettable || name as String != kAXSelectedTextAttribute) && (name as String == kAXSelectedTextAttribute || name as String == kAXSelectedTextRangeAttribute || name as String == kAXValueAttribute))
+    precondition(CFEqual(element, fixture.field) || CFEqual(element, fixture.other))
+    if name as String == kAXValueAttribute, fixture.valueSettableError != .success { return fixture.valueSettableError }
+    let writable = [kAXSelectedTextAttribute: fixture.directSettable,
+                    kAXSelectedTextRangeAttribute: fixture.rangeSettable,
+                    kAXValueAttribute: fixture.valueSettable]
+    settable.pointee = DarwinBoolean(main { fixture.editor.isEditable } && writable[name as String] == true)
     return .success
 }
 func fixtureAXUIElementSetAttributeValue(_ element: AXUIElement, _ name: CFString, _ value: CFTypeRef) -> AXError {
@@ -238,6 +248,8 @@ func fixtureAXUIElementSetAttributeValue(_ element: AXUIElement, _ name: CFStrin
     return main {
         switch name as String {
         case kAXSelectedTextRangeAttribute:
+            fixture.selectionWrites += 1
+            guard fixture.rangeSettable else { return .attributeUnsupported }
             var range = CFRange()
             guard CFGetTypeID(value) == AXValueGetTypeID(), AXValueGetValue(unsafeBitCast(value, to: AXValue.self), .cfRange, &range) else { return .illegalArgument }
             fixture.editor.setAccessibilitySelectedTextRange(NSRange(location: range.location, length: range.length))
@@ -260,6 +272,123 @@ func capturedReplacement() -> Bool {
         originalSelection: CFRange(location: 13, length: 0), allowed: { true })
     return result == .confirmed && fixture.editor.string == "before привет after"
         && fixture.editor.selectedRange() == NSRange(location: 13, length: 0) && fixture.writes == 1
+}
+// The real selection capture, KeyMap conversion, transaction, capability
+// classifier and Unicode construction run against raw AX RPC responses. The
+// only receiving editor is this process's NSTextView; no user's UI is read.
+func convertFixtureSelection() -> InputFocusGuard.ReplacementResult? {
+    let converter = SelectionConverter()
+    var capture: SelectionConverter.Capture?
+    var request: InputFocusGuard.Permit?
+    converter.capture(expectedPID: getpid()) { capture = $0; request = $1 }
+    let deadline = Date().addingTimeInterval(4)
+    while capture == nil && Date() < deadline { pump() }
+    let selection: SelectionConverter.Selection?
+    switch capture {
+    case .selected(let value): selection = value
+    case .empty(_, _, let word, _): selection = word
+    default: selection = nil
+    }
+    guard let selection, let request else { return nil }
+    let typist = Typist(postEvent: { _ in fatalError("manual selection must not submit") })
+    var result: InputFocusGuard.ReplacementResult?
+    converter.replace(selection, permit: request, typist: typist,
+        replayRoute: .init(target: selection.target)) { result = $0; _ = $1 }
+    while (result == nil || typist.isBusy) && Date() < deadline { pump() }
+    return result
+}
+if ProcessInfo.processInfo.environment["MLS_REPLACEMENT_COMPATIBILITY"] != nil {
+    fixture = FocusFixture()
+    fixture.directSettable = false
+    fixture.rangeSettable = false
+    fixture.enabled = NSTextField().isEnabled
+    fixture.editor.string = "мзт"
+    fixture.editor.setSelectedRange(NSRange(location: 0, length: 3))
+    let result = convertFixtureSelection()
+    print("Already selected/no range setter: result=\(String(describing: result)); text=\(fixture.editor.string); caret=\(fixture.editor.selectedRange()); selectionWrites=\(fixture.selectionWrites); textWrites=\(fixture.writes)")
+    check(result == .confirmed && fixture.editor.string == "vpn"
+          && fixture.editor.selectedRange() == NSRange(location: 3, length: 0)
+          && fixture.writes == 1 && fixture.selectionWrites == 0,
+          "selected мзт converts to vpn without requiring an unused selection setter")
+    let combo = NSComboBox()
+    fixture = FocusFixture()
+    fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+    fixture.enabled = combo.isEnabled
+    fixture.directSettable = false
+    fixture.editor.string = "🙂 кмсф tail"
+    fixture.editor.setSelectedRange(NSRange(location: 3, length: 4))
+    let comboResult = convertFixtureSelection()
+    print("Native combo metadata / owned NSTextView receiver: role=\(fixture.role ?? "nil"); valueSettable=\(fixture.valueSettable); result=\(String(describing: comboResult)); text=\(fixture.editor.string); caret=\(fixture.editor.selectedRange())")
+    check(comboResult == .confirmed && fixture.editor.string == "🙂 rvca tail"
+          && fixture.editor.selectedRange() == NSRange(location: 7, length: 0)
+          && fixture.writes == 1 && fixture.selectionWrites == 0,
+          "editable native combo capabilities authorize exact selection with emoji and suffix preserved")
+    for mode in ["readonly-combo", "readonly-text", "disabled", "button", "secure", "secure-input", "unknown-value-capability"] {
+        fixture = FocusFixture()
+        fixture.directSettable = false
+        fixture.enabled = true
+        fixture.editor.string = "мзт"
+        fixture.editor.setSelectedRange(NSRange(location: 0, length: 3))
+        switch mode {
+        case "readonly-combo":
+            let readonly = NSComboBox(); readonly.isEditable = false
+            fixture.role = readonly.cell!.accessibilityAttributeValue(.role) as? String
+            fixture.valueSettable = readonly.cell!.accessibilityIsAttributeSettable(.value)
+        case "readonly-text": fixture.editor.isEditable = false
+        case "disabled": fixture.enabled = false
+        case "button": fixture.role = kAXButtonRole
+        case "secure": fixture.secureField = true
+        case "secure-input": fixtureSecureInput = true
+        default: fixture.valueSettableError = .attributeUnsupported
+        }
+        let refused = convertFixtureSelection()
+        check(refused != .confirmed && fixture.editor.string == "мзт"
+              && fixture.editor.selectedRange() == NSRange(location: 0, length: 3)
+              && fixture.writes == 0 && fixture.selectionWrites == 0,
+              "\(mode) preserves selected source without blind Unicode or range writes")
+        fixtureSecureInput = false
+    }
+    // A preexisting word needs a real selection change. Removing the redundant
+    // capability check must not let it type over the old collapsed caret.
+    fixture = FocusFixture()
+    fixture.directSettable = false; fixture.rangeSettable = false; fixture.enabled = true
+    fixture.editor.string = "мзт"; fixture.editor.setSelectedRange(NSRange(location: 3, length: 0))
+    let preexisting = convertFixtureSelection()
+    check(preexisting == .unconfirmedSelection && fixture.editor.string == "мзт"
+          && fixture.editor.selectedRange() == NSRange(location: 3, length: 0) && fixture.writes == 0,
+          "preexisting word without working range setter stays unchanged and does not type at the old caret")
+    fixture = FocusFixture()
+    fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+    fixture.valueSettable = combo.cell!.accessibilityIsAttributeSettable(.value)
+    fixture.enabled = combo.isEnabled; fixture.directSettable = false
+    fixture.editor.string = "🙂 кмсф\nмзт tail"
+    fixture.editor.setSelectedRange(NSRange(location: 3, length: 8))
+    let phrase = convertFixtureSelection()
+    check(phrase == .confirmed && fixture.editor.string == "🙂 rvca\nvpn tail"
+          && fixture.editor.selectedRange() == NSRange(location: 11, length: 0)
+          && fixture.writes == 1 && fixture.selectionWrites == 0,
+          "combo selection converts multiline phrase while preserving emoji and suffix")
+    for speech in [false, true] {
+        fixture = FocusFixture()
+        fixture.role = combo.cell!.accessibilityAttributeValue(.role) as? String
+        fixture.rangeNeedsTree = true
+        fixture.afterManual = {
+            fixture.rangeNeedsTree = false
+            fixture.systemFocus = fixture.other; fixture.appFocus = fixture.other
+        }
+        var refused = false
+        if speech {
+            if case .unavailable(.changed) = DictationTarget.capture(expectedPID: getpid(), permit: .init()) { refused = true }
+        } else {
+            var reason: InputFocusGuard.CaptureFailure?
+            let target = InputFocusGuard.Target.capture(expectedPID: getpid(), failure: { reason = $0 })
+            if case .changed = reason { refused = target == nil }
+        }
+        check(refused && fixture.writes == 0,
+              "\(speech ? "dictation" : "keyboard") pins initial combo identity when range becomes available after focus changed")
+    }
+    exit(failures == 0 ? 0 : 1)
 }
 // Literal Spotlight overlay: menu application is frontmost, but the system
 // field belongs to the canonical, live Apple Spotlight process.

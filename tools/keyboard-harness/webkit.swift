@@ -13,6 +13,22 @@ func fixtureProcessBundleURL(pid: pid_t) -> URL? {
 func main<T>(_ body: () -> T) -> T { Thread.isMainThread ? body() : DispatchQueue.main.sync(execute: body) }
 func pump(_ seconds: Double = 0.03) { RunLoop.current.run(until: Date().addingTimeInterval(seconds)) }
 
+// Production Unicode eligibility reads these two raw AX RPCs against the real
+// in-process WebCore wrapper. No role/capability predicate is copied here.
+var eligibilityTarget: WebKitAX?
+func fixtureAXUIElementCopyAttributeValue(_ element: AXUIElement, _ name: CFString,
+                                         _ value: UnsafeMutablePointer<CFTypeRef?>) -> AXError {
+    guard let target = eligibilityTarget, CFEqual(element, target.element) else { fatalError("eligibility RPC outside owned WebKit target") }
+    value.pointee = target.attribute(name as String, of: element)
+    return value.pointee == nil ? .noValue : .success
+}
+func fixtureAXUIElementIsAttributeSettable(_ element: AXUIElement, _ name: CFString,
+                                         _ settable: UnsafeMutablePointer<DarwinBoolean>) -> AXError {
+    guard let target = eligibilityTarget, CFEqual(element, target.element) else { fatalError("capability RPC outside owned WebKit target") }
+    settable.pointee = DarwinBoolean(target.node.accessibilityIsAttributeSettable(NSAccessibility.Attribute(rawValue: name as String)))
+    return .success
+}
+
 // WebKit1 exposes the system WebCore accessibility wrapper in this process.
 // WKWebView's remote AX tree requires cross-process AX permission; this fixture
 // deliberately uses neither that permission nor another application's AX tree.
@@ -30,37 +46,62 @@ final class WebKitAX: DictationAccessibility {
     var afterPost: (() -> Void)?
     var directWrites = 0
     var unicodePosts = 0
+    let kind: String
 
-    init() {
+    init(kind: String = "input") {
+        self.kind = kind
         window = NSWindow(contentRect: web.frame, styleMask: [], backing: .buffered, defer: false)
         window.contentView = web
+        let markup: String
+        switch kind {
+        case "textarea": markup = "<textarea id='name'></textarea>"
+        case "contenteditable": markup = "<div id='name' contenteditable='true' role='textbox' aria-multiline='true'></div>"
+        case "palette": markup = "<input id='name' type='search' role='combobox' aria-expanded='false' aria-controls='options'><div id='options' role='listbox'></div>"
+        default: markup = "<input id='name' autocomplete='name'>"
+        }
         web.mainFrame.loadHTMLString("""
-            <input id="name" autocomplete="name"><script>
+            \(markup)<script>
             window.inputs=[]; const field=document.getElementById('name');
             field.addEventListener('input', e => inputs.push({value:field.value, type:e.inputType}));
+            function fieldValue() { return field.isContentEditable ? field.textContent : field.value; }
+            function fieldSelection() {
+              if (!field.isContentEditable) return [field.selectionStart,field.selectionEnd];
+              const s=getSelection(), r=s.getRangeAt(0), prefix=document.createRange();
+              prefix.selectNodeContents(field); prefix.setEnd(r.startContainer,r.startOffset);
+              const start=prefix.toString().length; return [start,start+r.toString().length];
+            }
+            function seedField(value,start,end) {
+              if (field.isContentEditable) {
+                field.textContent=value; field.focus(); const r=document.createRange();
+                r.setStart(field.firstChild,start); r.setEnd(field.firstChild,end);
+                const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+              } else { field.value=value; field.focus(); field.setSelectionRange(start,end); }
+              inputs=[];
+            }
             </script>
             """, baseURL: nil)
         let deadline = Date().addingTimeInterval(4)
         while web.stringByEvaluatingJavaScript(from: "typeof field") != "object", Date() < deadline { pump() }
         func visit(_ object: NSObject, depth: Int = 0) {
             guard depth < 12 else { return }
-            if object.accessibilityAttributeValue(.role) as? String == kAXTextFieldRole { node = object; return }
+            if let role = object.accessibilityAttributeValue(.role) as? String,
+               [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole].contains(role) { node = object; return }
             for child in object.accessibilityAttributeValue(.children) as? [NSObject] ?? [] { visit(child, depth: depth + 1) }
         }
         visit(web)
-        require(node != nil, "own WebKit AX text field exists")
+        require(node != nil, "own WebKit \(kind) AX text field exists")
     }
     func seed(_ value: String, selection: NSRange) {
         let data = try! JSONSerialization.data(withJSONObject: [value])
         let encoded = String(data: data, encoding: .utf8)!
-        _ = web.stringByEvaluatingJavaScript(from: "field.value=\(encoded)[0];field.focus();field.setSelectionRange(\(selection.location),\(selection.location + selection.length));inputs=[]")
+        _ = web.stringByEvaluatingJavaScript(from: "seedField(\(encoded)[0],\(selection.location),\(selection.location + selection.length))")
         pump()
         require(domValue == value && domSelection == selection, "literal source and caret before conversion")
     }
-    var domValue: String { web.stringByEvaluatingJavaScript(from: "field.value")! }
+    var domValue: String { web.stringByEvaluatingJavaScript(from: "fieldValue()")! }
     var domSelection: NSRange {
-        let start = Int(web.stringByEvaluatingJavaScript(from: "String(field.selectionStart)")!)!
-        let end = Int(web.stringByEvaluatingJavaScript(from: "String(field.selectionEnd)")!)!
+        let start = Int(web.stringByEvaluatingJavaScript(from: "String(fieldSelection()[0])")!)!
+        let end = Int(web.stringByEvaluatingJavaScript(from: "String(fieldSelection()[1])")!)!
         return NSRange(location: start, length: end - start)
     }
     var domInputCount: Int { Int(web.stringByEvaluatingJavaScript(from: "String(inputs.length)")!)! }
@@ -79,9 +120,10 @@ final class WebKitAX: DictationAccessibility {
     func selectedTextIsSettable(_ element: AXUIElement) -> Bool { main { node.accessibilityIsAttributeSettable(.selectedText) } }
     func supportsUnicodeInsertion(_ element: AXUIElement) -> Bool {
         main {
-            node.accessibilityAttributeValue(.role) as? String == kAXTextFieldRole
-                && node.accessibilityIsAttributeSettable(.selectedTextRange)
-                && node.accessibilityIsAttributeSettable(.value)
+            precondition(eligibilityTarget == nil)
+            eligibilityTarget = self
+            defer { eligibilityTarget = nil }
+            return SystemDictationAccessibility().supportsUnicodeInsertion(element)
         }
     }
     func prefersUnicodeInsertion(pid: pid_t) -> Bool { !forceDirect && SystemDictationAccessibility().prefersUnicodeInsertion(pid: pid) }
@@ -270,4 +312,26 @@ require(speechResult == .inserted && speech.domValue == "До новый пол�
     "shared dictation route inserts full text and preserves surroundings")
 require(speech.directWrites == 0 && speech.unicodePosts == 2 && speech.domInputCount == 2, "shared dictation chunks are once-only native edits")
 print("PASS: shared Safari dictation route preserves source surroundings and full chunked text")
+for kind in ["input", "textarea", "contenteditable", "palette"] {
+    for selected in [true, false] {
+        let ax = WebKitAX(kind: kind)
+        let initial = NSRange(location: selected ? 3 : 7, length: selected ? 4 : 0)
+        ax.seed("🙂 кмсф tail", selection: initial)
+        let role = ax.node.accessibilityAttributeValue(.role) as? String ?? "missing"
+        let supported = ax.supportsUnicodeInsertion(ax.element)
+        let selection = SelectionConverter.Selection(target: ax.target, range: CFRange(location: 3, length: 4), text: "кмсф",
+            originalSelection: CFRange(location: initial.location, length: initial.length), isWord: !selected,
+            sourceValue: "🙂 кмсф tail")
+        var result: InputFocusGuard.ReplacementResult?
+        let typist = Typist(postEvent: { _ in fatalError("manual conversion never submits") })
+        SelectionConverter().replace(selection, permit: .init(), typist: typist, replayRoute: ax.ticket.replayRoute) { result = $0; _ = $1 }
+        drain(typist, { result != nil })
+        print("WebKit \(kind) role=\(role), supported=\(supported), selected=\(selected), result=\(String(describing: result)), text=\(ax.domValue), caret=\(ax.domSelection), unicodePosts=\(ax.unicodePosts), directWrites=\(ax.directWrites)")
+        require(result == .confirmed && ax.domValue == "🙂 rvca tail" && ax.domSelection == NSRange(location: 7, length: 0),
+                "real WebKit \(kind) \(selected ? "selection" : "word") preserves emoji, suffix and caret")
+        require(ax.domInputCount == 1 && ax.unicodePosts == 1 && ax.directWrites == 0,
+                "real WebKit \(kind) uses one verified native insertion without setter retry")
+        print("PASS: real WebKit \(kind) role=\(role) \(selected ? "selected" : "preexisting") кмсф→rvca; production eligibility; exact DOM/caret")
+    }
+}
 print("WebKit harness passed: actual system WebCore AX wrapper and local text input; not Safari/WindowServer delivery.")

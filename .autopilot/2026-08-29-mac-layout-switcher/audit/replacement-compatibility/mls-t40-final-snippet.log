@@ -1,0 +1,9 @@
+Engine regression scratch: /tmp/mls-keyboard-engine.NzvGq1
+2026-11-10 07:20:47.036 test-engine[78252:15302066] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-10 07:20:47.036 test-engine[78252:15302017] Error received in message reply handler: Connection invalid
+2026-11-10 07:20:47.127 test-engine[78252:15302017] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-10 07:20:48.902 test-engine[78252:15302017] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+2026-11-10 07:20:48.911 test-engine[78252:15302017] Failure on line 687 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-10 07:20:50.674 test-engine[78252:15302017] Failure on line 694 in function void unscheduleApplicationNotification(id): noErr == _LSUnscheduleNotificationFunction(notificationID)
+Frozen TIS fixture: source=com.apple.keylayout.ABC; uchrBytes=5032; uchrSHA256=464baf9b5025c0e060e45b1ceeafe45307e8be4c7a518d1bf4606edfecd98545
+PASS: quiet-time snippet and longer trigger prefix

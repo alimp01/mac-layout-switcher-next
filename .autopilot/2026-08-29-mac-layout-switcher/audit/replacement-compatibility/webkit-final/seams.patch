@@ -1,0 +1,54 @@
+--- Sources/DictationTarget.swift
++++ Compiled/DictationTarget.swift
+@@ -222,7 +222,7 @@
+     var isSecure: Bool { SecureInput.isActive }
+     func attribute(_ name: String, of element: AXUIElement) -> CFTypeRef? {
+         var value: CFTypeRef?
+-        guard AXUIElementCopyAttributeValue(element, name as CFString, &value) == .success else { return nil }
++        guard fixtureAXUIElementCopyAttributeValue(element, name as CFString, &value) == .success else { return nil }
+         return value
+     }
+     private func bounded(_ element: AXUIElement) -> AXUIElement {
+@@ -280,7 +280,7 @@
+         typealias Status = DictationFocusFailure.Status
+         func read(_ name: String, from element: AXUIElement) -> (CFTypeRef?, Status) {
+             var value: CFTypeRef?
+-            let result = AXUIElementCopyAttributeValue(element, name as CFString, &value)
++            let result = fixtureAXUIElementCopyAttributeValue(element, name as CFString, &value)
+             guard result == .success else { return (nil, .error(result.rawValue)) }
+             return (value, value == nil ? .noValue : .success)
+         }
+@@ -372,7 +372,7 @@
+         }
+         func readEnhanced() -> (Bool?, String) {
+             var value: CFTypeRef?
+-            let code = AXUIElementCopyAttributeValue(app, "AXEnhancedUserInterface" as CFString, &value)
++            let code = fixtureAXUIElementCopyAttributeValue(app, "AXEnhancedUserInterface" as CFString, &value)
+             guard code == .success else { return (nil, String(code.rawValue)) }
+             guard let value else { return (nil, "no-value") }
+             guard CFGetTypeID(value) == CFBooleanGetTypeID() else { return (nil, "invalid-type") }
+@@ -400,13 +400,13 @@
+     }
+     func selectedTextIsSettable(_ element: AXUIElement) -> Bool {
+         var settable = DarwinBoolean(false)
+-        return AXUIElementIsAttributeSettable(element, kAXSelectedTextAttribute as CFString, &settable) == .success && settable.boolValue
++        return fixtureAXUIElementIsAttributeSettable(element, kAXSelectedTextAttribute as CFString, &settable) == .success && settable.boolValue
+     }
+     func prefersUnicodeInsertion(pid: pid_t) -> Bool {
+         // Chromium bridges can advertise a selected-text setter whose browser
+         // action is unimplemented. Select verified Unicode before any mutation;
+         // never discover this by attempting text and then retrying it.
+-        guard let bundle = NSRunningApplication(processIdentifier: pid)?.bundleURL else { return false }
++        guard let bundle = fixtureProcessBundleURL(pid: pid) else { return false }
+         // Safari's WebKit text controls likewise advertise AXSelectedText, but
+         // the WebCore setter is a no-op. Choose the existing verified native
+         // input route before selection/text mutation, never as a write retry.
+@@ -422,7 +422,7 @@
+             // Unicode replaces the selection already verified by the caller.
+             // A range setter is needed only when that caller changes selection;
+             // its write/readback remains a separate precondition to text input.
+-            && AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable) == .success
++            && fixtureAXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable) == .success
+             && valueSettable.boolValue
+     }
+     static func isTextInputRole(_ role: String?) -> Bool {

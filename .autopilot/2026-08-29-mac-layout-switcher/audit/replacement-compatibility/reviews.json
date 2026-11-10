@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-10",
+  "manifestSHA256": "91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337",
+  "files": 109,
+  "baselinePatchSHA256": "52eb164e9b2d721f35fd529e5da01b597b95633f43b17fda4588fca477b632ea",
+  "spec": {
+    "agent": "review_compatibility_spec",
+    "verdict": "APPROVE",
+    "findings": 0
+  },
+  "standards": {
+    "agent": "review_compatibility_standards",
+    "verdict": "APPROVE",
+    "findings": 0
+  },
+  "independentVerification": "Both verified pristine baseline, identical WebCore fixture, final production sources and one-write complete replacement; Standards also independently verified P2 diagnosis repair.",
+  "limit": "Owned fixtures; no live Codex/Safari or physical Option acceptance."
+}
