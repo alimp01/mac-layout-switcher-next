@@ -1,0 +1,34 @@
+{
+  "version": "1.5.3",
+  "date": "2026-11-10",
+  "application": "Safari",
+  "url": "https://ya.ru/",
+  "field": "search ComboBox",
+  "source": "мзт",
+  "replacement": "vpn",
+  "selection": "entire word selected",
+  "trigger": "physical modifier-only Option",
+  "result": "passed",
+  "evidence": "explicit user reply: Получилось vpn",
+  "observationLimit": "CUA after user reply saw test tab already closed; no independent AX-after capture",
+  "otherPaths": "Codex command palette and Safari fresh word without selection not accepted by this answer",
+  "cuaAttempts": [
+    {
+      "shortcut": "F12",
+      "result": "no observed change; delivery/dispatch unknown"
+    },
+    {
+      "shortcut": "CtrlShiftK, 1000 ms",
+      "result": "no observed change; delivery/dispatch unknown"
+    }
+  ],
+  "permissions": "Input Monitoring and Accessibility toggles observed on; not a substitute for process trust; physical result demonstrates this operation worked",
+  "restoredShortcut": {
+    "modifiers": [
+      "option"
+    ]
+  },
+  "restoredPID": 80333,
+  "accessReview": "Initial Safari denial resolved by explicit user authorization: Разрешаю подключение к Safari для проверки. No bypass.",
+  "readOnlyFollowup": "No invalid hotkey config or blanket synthetic rejection found. Potential modifier-release queue cancellation remains an unconfirmed concern, no product edits justified by CUA attempts."
+}

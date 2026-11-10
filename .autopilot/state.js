@@ -48,19 +48,19 @@ window.STATE =
       "id": "build",
       "status": "active",
       "startedAt": "2026-08-29T03:52:30+00:00",
-      "note": "Next G35/T40 1.5.3 installed; code/tests and both reviews complete; publication and real Safari/Codex acceptance pending"
+      "note": "Next1.5.3 published/installed; both reviews approved; Safari selected-text Option physically accepted; Codex palette and G33 fresh Safari pending"
     },
     {
       "id": "review",
       "status": "pending",
       "startedAt": "2026-10-08T04:45:11.080956+00:00",
-      "note": "Next G35/T40 1.5.3 installed; code/tests and both reviews complete; publication and real Safari/Codex acceptance pending"
+      "note": "Next1.5.3 published/installed; both reviews approved; Safari selected-text Option physically accepted; Codex palette and G33 fresh Safari pending"
     },
     {
       "id": "final",
       "status": "pending",
       "startedAt": "2026-08-29T05:25:00+00:00",
-      "note": "Next G35/T40 1.5.3 installed; code/tests and both reviews complete; publication and real Safari/Codex acceptance pending"
+      "note": "Next1.5.3 published/installed; both reviews approved; Safari selected-text Option physically accepted; Codex palette and G33 fresh Safari pending"
     }
   ],
   "requirements": {
@@ -1004,7 +1004,7 @@ window.STATE =
       "blockedBy": [],
       "codeCommit": "8a8907a864773f36869e6364ecf4f207df653b45",
       "review": "Spec APPROVE0; Standards APPROVE0",
-      "note": "Implementation, tests, full speech build, signed mounted DMG and installation complete; publication and live acceptance pending"
+      "note": "Implementation, two reviews, tests, publication and installation complete. User physically accepted Safari selected мзт→vpn with Option; exact Codex palette pending."
     }
   ],
   "singlePass": null,
@@ -1169,9 +1169,12 @@ window.STATE =
   },
   "manualAcceptance": {
     "version": "1.5.3",
-    "status": "pending",
-    "scope": "Codex command palette selected мзт→vpn; Safari fresh шорты кмсф + Option→шорты rvca",
-    "blocker": "Safari getApp automatic access-review rejection; user approval or safe active tab pending; no denied-app bypass"
+    "status": "partial-pass",
+    "passed": "Safari ya.ru selected мзт + physical Option → vpn",
+    "answer": "Получилось vpn",
+    "date": "2026-11-10",
+    "pending": "Codex command palette; G33 Safari freshly typed шорты кмсф + Option without selection",
+    "limit": "Explicit user confirmation; no independent AX-after, test tab already closed; synthetic CUA attempts inconclusive"
   },
   "release": {
     "version": "1.5.3",
@@ -1185,13 +1188,14 @@ window.STATE =
     "deepStrictVerified": true,
     "allBundledFilesVerified": 23,
     "reviewedManifestSHA256": "91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337",
-    "liveAcceptance": "not proven; Safari access approval pending; no Codex UI bypass",
-    "status": "installed and launched; publication pending",
+    "liveAcceptance": "Safari selected мзт + physical Option → vpn confirmed by user; Codex palette/fresh Safari unproven",
+    "status": "published and installed; Safari selected-text physical Option passed",
     "installedPath": "/Applications/MacLayoutSwitcherNext.app",
-    "installedPID": 78854,
+    "installedPID": 80333,
     "repository": "alimp01/mac-layout-switcher-next",
     "artifact": "MacLayoutSwitcherNext-1.5.3.dmg",
-    "backup": "/Applications/.MacLayoutSwitcherNext-T40-raxhghuz/previous.app"
+    "backup": "/Applications/.MacLayoutSwitcherNext-T40-raxhghuz/previous.app",
+    "publication": "Next main and separate update archive; first publication receipt4a8fd17 in audit, final metadata archive verification in workspace outputs"
   },
   "wordCoverageAudit": {
     "independentRU": 459,
@@ -1561,7 +1565,7 @@ window.STATE =
     "ticket": "40",
     "version": "1.5.3",
     "actual": "Screenshot Codex command palette selected мзт; generic untouched notice",
-    "status": "validated and installed; publication/live acceptance pending",
+    "status": "published and installed; Safari selection passed, exact Codex palette acceptance pending",
     "baseline": "5c2d1c1298f4fa19ba3fb68ea56cb021b1b425bd",
     "codeCommit": "8a8907a864773f36869e6364ecf4f207df653b45",
     "manifestSHA256": "91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337",
@@ -1569,8 +1573,9 @@ window.STATE =
     "evidence": "2026-08-29-mac-layout-switcher/audit/replacement-compatibility",
     "actualGuard": "unknown from screenshot; shared capability defects independently reproduced",
     "nativeResult": "pristine baseline untouched → final confirmed, one Unicode write, exact source/prefix/suffix/caret",
-    "live": "not proven; Safari automatic access-review rejection, permission pending",
-    "concern": "Fast CtrlShiftF12 modifier release may cancel queued command; hypothesis only, unconfirmed, no T40 product change"
+    "live": "Safari selected мзт + physical Option → vpn, user confirmed10.11; original Codex palette remains untested",
+    "concern": "Fast CtrlShiftF12 modifier release may cancel queued command; hypothesis only, unconfirmed, no T40 product change",
+    "access": "Safari explicit user approval received; denial resolved without bypass"
   },
   "previousNext152Release": {
     "version": "1.5.2",

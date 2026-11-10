@@ -49,4 +49,4 @@
 
 | G34 | «Убери надпись next … иконки в трее» | done | Удалить только видимый префикс Next; язык/пауза/диктовка сохранены | tray-label-spec.md → T39 |
 
-| G35 | «Опять ошибка… починить это везде…» | in-ticket | Next1.5.2 command palette selected мзт; audit and repair common replacement capability/selection paths with truthful system matrix | replacement-compatibility-spec.md → T40 |
+| G35 | «Опять ошибка… починить это везде…» | in-ticket | Next1.5.3 fix/reviews/release done; physical Safari selected мзт→vpn accepted; exact Codex palette pending | replacement-compatibility-spec.md → T40 |

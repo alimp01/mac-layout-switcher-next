@@ -2,7 +2,9 @@
 
 Общие отказы выбранного/старого текста и editable ComboBox исправлены, code 8a8907a. Два финальных независимых ревью APPROVE0; manifest 109 файлов 91e702f8767fd0b6bc604b48fe88c275e9eb0c404c4f7498dd98444f183b5337. Pristine WebCore baseline→final: «🙂 кмсф tail»→«🙂 rvca tail», ровно одна запись и правильный caret. Linux110/0, native targeted checks, полный speech build и mounted DMG23files PASS. См. replacement-compatibility-qa.md: полный старый прогон и финальные targeted проверки имеют разный явно записанный provenance.
 
-1.5.3 установлена и запущена (PID78854); Option/autoSwitch сохранены. Публикация следующим шагом. Реальная палитра Codex и G33 Safari НЕ приняты; G35/T40 пока открыт. Safari CUA явно запрещён automatic access review из-за активной приватной VPS-вкладки; запрос разрешения/переключения вкладки ожидает пользователя. Не обходить через shell/AX/CDP. CUA не умеет одиночный Alt_L; SystemUIServer getApp ранее завис877с — не повторять. Запуск процесса не доказывает разрешения или аппаратную доставку.
+1.5.3 опубликована, установлена и запущена; после CUA-тестов восстановлены Option/autoSwitch, PID80333. Пользователь подтвердил физическую Option в Safari ya.ru: выделенное «мзт» → «vpn», ответ «Получилось vpn». Тестовая вкладка после ответа уже закрыта пользователем: независимого AX-after нет. Реальная палитра Codex и G33 fresh Safari без выделения НЕ приняты; G35/T40 пока открыт для Codex.
+
+Начальный запрет Safari automatic access review снят явным разрешением пользователя. CUA F12 и CtrlShiftK не дали наблюдаемого результата; доставка/dispatch неизвестны. Оба тумблера разрешений включены, но не равны проверке trust процесса. Продукт по этим неоднозначным попыткам не меняли. Не обходить прежние запреты Codex через shell/AX/CDP. CUA не умеет одиночный Alt_L; SystemUIServer getApp зависал877с, не повторять.
 
 Исторические pending-install записи ниже заменяются текущим статусом. Stable app/repo/archive не менять. Публиковать только Next main и mac-layout-switcher-next.tar.gz. Root ведёт metadata/release; продукт и тесты пишет исполнитель.
 

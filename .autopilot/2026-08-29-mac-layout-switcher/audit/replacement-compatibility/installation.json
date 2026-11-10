@@ -13,5 +13,11 @@
       "option"
     ]
   },
-  "autoSwitch": true
+  "autoSwitch": true,
+  "latestRestoredPID": 80333,
+  "hotkeyRestoredAfterLiveChecks": {
+    "modifiers": [
+      "option"
+    ]
+  }
 }
